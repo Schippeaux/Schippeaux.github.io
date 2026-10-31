@@ -6,11 +6,12 @@
   "groups": [
     {
       "slug": "travel",
-      "title": "Travel",
+      "title": "Travel Photography",
+      "nav": "Travel",
       "sections": [
         {
           "slug": "usa-2025",
-          "title": "Bikepacking & Roadtripping",
+          "title": "Bikepacking & Roadtripping in the USA",
           "place": "United States",
           "year": "2025"
         },

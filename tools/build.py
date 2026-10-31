@@ -80,7 +80,7 @@ def page(title, body, extra_head="", body_class=""):
 <body class="{body_class}">
   <nav class="topbar">
     <a href="/" class="wordmark">{escape(SITE['title'])}</a>
-    <div class="links">{''.join(f'<a href="/{g["slug"]}/">{escape(g["title"])}</a>' for g in SITE['groups'])}</div>
+    <div class="links">{''.join(f'<a href="/{g["slug"]}/">{escape(g.get("nav", g["title"]))}</a>' for g in SITE['groups'])}</div>
   </nav>
 {body}
   <footer class="site-footer">
@@ -104,7 +104,7 @@ def load_section(group, section):
     pub = PUBLIC.get("sections", {}).get(section["slug"], {})
     chapters = [c for c in pub.get("chapters", []) if c["photos"]]
     photos = [p for c in chapters for p in c["photos"]]
-    s = {**section, "group": group["slug"], "chapters": chapters, "photos": photos,
+    s = {**section, "group": group["slug"], "chapters": chapters, "photos": photos, "text": pub.get("text", ""),
          "cover_photo": find(photos, pub.get("cover")) if photos else None,
          "planned": section.get("planned", [])}
     s["base"] = f"/{group['slug']}/{section['slug']}/"
@@ -158,7 +158,7 @@ def build_home(groups):
     </div>
   </header>
 {blocks}"""
-    write("index.html", page("", body))
+    write("index.html", page("", body, body_class="home"))
 
 
 def build_group(g):
@@ -206,11 +206,13 @@ def build_section(s):
       <li class="pending"><span class="num">{i:02d}</span><span class="ch-title">{escape(name)}</span><span class="ch-meta">Forthcoming</span></li>"""
                        for i, name in enumerate(s["planned"], 1))
     toc = f'<p class="eyebrow">Contents</p>\n    <ol class="toc">{rows}\n    </ol>' if rows else ""
+    text = paragraphs(s.get("text") or "")
+    intro = f'<div class="section-text">{text}</div>\n    ' if text else ""
     body = f"""{head}
   <section class="contents">
-    {toc}
+    {intro}{toc}
   </section>"""
-    write(path, page(s["title"], body))
+    write(path, page(s["title"], body, body_class="section-page"))
 
 
 def build_chapter(s, idx):
@@ -231,7 +233,8 @@ def build_chapter(s, idx):
     crumb = (f'<a href="{s["base"]}">{escape(s["title"])}</a> · Chapter {c["number"]:02d}' if not single
              else f'{escape(s["place"])} · {escape(s["year"])}')
     title = s["title"] if single else c["title"]
-    text = paragraphs(c.get("text") or "")
+    # Single-chapter sections skip the section page, so show the section's description here
+    text = paragraphs(((s.get("text") or "") + "\n\n" if single else "") + (c.get("text") or ""))
     info = (f"""
   <section class="chapter-info">
     {f'<div class="chapter-text">{text}</div>' if text else ''}{nav}

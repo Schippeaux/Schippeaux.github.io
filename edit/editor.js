@@ -129,7 +129,7 @@
       }).filter(Boolean);
       if (!chapters.length) continue;
       const all = chapters.flatMap(c => c.photos);
-      out.sections[slug] = { cover: all.some(p => p.id === sec.cover) ? sec.cover : chapters[0].cover, chapters };
+      out.sections[slug] = { cover: all.some(p => p.id === sec.cover) ? sec.cover : chapters[0].cover, text: sec.text || '', chapters };
     }
     // Homepage cover only if that photo is public; otherwise the build falls back to a section cover
     const publicIds = new Set(Object.values(out.sections).flatMap(s => s.chapters.flatMap(c => c.photos.map(p => p.id))));
@@ -242,7 +242,13 @@
         <h1>${esc(meta.title)}</h1>
         ${chapters.length ? '' : '<p class="status">No photos indexed yet</p>'}
       </header>
-      <section class="contents">${rows ? `<p class="eyebrow">Chapters</p><ol class="toc">${rows}</ol>` : ''}</section>`;
+      <section class="contents">
+        ${s ? `<label class="field section-desc">Section description
+          <textarea id="section-text" rows="5" placeholder="What this section is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
+        </label>` : ''}
+        ${rows ? `<p class="eyebrow">Chapters</p><ol class="toc">${rows}</ol>` : ''}
+      </section>`;
+    if (s) $('section-text').addEventListener('input', e => { s.text = e.target.value; setDirty(); });
     showView('section-view');
   }
 

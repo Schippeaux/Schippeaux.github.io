@@ -52,6 +52,7 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 #home-view .index-section { padding-top: 6vh; }
 #section-view .page-head { padding: 12vh var(--gutter) 4vh; }
 #section-view .contents { padding-top: 4vh; }
+.section-desc { margin-bottom: 6vh; max-width: 900px; }
 
 .ed-main { display: grid; grid-template-columns: 1fr var(--side-w); min-height: calc(100svh - 58px); }
 .ed-left { min-width: 0; }
