@@ -8,126 +8,14 @@
      "number": 0,
      "title": "Preparation & Arrival",
      "text": "",
-     "cover": "1dhSpNvjprPfZfyFD0Eoqe-1Z9TaaAqZa",
+     "cover": "15yr5SdKqQ2VYRUfUYHIt2tlc8pnNErOT",
      "photos": [
-      {
-       "id": "1dhSpNvjprPfZfyFD0Eoqe-1Z9TaaAqZa",
-       "w": 6635,
-       "h": 3732,
-       "date": "2025-06-05",
-       "desc": ""
-      },
-      {
-       "id": "17APhhgiiz0WV9XRzvJg7DRaY7vOVoLYc",
-       "w": 3727,
-       "h": 5591,
-       "date": "2025-06-06",
-       "desc": ""
-      },
-      {
-       "id": "1c4lpSEcPiybLr9xXd57ojVwe__W7ePIn",
-       "w": 7728,
-       "h": 4347,
-       "date": "2025-06-12",
-       "desc": ""
-      },
-      {
-       "id": "1zEAvTy3fbDl_Ek8Id_hmLQccpJlRmjYY",
-       "w": 7728,
-       "h": 4347,
-       "date": "2025-06-12",
-       "desc": ""
-      },
-      {
-       "id": "182YCumorDfr9ksPU-zdRb9Yb2J2H6pSj",
-       "w": 7728,
-       "h": 4347,
-       "date": "2025-06-12",
-       "desc": ""
-      },
-      {
-       "id": "1gNwL1Fq96_ERNmbRKvEfAOSN2EBRxEO6",
-       "w": 5152,
-       "h": 7728,
-       "date": "2025-06-12",
-       "desc": ""
-      },
-      {
-       "id": "1_6nXNlFT_aZ8VM2FZGqMxG-5bHWL1wz1",
-       "w": 4000,
-       "h": 2250,
-       "date": "2025-06-13",
-       "desc": ""
-      },
-      {
-       "id": "1ysx4JVWH9q4tYHdUmZ5hZ1uN6cvnp3ys",
-       "w": 4000,
-       "h": 2250,
-       "date": "2025-06-13",
-       "desc": ""
-      },
-      {
-       "id": "1DefSbHzaXWgZyd7uxsz4omwx1QMC862J",
-       "w": 7480,
-       "h": 4207,
-       "date": "2024-01-02",
-       "desc": ""
-      },
-      {
-       "id": "1CyuQo4_keBH9AcS418AhToRppDBrDUAJ",
-       "w": 4000,
-       "h": 2250,
-       "date": "2025-06-12",
-       "desc": ""
-      },
-      {
-       "id": "1Mo8c1qJ3Vl7sZXR5xfB4bPNP6ZB7bcVa",
-       "w": 3285,
-       "h": 1848,
-       "date": "2025-05-23",
-       "desc": ""
-      },
-      {
-       "id": "1SWHJYvZGa7UjgyOSJKPNBrp4MZav9ukg",
-       "w": 3285,
-       "h": 1848,
-       "date": "2025-05-23",
-       "desc": ""
-      },
-      {
-       "id": "1IHg1NdfhuN285Vt9iBNwtTxskakTLQtS",
-       "w": 6699,
-       "h": 3768,
-       "date": "2025-05-30",
-       "desc": ""
-      },
-      {
-       "id": "1ifOzvklTO1-I3mrC8wQ3ihqi_yW3aZoD",
-       "w": 5511,
-       "h": 3100,
-       "date": "2025-06-01",
-       "desc": ""
-      },
-      {
-       "id": "1CLLfT5pLjYaiWw2bY-HBSbklDO_irR2b",
-       "w": 8160,
-       "h": 3768,
-       "date": "2025-05-27",
-       "desc": ""
-      },
       {
        "id": "15yr5SdKqQ2VYRUfUYHIt2tlc8pnNErOT",
        "w": 8160,
        "h": 3768,
        "date": "2025-05-29",
-       "desc": ""
-      },
-      {
-       "id": "1QqDvJldPkpD9nVV6ddgy81Yw9NzbVKA0",
-       "w": 8160,
-       "h": 3768,
-       "date": "2025-06-05",
-       "desc": ""
+       "desc": "Test riding my noble steed, riding from Mandurah to Dwellingup"
       },
       {
        "id": "1R0WQqr72CcSSe-Ho8gB6e8zZz5p5yH7n",
@@ -151,31 +39,136 @@
        "desc": ""
       },
       {
+       "id": "1CyuQo4_keBH9AcS418AhToRppDBrDUAJ",
+       "w": 4000,
+       "h": 2250,
+       "date": "2025-06-12",
+       "desc": "Fare thee well Sam Fare thee well SamFare thee well SamFare thee well SamFare thee well SamFare thee well SamFare thee well SamFare thee well SamFare thee well Sam"
+      },
+      {
+       "id": "1DefSbHzaXWgZyd7uxsz4omwx1QMC862J",
+       "w": 7480,
+       "h": 4207,
+       "date": "2024-01-02",
+       "desc": "Stay cool Jad"
+      },
+      {
+       "id": "1ysx4JVWH9q4tYHdUmZ5hZ1uN6cvnp3ys",
+       "w": 4000,
+       "h": 2250,
+       "date": "2025-06-13",
+       "desc": "Goodbye my loves..."
+      },
+      {
+       "id": "1dhSpNvjprPfZfyFD0Eoqe-1Z9TaaAqZa",
+       "w": 6635,
+       "h": 3732,
+       "date": "2025-06-05",
+       "desc": "See ya kiddos"
+      },
+      {
+       "id": "17APhhgiiz0WV9XRzvJg7DRaY7vOVoLYc",
+       "w": 3727,
+       "h": 5591,
+       "date": "2025-06-06",
+       "desc": "Adios Jefe"
+      },
+      {
+       "id": "1c4lpSEcPiybLr9xXd57ojVwe__W7ePIn",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-12",
+       "desc": "Dear family"
+      },
+      {
+       "id": "182YCumorDfr9ksPU-zdRb9Yb2J2H6pSj",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-12",
+       "desc": "What a smile"
+      },
+      {
+       "id": "1gNwL1Fq96_ERNmbRKvEfAOSN2EBRxEO6",
+       "w": 5152,
+       "h": 7728,
+       "date": "2025-06-12",
+       "desc": "Cheeky boy"
+      },
+      {
+       "id": "1_6nXNlFT_aZ8VM2FZGqMxG-5bHWL1wz1",
+       "w": 4000,
+       "h": 2250,
+       "date": "2025-06-13",
+       "desc": "My neighbour Lorna.  A beautiful human who sadly passed away while I was gone.  Lots of love, I will miss you..."
+      },
+      {
+       "id": "1Mo8c1qJ3Vl7sZXR5xfB4bPNP6ZB7bcVa",
+       "w": 3285,
+       "h": 1848,
+       "date": "2025-05-23",
+       "desc": "Goodbye Site Architecture Studio"
+      },
+      {
+       "id": "1SWHJYvZGa7UjgyOSJKPNBrp4MZav9ukg",
+       "w": 3285,
+       "h": 1848,
+       "date": "2025-05-23",
+       "desc": "Bye Perth"
+      },
+      {
+       "id": "1IHg1NdfhuN285Vt9iBNwtTxskakTLQtS",
+       "w": 6699,
+       "h": 3768,
+       "date": "2025-05-30",
+       "desc": "Bye friends"
+      },
+      {
+       "id": "1ifOzvklTO1-I3mrC8wQ3ihqi_yW3aZoD",
+       "w": 5511,
+       "h": 3100,
+       "date": "2025-06-01",
+       "desc": "Goodbye car"
+      },
+      {
        "id": "1QIXsTtfaQuDLiTvCPlh5NkwIYgq1iBM3",
        "w": 6699,
        "h": 3768,
        "date": "2025-06-14",
-       "desc": ""
+       "desc": "Hello Seattle"
       },
       {
        "id": "1r6KQ3QUjWjFwPkYYaLwMrEvkVzPvlalU",
        "w": 6286,
        "h": 3536,
        "date": "2025-06-14",
-       "desc": ""
+       "desc": "Home of grunge"
       },
       {
        "id": "1Cp_wVA9YrDwK9K60-tWASjhGRf-yQVbb",
        "w": 4000,
        "h": 2250,
        "date": "2025-06-14",
-       "desc": ""
+       "desc": "Pit Stop"
       },
       {
        "id": "1REjMvnELTCHHnwvXLPX199HPIUwjccTo",
        "w": 3285,
        "h": 1848,
        "date": "2025-06-16",
+       "desc": "Our hostel in Seattle"
+      },
+      {
+       "id": "1QqDvJldPkpD9nVV6ddgy81Yw9NzbVKA0",
+       "w": 8160,
+       "h": 3768,
+       "date": "2025-06-05",
+       "desc": ""
+      },
+      {
+       "id": "1CLLfT5pLjYaiWw2bY-HBSbklDO_irR2b",
+       "w": 8160,
+       "h": 3768,
+       "date": "2025-05-27",
        "desc": ""
       }
      ]
