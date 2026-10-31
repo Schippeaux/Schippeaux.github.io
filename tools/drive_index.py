@@ -113,11 +113,18 @@ def main():
 
     db = open_db()
     folders = [c for c in children(db, find_folder(db, args.local_path)) if c[3]]
-    chapters = []
+    chapters, slugs = [], set()
     for sid, folder_id, name, _ in sorted(folders, key=lambda f: (chapter_number(f[2]) or 0, f[2])):
         num = chapter_number(name)
         if num is None or name.startswith("00"):
             continue  # skips "00 - Best Shots" and unnumbered folders
+        title = titles.get(num) or clean_title(name)
+        # Chapter addresses must be unique within a section (two folders can share a name).
+        # Worked out over every folder, so they stay the same whichever chapters a run sends.
+        slug = slugify(title)
+        if slug in slugs:
+            slug = f"{slug}-{num}"
+        slugs.add(slug)
         if args.include is not None and num not in args.include:
             continue
         photos = []
@@ -126,9 +133,8 @@ def main():
                 continue
             w, h, date = photo_meta(Path(args.local_path) / name / fname)
             photos.append({"id": file_id, "w": w, "h": h, "date": date})
-        title = titles.get(num) or clean_title(name)
         chapters.append({"folder_id": folder_id, "folder": name, "number": num,
-                         "title": title, "slug": slugify(title), "photos": photos})
+                         "title": title, "slug": slug, "photos": photos})
         print(f"{num:>3}  {title:<50} {len(photos):>3} photos")
 
     batch = {"section": args.section, "default_public": args.public, "cover": args.cover, "chapters": chapters}
