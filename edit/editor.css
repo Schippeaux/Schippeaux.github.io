@@ -1,4 +1,4 @@
-body.editor { --topbar-h: 0px; --reel-h: 104px; --side-w: 260px; }
+body.editor { --topbar-h: 0px; --reel-h: 112px; --side-w: 260px; }
 
 .btn {
   font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
@@ -46,6 +46,7 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 .crumbs a:hover { color: var(--fg); }
 .crumbs .sep { color: var(--faint); }
 .ed-status { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.ed-status a { color: var(--fg); border-bottom: 1px solid var(--muted); margin-left: 6px; }
 
 /* Home + section pages inside the editor */
 #home-view .index-section { padding-top: 6vh; }

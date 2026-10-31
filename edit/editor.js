@@ -571,18 +571,50 @@
     $('save-btn').disabled = true;
     $('status').textContent = 'Saving…';
     try {
+      const publicJson = JSON.stringify(publicData(), null, 1) + '\n';
       const files = {
         'data/private.json': JSON.stringify(await seal(state.dataKey, state.data)) + '\n',
-        'data/public.json': JSON.stringify(publicData(), null, 1) + '\n',
+        'data/public.json': publicJson,
       };
       await commit(files, state.inboxPaths, 'Edit photos');
       state.inboxPaths = [];
       setDirty(false);
-      $('status').textContent = 'Published · live in about a minute';
+      $('status').textContent = 'Published · updating the site…';
+      watchLive(publicJson);
     } catch (err) {
       setDirty(true);
       toast('Save failed: ' + err.message, 8000);
     }
+  }
+
+  // GitHub rebuilds the site ~30-60 s after a save, and browsers may keep a page they've
+  // already seen for up to 10 minutes. Poll the live data until it matches what we saved,
+  // then offer a link with ?v=… so the browser fetches the fresh page instead of its copy.
+  let liveWatch = 0;
+  async function watchLive(expected) {
+    const run = ++liveWatch;
+    const started = Date.now();
+    while (run === liveWatch && Date.now() - started < 4 * 60 * 1000) {
+      await new Promise(r => setTimeout(r, 6000));
+      try {
+        const r = await fetch(`/data/public.json?v=${Date.now()}`, { cache: 'no-store' });
+        if (r.ok && (await r.text()) === expected) {
+          if (run === liveWatch && !state.dirty) {
+            $('status').innerHTML = `Live ✓ <a href="${liveUrl()}" target="_blank" rel="noopener">View ↗</a>`;
+          }
+          return;
+        }
+      } catch {}
+    }
+    if (run === liveWatch && !state.dirty) $('status').textContent = 'Published · the site is taking longer than usual to update';
+  }
+
+  function liveUrl() {
+    const v = `?v=${Date.now()}`;
+    const c = chapter();
+    const group = state.site.groups.find(g => g.sections.some(s => s.slug === state.section));
+    if ($('chapter-view').hidden || !c || !group || !c.photos.some(p => p.public)) return `/${v}`;
+    return `/${group.slug}/${state.section}/${c.slug}/${v}`;
   }
 
   async function replaceToken() {

@@ -16,7 +16,7 @@
           <button class="arrow prev" aria-label="Previous photo"><span>‹</span></button>
           <div class="frame">
             <img class="main" alt="">
-            <div class="desc" hidden><p></p></div>
+            <div class="desc" hidden><p></p><button class="desc-toggle" aria-label="Hide description">−</button></div>
           </div>
           <button class="arrow next" aria-label="Next photo"><span>›</span></button>
         </div>
@@ -29,7 +29,15 @@
       root.querySelector('.prev').addEventListener('click', () => this.show(this.index - 1));
       root.querySelector('.next').addEventListener('click', () => this.show(this.index + 1));
       this.img.addEventListener('load', () => this.img.classList.add('loaded'));
-      this.desc.addEventListener('click', () => this.desc.classList.toggle('open'));
+      // − / + minimises the description; the choice sticks while browsing and between visits
+      try { this.descMin = localStorage.getItem('desc-min') === '1'; } catch { this.descMin = false; }
+      this.desc.querySelector('.desc-toggle').addEventListener('click', e => {
+        e.stopPropagation();
+        this.descMin = !this.descMin;
+        try { localStorage.setItem('desc-min', this.descMin ? '1' : ''); } catch {}
+        this.layoutDesc();
+      });
+      window.addEventListener('resize', () => this.layoutDesc());
       this.reel.addEventListener('click', e => {
         const t = e.target.closest('.thumb');
         if (!t) return;
@@ -117,13 +125,33 @@
       const p = this.current;
       const text = (p && p.desc || '').trim();
       this.desc.hidden = !text;
-      this.desc.classList.remove('open');
       this.desc.querySelector('p').textContent = text;
+      this.layoutDesc();
       if (this.opts.decorateThumb) {
         [...this.reel.children].forEach((t, n) => this.opts.decorateThumb(t, this.photos[n]));
       }
     }
   }
+
+  // Size the description box: the full text on at most two lines, growing leftwards
+  // from the bottom-right corner. Text too long for two lines at full photo width wraps further.
+  Viewer.prototype.layoutDesc = function () {
+    const box = this.desc, p = box.querySelector('p'), btn = box.querySelector('.desc-toggle');
+    box.classList.toggle('min', this.descMin);
+    btn.textContent = this.descMin ? '+' : '−';
+    btn.setAttribute('aria-label', this.descMin ? 'Show description' : 'Hide description');
+    box.style.width = '';
+    if (box.hidden || this.descMin) return;
+    const frameW = box.parentElement.clientWidth;
+    if (!frameW) return;
+    p.style.whiteSpace = 'nowrap';
+    const oneLine = p.scrollWidth;
+    p.style.whiteSpace = '';
+    const chrome = box.offsetWidth - p.clientWidth;  // padding + button
+    const maxW = Math.max(160, frameW - 24);
+    const textW = oneLine <= 340 ? oneLine : Math.ceil(oneLine / 2) + 30;  // slack for word breaks
+    box.style.width = `${Math.min(textW + chrome + 2, maxW)}px`;
+  };
 
   Viewer.imageBase = (meta && meta.content || 'https://lh3.googleusercontent.com/d').replace(/\/$/, '');
   Viewer.url = url;
