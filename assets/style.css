@@ -135,7 +135,7 @@ img.loaded { opacity: 1; }
 .frame { position: relative; display: inline-block; }
 .frame .main {
   max-width: 100%;
-  max-height: calc(100svh - var(--topbar-h) - var(--reel-h) - 16px);
+  max-height: calc(100svh - var(--topbar-h) - var(--head-h, 0px) - var(--reel-h) - 16px);
   width: auto;
   height: auto;
   background: none;
@@ -182,10 +182,29 @@ img.loaded { opacity: 1; }
 .thumb.active { opacity: 1; outline: 1px solid var(--fg); outline-offset: 2px; }
 .thumb img { height: 100%; width: auto; }
 
-.chapter-info { padding: 12vh var(--gutter) 4vh; max-width: 1400px; }
-.chapter-info h1 { font-size: clamp(44px, 7vw, 110px); line-height: .95; margin: .3em 0 .5em; }
-.chapter-info .eyebrow a { border-bottom: 1px solid var(--faint); }
-.chapter-text { margin-top: 6vh; max-width: 36em; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.5; }
+/* Chapter page: title bar, then the slideshow filling the rest of the screen */
+.chapter-top {
+  --head-h: 84px;
+  height: 100svh;
+  padding-top: var(--topbar-h);
+  display: flex; flex-direction: column;
+}
+.chapter-bar {
+  flex: none; height: var(--head-h);
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 2em;
+  padding: 0 var(--gutter) 12px;
+}
+.chapter-name { min-width: 0; }
+.chapter-bar h1 {
+  font-size: clamp(22px, 2.4vw, 34px); line-height: 1.15; margin-top: .2em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chapter-bar .eyebrow a { border-bottom: 1px solid var(--faint); }
+.chapter-bar .meta { white-space: nowrap; }
+.chapter-top .viewer { flex: 1; min-height: 0; height: auto; padding-top: 0; }
+
+.chapter-info { padding: 8vh var(--gutter) 4vh; max-width: 1400px; }
+.chapter-text { max-width: 36em; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.5; }
 .chapter-text p + p { margin-top: 1em; }
 
 .chapter-nav {
@@ -217,6 +236,9 @@ img.loaded { opacity: 1; }
   .arrow { width: 44px; font-size: 32px; }
   .reel { padding: 10px 16px; }
   .thumb { height: 60px; }
+  .chapter-top { --head-h: 64px; }
+  .chapter-bar { padding: 0 16px 8px; }
+  .chapter-bar .meta { display: none; }
   .chapter-nav { grid-template-columns: 1fr; }
   .chapter-nav .next { text-align: left; border-top: 1px solid var(--rule); }
   .chapter-nav a { padding: 5vh 0; }

@@ -224,14 +224,22 @@ def build_chapter(s, idx):
     crumb = (f'<a href="{s["base"]}">{escape(s["title"])}</a> · Chapter {c["number"]:02d}' if not single
              else f'{escape(s["place"])} · {escape(s["year"])}')
     title = s["title"] if single else c["title"]
-    body = f"""  <main class="viewer" id="viewer"></main>
-  <script type="application/json" id="photos">{data}</script>
+    text = paragraphs(c.get("text") or "")
+    info = (f"""
   <section class="chapter-info">
-    <p class="eyebrow">{crumb}</p>
-    <h1>{escape(title)}</h1>
-    <p class="meta">{date_range(c['photos'])} · {len(photos)} photographs</p>
-    <div class="chapter-text">{paragraphs(c.get('text') or '')}</div>{nav}
-  </section>"""
+    {f'<div class="chapter-text">{text}</div>' if text else ''}{nav}
+  </section>""" if text or nav else "")
+    body = f"""  <div class="chapter-top">
+    <header class="chapter-bar">
+      <div class="chapter-name">
+        <p class="eyebrow">{crumb}</p>
+        <h1>{escape(title)}</h1>
+      </div>
+      <p class="meta">{date_range(c['photos'])} · {len(photos)} photographs</p>
+    </header>
+    <main class="viewer" id="viewer"></main>
+  </div>
+  <script type="application/json" id="photos">{data}</script>{info}"""
     write(f"{s['group']}/{s['slug']}/{c['slug']}/index.html",
           page(title if single else f"{c['title']} · {s['title']}", body, body_class="chapter"))
 

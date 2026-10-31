@@ -54,8 +54,8 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 
 .ed-main { display: grid; grid-template-columns: 1fr var(--side-w); min-height: calc(100svh - 58px); }
 .ed-left { min-width: 0; }
-.ed-viewer { height: calc(100svh - 58px - 140px); min-height: 360px; padding-top: 0; }
-.ed-viewer .frame .main { max-height: calc(100svh - 58px - 140px - var(--reel-h) - 16px); }
+.ed-viewer { --ed-h: calc(100svh - var(--bar-h, 58px) - 52px - 120px); height: var(--ed-h); min-height: 360px; padding-top: 0; }
+.ed-viewer .frame .main { max-height: calc(var(--ed-h) - var(--reel-h) - 16px); }
 
 .ed-photo-tools, .ed-chapter { padding: 16px; display: grid; gap: 14px; border-top: 1px solid var(--rule); }
 .toggles { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -83,10 +83,55 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 .ed-viewer .thumb.is-cover { box-shadow: inset 0 -2px 0 var(--fg); }
 .sortable-ghost { opacity: .3 !important; }
 
+/* Selection (reel + grid) */
+.ed-viewer .thumb.is-selected, .tile.is-selected { outline: 2px solid #6fa8ff; outline-offset: 2px; opacity: 1; }
+.ed-viewer .thumb.is-selected img { opacity: 1; filter: none; }
+.thumb.is-selected .sel-mark, .tile .sel-mark { display: none; }
+.picking .thumb, .picking .tile { cursor: crosshair; }
+.picking .thumb:not(.is-selected):hover, .picking .tile:not(.is-selected):hover { box-shadow: -4px 0 0 #6fa8ff; }
+
+.sel-bar {
+  position: sticky; top: var(--bar-h, 58px); z-index: 5;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--rule);
+}
+.seg { display: inline-flex; border: 1px solid var(--rule); }
+.seg button { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; padding: 6px 12px; color: var(--muted); }
+.seg button.on { background: var(--fg); color: var(--bg); }
+.sel-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sel-count { font-size: 12px; color: #6fa8ff; margin-right: 4px; }
+.picking .sel-actions [data-act="before"] { border-color: #6fa8ff; color: #6fa8ff; }
+.sel-hint { font-size: 12px; color: var(--faint); }
+.picking .sel-hint { color: #6fa8ff; }
+
+/* Arrange grid: contact sheet of the whole chapter */
+.arrange { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px; align-content: flex-start; min-height: 50svh; }
+.tile { position: relative; height: 150px; flex: none; cursor: grab; }
+.tile img { height: 100%; width: auto; }
+.tile .n {
+  position: absolute; top: 4px; left: 4px; z-index: 1;
+  font-size: 10px; background: rgba(0,0,0,.65); padding: 1px 6px; color: var(--fg);
+}
+.tile.is-hidden img { opacity: .22; filter: grayscale(1); }
+.tile.is-hidden::before {
+  content: "Hidden"; position: absolute; inset: auto 0 6px 0; text-align: center; z-index: 1;
+  font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+}
+.tile.is-insta::after {
+  content: "★"; position: absolute; top: 2px; right: 6px; font-size: 15px; color: #f2c14e; text-shadow: 0 0 3px #000;
+}
+.tile.is-cover { box-shadow: inset 0 -3px 0 var(--fg); }
+.dragging-group .tile.is-selected:not(.sortable-chosen) { opacity: .35; }
+
+@media (max-width: 700px) {
+  .tile { height: 96px; }
+  .arrange { gap: 6px; padding: 10px; }
+}
+
 /* Instagram sidebar */
 .ed-side {
   border-left: 1px solid var(--rule);
-  position: sticky; top: 58px; height: calc(100svh - 58px);
+  position: sticky; top: var(--bar-h, 58px); height: calc(100svh - var(--bar-h, 58px));
   display: flex; flex-direction: column;
 }
 .ed-side header { display: flex; gap: 10px; align-items: center; padding: 12px 16px 12px 8px; border-bottom: 1px solid var(--rule); }
@@ -137,6 +182,5 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
   .side-toggle { transform: rotate(90deg); }
   .ed-side { position: static; height: auto; border-left: 0; border-top: 1px solid var(--rule); }
   .insta-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); overflow: visible; }
-  .ed-viewer { height: 70svh; }
-  .ed-viewer .frame .main { max-height: calc(70svh - var(--reel-h) - 16px); }
+  .ed-viewer { --ed-h: 70svh; }
 }

@@ -32,10 +32,14 @@
       this.desc.addEventListener('click', () => this.desc.classList.toggle('open'));
       this.reel.addEventListener('click', e => {
         const t = e.target.closest('.thumb');
-        if (t) this.show([...this.reel.children].indexOf(t));
+        if (!t) return;
+        const i = [...this.reel.children].indexOf(t);
+        // The editor can take over clicks (e.g. Ctrl/Shift-click to select) by returning false
+        if (this.opts.onThumbClick && this.opts.onThumbClick(e, i) === false) return;
+        this.show(i);
       });
       document.addEventListener('keydown', e => {
-        if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+        if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
         if (!this.root.offsetParent) return;  // viewer not on screen (e.g. editor on another page)
         if (e.key === 'ArrowLeft') this.show(this.index - 1);
         if (e.key === 'ArrowRight') this.show(this.index + 1);

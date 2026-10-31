@@ -255,20 +255,35 @@
   }
 
   // ---------- chapter workspace ----------
-  let reelSortable = null, instaSortable = null;
+  // Selection is shared by the reel and the Arrange grid. Ctrl/Shift-click in the reel,
+  // plain click in the grid. Moves and visibility changes can be undone.
+  const sel = new Set();
+  let anchorId = null, pickMode = false, arranging = false, undoStack = [];
+  let reelSortable = null, gridSortable = null, instaSortable = null;
+
+  function decorate(el, p) {
+    const ch = chapter();
+    el.classList.toggle('is-hidden', !p.public);
+    el.classList.toggle('is-insta', ch.insta.includes(p.id));
+    el.classList.toggle('is-cover', ch.cover === p.id);
+    el.classList.toggle('is-selected', sel.has(p.id));
+  }
+
   function loadChapter() {
     const c = chapter();
+    sel.clear(); anchorId = null; pickMode = false; undoStack = [];
     $('chapter-title').value = c.title;
     $('chapter-text').value = c.text || '';
     if (!state.viewer) {
       state.viewer = new Viewer($('ed-viewer'), c.photos, {
-        decorateThumb: (el, p) => {
-          const ch = chapter();
-          el.classList.toggle('is-hidden', !p.public);
-          el.classList.toggle('is-insta', ch.insta.includes(p.id));
-          el.classList.toggle('is-cover', ch.cover === p.id);
-        },
+        decorateThumb: decorate,
         onShow: () => syncPhotoTools(),
+        onThumbClick: (e, i) => {
+          const id = chapter().photos[i].id;
+          if (pickMode) { moveSelection('before', id); return false; }
+          if (e.shiftKey || e.ctrlKey || e.metaKey) { selectClick(id, e.shiftKey); return false; }
+          return true;  // plain click: show the photo
+        },
       });
     } else {
       state.viewer.setPhotos(c.photos, null, 0);
@@ -276,17 +291,186 @@
     if (reelSortable) reelSortable.destroy();
     reelSortable = Sortable.create(state.viewer.reel, {
       animation: 150, direction: 'horizontal', delay: 150, delayOnTouchOnly: true, forceFallback: true,
-      onEnd: () => {
-        const ch = chapter();
-        const order = [...state.viewer.reel.children].map(t => t.dataset.id);
-        const byId = new Map(ch.photos.map(p => [p.id, p]));
-        ch.photos.splice(0, ch.photos.length, ...order.map(id => byId.get(id)));
-        state.viewer.setPhotos(ch.photos, state.viewer.current.id);
-        setDirty();
-      },
+      onEnd: e => dropped(e.item.dataset.id, state.viewer.reel),
     });
+    setArranging(arranging);
     renderInsta();
     syncPhotoTools();
+    updateSelBar();
+  }
+
+  // Re-render everything that shows the chapter's photos, keeping the current photo in view
+  function refreshPhotos() {
+    const c = chapter();
+    state.viewer.setPhotos(c.photos, state.viewer.current?.id);
+    if (arranging) renderGrid();
+    renderInsta();
+    syncPhotoTools();
+    updateSelBar();
+  }
+
+  // ---- undo: remembers order, visibility and Instagram picks (not descriptions/text) ----
+  function checkpoint() {
+    const c = chapter();
+    undoStack.push({ order: c.photos.map(p => p.id), pub: c.photos.map(p => p.public), insta: [...c.insta] });
+    if (undoStack.length > 50) undoStack.shift();
+    $('undo-btn').disabled = false;
+  }
+  function undo() {
+    const snap = undoStack.pop();
+    $('undo-btn').disabled = !undoStack.length;
+    if (!snap) return;
+    const c = chapter();
+    const byId = new Map(c.photos.map(p => [p.id, p]));
+    c.photos.splice(0, c.photos.length, ...snap.order.map(id => byId.get(id)).filter(Boolean));
+    c.photos.forEach((p, i) => { p.public = snap.pub[i]; });
+    c.insta = snap.insta;
+    refreshPhotos();
+    setDirty();
+  }
+
+  // ---- selection ----
+  function selectClick(id, range) {
+    const ids = chapter().photos.map(p => p.id);
+    if (range && anchorId && ids.includes(anchorId)) {
+      const [a, b] = [ids.indexOf(anchorId), ids.indexOf(id)].sort((x, y) => x - y);
+      ids.slice(a, b + 1).forEach(x => sel.add(x));
+    } else {
+      sel.has(id) ? sel.delete(id) : sel.add(id);
+      anchorId = id;
+    }
+    redecorate();
+    updateSelBar();
+  }
+  function clearSelection() { sel.clear(); anchorId = null; setPickMode(false); redecorate(); updateSelBar(); }
+  function redecorate() {
+    state.viewer.refresh();
+    if (arranging) [...$('arrange').children].forEach(t => decorate(t, chapter().photos.find(p => p.id === t.dataset.id)));
+  }
+
+  function setPickMode(on) {
+    pickMode = on && sel.size > 0;
+    $('chapter-view').classList.toggle('picking', pickMode);
+    updateSelBar();
+  }
+
+  function updateSelBar() {
+    const n = sel.size;
+    $('sel-actions').hidden = !n;
+    $('sel-count').textContent = `${n} selected`;
+    $('sel-hint').textContent = pickMode
+      ? 'Now click the photo to move them in front of. Esc to cancel.'
+      : n ? '' : arranging
+        ? 'Click photos to select · Shift-click for a range · drag to move · double-click to open'
+        : 'Ctrl-click thumbnails to select several · Shift-click for a range';
+  }
+
+  // ---- moving ----
+  // where: 'start' | 'end' | 'before' (targetId)
+  function moveSelection(where, targetId) {
+    const c = chapter();
+    if (where === 'before' && sel.has(targetId)) { toast('Pick a photo that isn’t selected.'); return; }
+    checkpoint();
+    const moving = c.photos.filter(p => sel.has(p.id));
+    const rest = c.photos.filter(p => !sel.has(p.id));
+    const at = where === 'start' ? 0 : where === 'end' ? rest.length : rest.findIndex(p => p.id === targetId);
+    rest.splice(at, 0, ...moving);
+    c.photos.splice(0, c.photos.length, ...rest);
+    setPickMode(false);
+    refreshPhotos();
+    setDirty();
+    toast(`Moved ${moving.length} photo${moving.length > 1 ? 's' : ''}.`, 1800);
+  }
+
+  // A drag finished in the reel or grid. Dragging a selected photo moves the whole selection.
+  function dropped(id, container) {
+    const order = [...container.children].map(t => t.dataset.id);
+    const c = chapter();
+    if (sel.has(id) && sel.size > 1) {
+      // Drop the selection in front of the first unselected photo after where it landed
+      const after = order.slice(order.indexOf(id) + 1).find(x => !sel.has(x));
+      moveSelection(after ? 'before' : 'end', after);
+      return;
+    }
+    checkpoint();
+    const byId = new Map(c.photos.map(p => [p.id, p]));
+    c.photos.splice(0, c.photos.length, ...order.map(x => byId.get(x)));
+    refreshPhotos();
+    setDirty();
+  }
+
+  function setVisibility(pub) {
+    checkpoint();
+    chapter().photos.forEach(p => { if (sel.has(p.id)) p.public = pub; });
+    redecorate(); syncPhotoTools(); setDirty();
+  }
+
+  // ---- Arrange grid ----
+  function setArranging(on) {
+    arranging = on;
+    $('mode-slides').classList.toggle('on', !on);
+    $('mode-arrange').classList.toggle('on', on);
+    $('ed-viewer').hidden = on;
+    $('photo-tools').hidden = on;
+    $('arrange').hidden = !on;
+    if (on) renderGrid();
+    else if (gridSortable) { gridSortable.destroy(); gridSortable = null; }
+    updateSelBar();
+  }
+
+  function renderGrid() {
+    const c = chapter(), grid = $('arrange');
+    grid.innerHTML = c.photos.map((p, i) => `
+      <button class="tile" data-id="${p.id}" title="${i + 1}">
+        <img src="${thumbUrl(p.id, 'h300')}" alt="" loading="lazy" class="loaded" style="aspect-ratio:${p.w}/${p.h}">
+        <span class="n">${i + 1}</span>
+      </button>`).join('');
+    [...grid.children].forEach((t, i) => decorate(t, c.photos[i]));
+    if (gridSortable) gridSortable.destroy();
+    gridSortable = Sortable.create(grid, {
+      animation: 150, delay: 150, delayOnTouchOnly: true, forceFallback: true,
+      onStart: e => { if (sel.has(e.item.dataset.id)) grid.classList.add('dragging-group'); },
+      onEnd: e => { grid.classList.remove('dragging-group'); dropped(e.item.dataset.id, grid); },
+    });
+  }
+
+  function bindArrange() {
+    const grid = $('arrange');
+    grid.addEventListener('click', e => {
+      const t = e.target.closest('.tile');
+      if (!t) return;
+      if (pickMode) moveSelection('before', t.dataset.id);
+      else selectClick(t.dataset.id, e.shiftKey);
+    });
+    grid.addEventListener('dblclick', e => {
+      const t = e.target.closest('.tile');
+      if (!t) return;
+      sel.delete(t.dataset.id);
+      setArranging(false);
+      state.viewer.show(chapter().photos.findIndex(p => p.id === t.dataset.id));
+      redecorate(); updateSelBar();
+    });
+    $('mode-slides').addEventListener('click', () => setArranging(false));
+    $('mode-arrange').addEventListener('click', () => setArranging(true));
+    $('undo-btn').addEventListener('click', undo);
+    $('sel-actions').addEventListener('click', e => {
+      const act = e.target.closest('[data-act]')?.dataset.act;
+      if (act === 'start' || act === 'end') moveSelection(act);
+      else if (act === 'before') setPickMode(!pickMode);
+      else if (act === 'public') setVisibility(true);
+      else if (act === 'hide') setVisibility(false);
+      else if (act === 'clear') clearSelection();
+    });
+    document.addEventListener('keydown', e => {
+      if ($('chapter-view').hidden || e.target.closest?.('input, textarea, select')) return;
+      if (e.key === 'Escape') { pickMode ? setPickMode(false) : clearSelection(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a' && arranging) {
+        e.preventDefault();
+        chapter().photos.forEach(p => sel.add(p.id));
+        redecorate(); updateSelBar();
+      }
+    });
   }
 
   function syncPhotoTools() {
@@ -314,7 +498,10 @@
       li.dataset.id = id;
       li.innerHTML = `<span class="n">${n + 1}</span><img src="${thumbUrl(id, 'w400')}" alt="" class="loaded"><button class="rm" title="Remove from Instagram">✕</button>`;
       li.querySelector('.rm').addEventListener('click', e => { e.stopPropagation(); toggleInsta(id); });
-      li.addEventListener('click', () => state.viewer.show(c.photos.findIndex(p => p.id === id)));
+      li.addEventListener('click', () => {
+        if (arranging) setArranging(false);
+        state.viewer.show(c.photos.findIndex(p => p.id === id));
+      });
       list.append(li);
     });
     $('insta-count').textContent = `${c.insta.length} / ${INSTA_MAX}`;
@@ -323,6 +510,7 @@
     instaSortable = Sortable.create(list, {
       animation: 150, delay: 150, delayOnTouchOnly: true, forceFallback: true,
       onEnd: () => {
+        checkpoint();
         chapter().insta = [...list.children].map(li => li.dataset.id);
         renderInsta();
         setDirty();
@@ -332,9 +520,9 @@
 
   function toggleInsta(id) {
     const c = chapter();
-    if (c.insta.includes(id)) c.insta = c.insta.filter(x => x !== id);
+    if (c.insta.includes(id)) { checkpoint(); c.insta = c.insta.filter(x => x !== id); }
     else if (c.insta.length >= INSTA_MAX) { toast(`Instagram is limited to ${INSTA_MAX} per chapter. Remove one from the sidebar first.`); syncPhotoTools(); return; }
-    else c.insta.push(id);
+    else { checkpoint(); c.insta.push(id); }
     renderInsta();
     state.viewer.refresh();
     syncPhotoTools();
@@ -347,7 +535,11 @@
     let collapsed = false;
     try { collapsed = localStorage.getItem('ed-side-collapsed') === '1'; } catch {}
     setSideCollapsed(collapsed);
+    bindArrange();
+    const setBarHeight = () => document.body.style.setProperty('--bar-h', `${document.querySelector('.ed-bar').offsetHeight}px`);
+    new ResizeObserver(setBarHeight).observe(document.querySelector('.ed-bar'));
     $('t-public').addEventListener('change', e => {
+      checkpoint();
       state.viewer.current.public = e.target.checked;
       state.viewer.refresh(); syncPhotoTools(); setDirty();
     });

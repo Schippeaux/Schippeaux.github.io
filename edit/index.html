@@ -62,7 +62,25 @@
 
     <main class="ed-main" id="chapter-view" hidden>
       <div class="ed-left">
+        <div class="sel-bar" id="sel-bar">
+          <div class="seg" role="group" aria-label="View">
+            <button id="mode-slides" class="on">Slideshow</button>
+            <button id="mode-arrange">Arrange</button>
+          </div>
+          <button class="btn small" id="undo-btn" disabled title="Undo (Ctrl+Z)">Undo</button>
+          <div class="sel-actions" id="sel-actions" hidden>
+            <span class="sel-count" id="sel-count"></span>
+            <button class="btn small" data-act="start">Move to start</button>
+            <button class="btn small" data-act="end">Move to end</button>
+            <button class="btn small" data-act="before">Move before…</button>
+            <button class="btn small" data-act="public">Make public</button>
+            <button class="btn small" data-act="hide">Hide</button>
+            <button class="btn small" data-act="clear">Clear</button>
+          </div>
+          <span class="sel-hint" id="sel-hint"></span>
+        </div>
         <div class="viewer ed-viewer" id="ed-viewer"></div>
+        <div class="arrange" id="arrange" hidden></div>
         <div class="ed-photo-tools" id="photo-tools">
           <div class="toggles">
             <label class="toggle"><input type="checkbox" id="t-public"> Public</label>
