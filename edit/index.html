@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Editor — Ciaran Beahan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/edit/editor.css">
+</head>
+<body class="editor">
+  <!-- Locked: password prompt -->
+  <section class="gate" id="login" hidden>
+    <form class="gate-card" id="login-form">
+      <p class="eyebrow">Editor</p>
+      <h1>Unlock</h1>
+      <label>Password <input type="password" id="login-password" autocomplete="current-password" required></label>
+      <button class="btn primary" type="submit">Unlock</button>
+      <p class="gate-msg" id="login-msg"></p>
+    </form>
+  </section>
+
+  <!-- First run: choose password + connect GitHub -->
+  <section class="gate" id="setup" hidden>
+    <form class="gate-card wide" id="setup-form">
+      <p class="eyebrow">Editor · first-time setup</p>
+      <h1>Set up editing</h1>
+      <ol class="steps">
+        <li>On GitHub, create a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained personal access token</a>:
+          <ul>
+            <li>Repository access: <b>Only select repositories</b> → <b>Schippeaux.github.io</b></li>
+            <li>Repository permissions: <b>Contents → Read and write</b></li>
+            <li>Expiration: your choice (you can replace it later from the editor)</li>
+          </ul>
+        </li>
+        <li>Paste it below and choose an editor password (at least 12 characters). The token is stored encrypted with this password; it is never sent anywhere except GitHub.</li>
+      </ol>
+      <label>GitHub token <input type="password" id="setup-token" autocomplete="off" required></label>
+      <label>Editor password <input type="password" id="setup-password" autocomplete="new-password" minlength="12" required></label>
+      <label>Confirm password <input type="password" id="setup-confirm" autocomplete="new-password" minlength="12" required></label>
+      <button class="btn primary" type="submit">Save and unlock</button>
+      <p class="gate-msg" id="setup-msg"></p>
+    </form>
+  </section>
+
+  <!-- Unlocked -->
+  <div class="workspace" id="workspace" hidden>
+    <header class="ed-bar">
+      <a href="/" class="wordmark" target="_blank" rel="noopener">View site ↗</a>
+      <select id="section-select" aria-label="Section"></select>
+      <select id="chapter-select" aria-label="Chapter"></select>
+      <span class="ed-status" id="status"></span>
+      <button class="btn" id="token-btn" title="Replace the GitHub token">Token</button>
+      <button class="btn" id="lock-btn">Lock</button>
+      <button class="btn primary" id="save-btn" disabled>Save &amp; publish</button>
+    </header>
+
+    <main class="ed-main">
+      <div class="ed-left">
+        <div class="viewer ed-viewer" id="ed-viewer"></div>
+        <div class="ed-photo-tools" id="photo-tools">
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="t-public"> Public</label>
+            <label class="toggle"><input type="checkbox" id="t-insta"> Instagram</label>
+            <button class="btn small" id="cover-chapter">Use as chapter cover</button>
+            <button class="btn small" id="cover-section">Use as section cover</button>
+            <span class="ed-pos" id="photo-pos"></span>
+          </div>
+          <label class="field">Photo description
+            <textarea id="photo-desc" rows="3" placeholder="Shown in a tab on the bottom-right of the photo. Leave empty for none."></textarea>
+          </label>
+        </div>
+        <div class="ed-chapter">
+          <label class="field">Chapter title <input type="text" id="chapter-title"></label>
+          <label class="field">Chapter text
+            <textarea id="chapter-text" rows="6" placeholder="What this chapter is about. Blank line = new paragraph."></textarea>
+          </label>
+          <p class="hint">Drag thumbnails in the reel to reorder. Dimmed thumbnails are hidden from the public site. ★ marks Instagram picks.</p>
+        </div>
+      </div>
+
+      <aside class="ed-side">
+        <header><p class="eyebrow">Instagram</p><span class="insta-count" id="insta-count"></span></header>
+        <ol class="insta-list" id="insta-list"></ol>
+        <p class="hint" id="insta-empty">Tick “Instagram” on up to 10 photos in this chapter. Drag to reorder.</p>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <script src="/assets/viewer.js"></script>
+  <script src="/edit/editor.js"></script>
+</body>
+</html>

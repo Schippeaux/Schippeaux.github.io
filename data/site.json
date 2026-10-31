@@ -2,11 +2,11 @@
   "title": "Ciaran Beahan",
   "tagline": "Photographs",
   "camera": "Fujifilm X-T50",
-  "sections": [
+  "groups": [
     {
       "slug": "travel",
       "title": "Travel",
-      "trips": [
+      "sections": [
         {
           "slug": "usa-2025",
           "title": "Bikepacking & Roadtripping",
@@ -30,7 +30,7 @@
           "title": "Peru",
           "place": "Peru",
           "year": "2026",
-          "chapters": [
+          "planned": [
             "Lima",
             "Iquitos",
             "Pisac",
