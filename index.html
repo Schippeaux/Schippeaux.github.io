@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ciaran Beahan — Photographs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --fg: #e9e6e1;
+      --muted: #8a867f;
+      --rule: #2a2826;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font: 300 15px/1.6 Inter, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 6vw;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    h1 {
+      font: 300 clamp(48px, 9vw, 140px)/0.95 "Cormorant Garamond", serif;
+      letter-spacing: -.01em;
+      margin: .3em 0 .4em;
+    }
+    h1 em { font-style: italic; color: var(--muted); }
+    .rule { border-top: 1px solid var(--rule); padding-top: 1.2em; display: flex; justify-content: space-between; }
+
+    figure { margin: 0 0 18vh; }
+    figure.bleed img { width: 100%; height: 100svh; object-fit: cover; }
+    figure.inset { padding: 0 14vw; }
+    figure.inset img { width: 100%; height: auto; }
+    img {
+      display: block;
+      background: #151515;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    img.loaded { opacity: 1; }
+    figcaption {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.2em 6vw 0;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    figure.inset figcaption { padding-left: 0; padding-right: 0; }
+
+    footer {
+      padding: 10vh 6vw 6vh;
+      border-top: 1px solid var(--rule);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    @media (max-width: 700px) {
+      figure.inset { padding: 0 16px; }
+      figure.bleed img { height: 70svh; }
+      figcaption { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Fujifilm X-T50 · Proof of concept</p>
+    <h1>Photographs<br><em>from the road</em></h1>
+    <div class="rule eyebrow"><span>Ciaran Beahan</span><span>Scroll ↓</span></div>
+  </header>
+
+  <!-- Images served from Google Drive via lh3; "=w2400" asks Google for a resized copy instead of the 20MB original -->
+  <figure class="bleed">
+    <img src="https://lh3.googleusercontent.com/d/18a3TwoDTaRFUzL33nXE3n1BpRdHRPy_9=w2400" alt="Photograph DSCF5613" loading="eager">
+    <figcaption><span>I</span><span>DSCF5613</span></figcaption>
+  </figure>
+
+  <figure class="inset">
+    <img src="https://lh3.googleusercontent.com/d/1ki2FBZ9Ua0l2aRe5M7_CI44z108JvtDE=w2400" alt="Photograph DSCF5606" loading="lazy">
+    <figcaption><span>II</span><span>DSCF5606</span></figcaption>
+  </figure>
+
+  <figure class="bleed">
+    <img src="https://lh3.googleusercontent.com/d/1MJnsLbsPXA7mfVzhSNKfdfYEHNU7jYiF=w2400" alt="Photograph DSCF5599" loading="lazy">
+    <figcaption><span>III</span><span>DSCF5599</span></figcaption>
+  </figure>
+
+  <figure class="inset">
+    <img src="https://lh3.googleusercontent.com/d/1r9YurTj9VwnbmuOysLLz0ivohfPfctko=w2400" alt="Photograph DSCF5597" loading="lazy">
+    <figcaption><span>IV</span><span>DSCF5597</span></figcaption>
+  </figure>
+
+  <footer>© 2026 Ciaran Beahan</footer>
+
+  <script>
+    document.querySelectorAll('img').forEach(img => {
+      const show = () => img.classList.add('loaded');
+      if (img.complete && img.naturalWidth) show();
+      else img.addEventListener('load', show);
+      img.addEventListener('error', () => console.error('Image failed:', img.src));
+    });
+  </script>
+</body>
+</html>
