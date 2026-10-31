@@ -131,6 +131,9 @@
       const all = chapters.flatMap(c => c.photos);
       out.sections[slug] = { cover: all.some(p => p.id === sec.cover) ? sec.cover : chapters[0].cover, chapters };
     }
+    // Homepage cover only if that photo is public; otherwise the build falls back to a section cover
+    const publicIds = new Set(Object.values(out.sections).flatMap(s => s.chapters.flatMap(c => c.photos.map(p => p.id))));
+    if (publicIds.has(state.data.home_cover)) out.home_cover = state.data.home_cover;
     return out;
   }
 
@@ -294,6 +297,7 @@
     $('photo-desc').value = p.desc || '';
     $('cover-chapter').textContent = c.cover === p.id ? 'Chapter cover ✓' : 'Use as chapter cover';
     $('cover-section').textContent = sec().cover === p.id ? 'Section cover ✓' : 'Use as section cover';
+    $('cover-home').textContent = state.data.home_cover === p.id ? 'Homepage cover ✓' : 'Use as homepage cover';
     const visible = c.photos.filter(x => x.public).length;
     $('photo-pos').textContent = `${state.viewer.index + 1} / ${c.photos.length} · ${visible} public`;
     [...$('insta-list').children].forEach(li => li.classList.toggle('active', li.dataset.id === p.id));
@@ -360,6 +364,7 @@
     $('chapter-text').addEventListener('input', e => { chapter().text = e.target.value; setDirty(); });
     $('cover-chapter').addEventListener('click', () => { chapter().cover = state.viewer.current.id; state.viewer.refresh(); syncPhotoTools(); setDirty(); });
     $('cover-section').addEventListener('click', () => { sec().cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
+    $('cover-home').addEventListener('click', () => { state.data.home_cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
     $('save-btn').addEventListener('click', save);
     $('lock-btn').addEventListener('click', () => {
       if (state.dirty && !confirm('Discard unsaved changes and lock?')) return;

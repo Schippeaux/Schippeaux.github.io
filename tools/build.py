@@ -130,8 +130,11 @@ def section_list(sections):
 
 
 def build_home(groups):
-    hero_section = next((s for g in groups for s in g["sections"] if s["cover_photo"]), None)
-    hero = img(hero_section["cover_photo"], "100vw", "hero-img", eager=True) if hero_section else ""
+    all_photos = [p for g in groups for s in g["sections"] for p in s["photos"]]
+    hero_photo = next((p for p in all_photos if p["id"] == PUBLIC.get("home_cover")), None)
+    if not hero_photo:  # no homepage cover chosen: use the first section's cover
+        hero_photo = next((s["cover_photo"] for g in groups for s in g["sections"] if s["cover_photo"]), None)
+    hero = img(hero_photo, "100vw", "hero-img", eager=True) if hero_photo else ""
     blocks = "".join(f"""
   <section class="index-section">
     <header class="section-head">
