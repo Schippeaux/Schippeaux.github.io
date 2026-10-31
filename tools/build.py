@@ -20,10 +20,11 @@ SITE = json.loads((ROOT / "data" / "site.json").read_text(encoding="utf-8"))
 PUBLIC = json.loads((ROOT / "data" / "public.json").read_text(encoding="utf-8"))
 WIDTHS = (800, 1400, 2000, 2800)
 MONTHS = "January February March April May June July August September October November December".split()
+IMAGE_BASE = SITE.get("image_base", "https://lh3.googleusercontent.com/d").rstrip("/")
 
 
 def img_url(file_id, w):
-    return f"https://lh3.googleusercontent.com/d/{file_id}=w{w}"
+    return f"{IMAGE_BASE}/{file_id}=w{w}"
 
 
 def img(photo, sizes, cls="", eager=False):
@@ -62,9 +63,10 @@ def page(title, body, extra_head="", body_class=""):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(full)}</title>
   <meta name="description" content="{escape(SITE['tagline'])}">
+  <meta name="image-base" content="{escape(IMAGE_BASE)}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://lh3.googleusercontent.com">
+  <link rel="preconnect" href="{escape(IMAGE_BASE.rsplit('/', 1)[0] if IMAGE_BASE.endswith('/d') else IMAGE_BASE)}">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/style.css">{extra_head}
 </head>

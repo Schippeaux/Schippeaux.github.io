@@ -2,6 +2,7 @@
   "title": "Ciaran Beahan",
   "tagline": "Photographs",
   "camera": "Fujifilm X-T50",
+  "image_base": "https://photos.ciaran-beahan.workers.dev",
   "groups": [
     {
       "slug": "travel",

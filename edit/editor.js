@@ -152,7 +152,7 @@
   const chapter = () => sec() && sec().chapters[state.chapterIdx];
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pad = n => String(n).padStart(2, '0');
-  const thumbUrl = (id, size) => `https://lh3.googleusercontent.com/d/${id}=${size}`;
+  const thumbUrl = (id, size) => Viewer.url(id, size);
   const sectionMeta = slug => {
     for (const g of state.site.groups) for (const s of g.sections) if (s.slug === slug) return s;
     return { slug, title: slug, place: '', year: '' };
@@ -308,7 +308,7 @@
     c.insta.forEach((id, n) => {
       const li = document.createElement('li');
       li.dataset.id = id;
-      li.innerHTML = `<span class="n">${n + 1}</span><img src="https://lh3.googleusercontent.com/d/${id}=w400" alt="" class="loaded"><button class="rm" title="Remove from Instagram">✕</button>`;
+      li.innerHTML = `<span class="n">${n + 1}</span><img src="${thumbUrl(id, 'w400')}" alt="" class="loaded"><button class="rm" title="Remove from Instagram">✕</button>`;
       li.querySelector('.rm').addEventListener('click', e => { e.stopPropagation(); toggleInsta(id); });
       li.addEventListener('click', () => state.viewer.show(c.photos.findIndex(p => p.id === id)));
       list.append(li);
@@ -416,6 +416,7 @@
     ]);
     state.data = priv ? await unseal(state.dataKey, JSON.parse(priv)) : { sections: {} };
     state.site = JSON.parse(site);
+    if (state.site.image_base) Viewer.imageBase = state.site.image_base.replace(/\/$/, '');
     let merged = 0;
     for (const f of (inbox || []).filter(f => f.name.endsWith('.json'))) {
       mergeBatch(await openInboxBatch(JSON.parse(await readFile(f.path))));

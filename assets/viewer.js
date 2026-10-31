@@ -2,7 +2,9 @@
 // Shared by the public chapter pages and the editor.
 (() => {
   const WIDTHS = [800, 1400, 2000, 2800];
-  const url = (id, size) => `https://lh3.googleusercontent.com/d/${id}=${size}`;
+  // Photo host: the Cloudflare cache when configured (data/site.json "image_base"), else Drive
+  const meta = document.querySelector('meta[name="image-base"]');
+  const url = (id, size) => `${Viewer.imageBase}/${id}=${size}`;
 
   class Viewer {
     constructor(root, photos, opts = {}) {
@@ -119,5 +121,7 @@
     }
   }
 
+  Viewer.imageBase = (meta && meta.content || 'https://lh3.googleusercontent.com/d').replace(/\/$/, '');
+  Viewer.url = url;
   window.Viewer = Viewer;
 })();
