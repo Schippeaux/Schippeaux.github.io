@@ -10,7 +10,7 @@ Writes index.html, <group>/index.html, <group>/<section>/index.html and
 <group>/<section>/<chapter>/index.html. A section with a single chapter links straight
 to that chapter.
 """
-import json, shutil
+import hashlib, json, shutil
 from datetime import date
 from html import escape
 from pathlib import Path
@@ -21,6 +21,13 @@ PUBLIC = json.loads((ROOT / "data" / "public.json").read_text(encoding="utf-8"))
 WIDTHS = (800, 1400, 2000, 2800)
 MONTHS = "January February March April May June July August September October November December".split()
 IMAGE_BASE = SITE.get("image_base", "https://lh3.googleusercontent.com/d").rstrip("/")
+
+
+def asset(path):
+    """Link to a file in assets/ with a content hash, so browsers fetch it again when it changes
+    (GitHub Pages lets browsers cache files for 10 minutes)."""
+    digest = hashlib.sha1((ROOT / path.lstrip("/")).read_bytes()).hexdigest()[:8]
+    return f"{path}?v={digest}"
 
 
 def img_url(file_id, w):
@@ -68,7 +75,7 @@ def page(title, body, extra_head="", body_class=""):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="{escape(IMAGE_BASE.rsplit('/', 1)[0] if IMAGE_BASE.endswith('/d') else IMAGE_BASE)}">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/style.css">{extra_head}
+  <link rel="stylesheet" href="{asset('/assets/style.css')}">{extra_head}
 </head>
 <body class="{body_class}">
   <nav class="topbar">
@@ -80,8 +87,8 @@ def page(title, body, extra_head="", body_class=""):
     <span>© {date.today().year} {escape(SITE['title'])}</span>
     <span>{escape(SITE['camera'])}</span>
   </footer>
-  <script src="/assets/viewer.js" defer></script>
-  <script src="/assets/site.js" defer></script>
+  <script src="{asset('/assets/viewer.js')}" defer></script>
+  <script src="{asset('/assets/site.js')}" defer></script>
 </body>
 </html>
 """
