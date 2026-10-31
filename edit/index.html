@@ -49,16 +49,18 @@
   <!-- Unlocked -->
   <div class="workspace" id="workspace" hidden>
     <header class="ed-bar">
-      <a href="/" class="wordmark" target="_blank" rel="noopener">View site ↗</a>
-      <select id="section-select" aria-label="Section"></select>
-      <select id="chapter-select" aria-label="Chapter"></select>
+      <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
       <span class="ed-status" id="status"></span>
+      <a class="btn" href="/" target="_blank" rel="noopener">View site ↗</a>
       <button class="btn" id="token-btn" title="Replace the GitHub token">Token</button>
       <button class="btn" id="lock-btn">Lock</button>
       <button class="btn primary" id="save-btn" disabled>Save &amp; publish</button>
     </header>
 
-    <main class="ed-main">
+    <section id="home-view" hidden></section>
+    <section id="section-view" hidden></section>
+
+    <main class="ed-main" id="chapter-view" hidden>
       <div class="ed-left">
         <div class="viewer ed-viewer" id="ed-viewer"></div>
         <div class="ed-photo-tools" id="photo-tools">
@@ -83,7 +85,11 @@
       </div>
 
       <aside class="ed-side">
-        <header><p class="eyebrow">Instagram</p><span class="insta-count" id="insta-count"></span></header>
+        <header>
+          <button class="side-toggle" id="side-toggle" aria-label="Collapse Instagram panel" aria-expanded="true">›</button>
+          <p class="eyebrow">Instagram</p>
+          <span class="insta-count" id="insta-count"></span>
+        </header>
         <ol class="insta-list" id="insta-list"></ol>
         <p class="hint" id="insta-empty">Tick “Instagram” on up to 10 photos in this chapter. Drag to reorder.</p>
       </aside>

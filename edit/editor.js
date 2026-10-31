@@ -150,35 +150,111 @@
   const showOnly = id => ['login', 'setup', 'workspace'].forEach(x => { $(x).hidden = x !== id; });
   const sec = () => state.data.sections[state.section];
   const chapter = () => sec() && sec().chapters[state.chapterIdx];
-  const sectionTitle = slug => {
-    for (const g of state.site.groups) for (const s of g.sections) if (s.slug === slug) return s.title;
-    return slug;
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pad = n => String(n).padStart(2, '0');
+  const thumbUrl = (id, size) => `https://lh3.googleusercontent.com/d/${id}=${size}`;
+  const sectionMeta = slug => {
+    for (const g of state.site.groups) for (const s of g.sections) if (s.slug === slug) return s;
+    return { slug, title: slug, place: '', year: '' };
   };
 
-  // ---------- workspace ----------
-  function fillSelects() {
-    const ss = $('section-select');
-    ss.innerHTML = '';
-    const slugs = Object.keys(state.data.sections);
-    for (const slug of slugs) ss.add(new Option(sectionTitle(slug), slug));
-    if (!slugs.includes(state.section)) state.section = slugs[0] || null;
-    ss.value = state.section || '';
-    fillChapters();
+  // ---------- navigation: mirrors the public site (home → section → chapter) ----------
+  function showView(id) {
+    ['home-view', 'section-view', 'chapter-view'].forEach(v => { $(v).hidden = v !== id; });
+    window.scrollTo(0, 0);
   }
-  function fillChapters() {
-    const cs = $('chapter-select');
-    cs.innerHTML = '';
-    (sec()?.chapters || []).forEach((c, i) => cs.add(new Option(`${String(c.number).padStart(2, '0')} · ${c.title}`, i)));
-    state.chapterIdx = Math.min(state.chapterIdx, Math.max(0, cs.options.length - 1));
-    cs.value = state.chapterIdx;
+
+  function setCrumbs(parts) {
+    $('crumbs').innerHTML = parts
+      .map(([label, href]) => href ? `<a href="${href}">${esc(label)}</a>` : `<span>${esc(label)}</span>`)
+      .join('<span class="sep">/</span>');
+  }
+
+  function route() {
+    const [slug, chSlug] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    if (!slug) return renderHome();
+    const s = state.data.sections[slug];
+    if (!chSlug) {
+      // Single-chapter sections go straight into the chapter, like the public site
+      if (s && s.chapters.length === 1) return location.replace(`#/${slug}/${s.chapters[0].slug}`);
+      return renderSection(slug);
+    }
+    const idx = s ? s.chapters.findIndex(c => c.slug === chSlug) : -1;
+    if (idx < 0) return location.replace(`#/${slug}`);
+    state.section = slug;
+    state.chapterIdx = idx;
+    const title = sectionMeta(slug).title;
+    setCrumbs(s.chapters.length === 1
+      ? [['Editor', '#/'], [title]]
+      : [['Editor', '#/'], [title, `#/${slug}`], [s.chapters[idx].title]]);
+    showView('chapter-view');
     loadChapter();
   }
 
+  function renderHome() {
+    setCrumbs([['Editor']]);
+    $('home-view').innerHTML = state.site.groups.map(g => `
+      <section class="index-section">
+        <header class="section-head"><p class="eyebrow">${g.sections.length} sections</p><h2>${esc(g.title)}</h2></header>
+        <div class="trip-list">${g.sections.map((meta, i) => {
+          const s = state.data.sections[meta.slug];
+          const photos = s ? s.chapters.flatMap(c => c.photos) : [];
+          const cover = photos.find(p => p.id === s.cover) || photos[0];
+          const stats = photos.length
+            ? `${s.chapters.length} chapter${s.chapters.length > 1 ? 's' : ''} · ${photos.filter(p => p.public).length} of ${photos.length} public`
+            : 'No photos yet';
+          return `
+          <a class="trip-row${photos.length ? '' : ' pending'}" href="#/${meta.slug}">
+            <span class="num">${pad(i + 1)}</span>
+            <div class="trip-text"><h3>${esc(meta.title)}</h3><p class="meta">${esc(meta.place)} · ${esc(meta.year)} · ${stats}</p></div>
+            <div class="trip-thumb">${cover
+              ? `<img class="thumb loaded" src="${thumbUrl(cover.id, 'w1000')}" alt="">`
+              : '<div class="thumb placeholder"><span>No photos yet</span></div>'}</div>
+          </a>`;
+        }).join('')}</div>
+      </section>`).join('');
+    showView('home-view');
+  }
+
+  function renderSection(slug) {
+    const meta = sectionMeta(slug), s = state.data.sections[slug];
+    setCrumbs([['Editor', '#/'], [meta.title]]);
+    const chapters = s ? s.chapters : [];
+    const rows = chapters.length
+      ? chapters.map(c => {
+          const cover = c.photos.find(p => p.id === c.cover) || c.photos[0];
+          return `
+          <li><a href="#/${slug}/${c.slug}">
+            <span class="num">${pad(c.number)}</span>
+            <span class="ch-title">${esc(c.title)}</span>
+            <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} public<span class="count">★ ${c.insta.length}</span></span>
+            <span class="ch-thumb">${cover ? `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">` : ''}</span>
+          </a></li>`;
+        }).join('')
+      : (meta.planned || []).map((name, i) => `
+          <li class="pending"><span class="num">${pad(i + 1)}</span><span class="ch-title">${esc(name)}</span><span class="ch-meta">No photos yet</span></li>`).join('');
+    $('section-view').innerHTML = `
+      <header class="page-head">
+        <p class="eyebrow">${esc(meta.place)} · ${esc(meta.year)}</p>
+        <h1>${esc(meta.title)}</h1>
+        ${chapters.length ? '' : '<p class="status">No photos indexed yet</p>'}
+      </header>
+      <section class="contents">${rows ? `<p class="eyebrow">Chapters</p><ol class="toc">${rows}</ol>` : ''}</section>`;
+    showView('section-view');
+  }
+
+  function setSideCollapsed(on) {
+    $('chapter-view').classList.toggle('side-collapsed', on);
+    $('side-toggle').textContent = on ? '‹' : '›';
+    $('side-toggle').setAttribute('aria-expanded', String(!on));
+    $('side-toggle').setAttribute('aria-label', on ? 'Expand Instagram panel' : 'Collapse Instagram panel');
+    try { localStorage.setItem('ed-side-collapsed', on ? '1' : ''); } catch {}
+  }
+
+  // ---------- chapter workspace ----------
   let reelSortable = null, instaSortable = null;
   function loadChapter() {
     const c = chapter();
-    $('photo-tools').hidden = !c;
-    if (!c) { toast('No chapters yet. Run tools/drive_index.py to add photos.'); return; }
     $('chapter-title').value = c.title;
     $('chapter-text').value = c.text || '';
     if (!state.viewer) {
@@ -262,8 +338,11 @@
   }
 
   function bindWorkspace() {
-    $('section-select').addEventListener('change', e => { state.section = e.target.value; state.chapterIdx = 0; fillChapters(); });
-    $('chapter-select').addEventListener('change', e => { state.chapterIdx = +e.target.value; loadChapter(); });
+    window.addEventListener('hashchange', route);
+    $('side-toggle').addEventListener('click', () => setSideCollapsed(!$('chapter-view').classList.contains('side-collapsed')));
+    let collapsed = false;
+    try { collapsed = localStorage.getItem('ed-side-collapsed') === '1'; } catch {}
+    setSideCollapsed(collapsed);
     $('t-public').addEventListener('change', e => {
       state.viewer.current.public = e.target.checked;
       state.viewer.refresh(); syncPhotoTools(); setDirty();
@@ -275,7 +354,7 @@
     });
     $('chapter-title').addEventListener('input', e => {
       chapter().title = e.target.value;
-      $('chapter-select').selectedOptions[0].text = `${String(chapter().number).padStart(2, '0')} · ${e.target.value}`;
+      if (sec().chapters.length > 1) $('crumbs').lastElementChild.textContent = e.target.value;
       setDirty();
     });
     $('chapter-text').addEventListener('input', e => { chapter().text = e.target.value; setDirty(); });
@@ -345,7 +424,7 @@
     }
     showOnly('workspace');
     bindWorkspace();
-    fillSelects();
+    route();
     if (merged) { setDirty(); toast(`Added ${merged} new photo batch${merged > 1 ? 'es' : ''} from Drive. Review, then Save & publish.`, 6000); }
   }
 

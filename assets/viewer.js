@@ -34,6 +34,7 @@
       });
       document.addEventListener('keydown', e => {
         if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+        if (!this.root.offsetParent) return;  // viewer not on screen (e.g. editor on another page)
         if (e.key === 'ArrowLeft') this.show(this.index - 1);
         if (e.key === 'ArrowRight') this.show(this.index + 1);
       });
