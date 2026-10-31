@@ -1,0 +1,48 @@
+{
+  "title": "Ciaran Beahan",
+  "tagline": "Photographs",
+  "camera": "Fujifilm X-T50",
+  "sections": [
+    {
+      "slug": "travel",
+      "title": "Travel",
+      "trips": [
+        {
+          "slug": "usa-2025",
+          "title": "Bikepacking & Roadtripping",
+          "place": "United States",
+          "year": "2025"
+        },
+        {
+          "slug": "argentina-2025",
+          "title": "Salta & Jujuy",
+          "place": "Argentina",
+          "year": "2025"
+        },
+        {
+          "slug": "western-australia-2026",
+          "title": "Western Australia",
+          "place": "Australia",
+          "year": "2026"
+        },
+        {
+          "slug": "peru-2026",
+          "title": "Peru",
+          "place": "Peru",
+          "year": "2026",
+          "chapters": [
+            "Lima",
+            "Iquitos",
+            "Pisac",
+            "Cusco",
+            "Ollantaytambo",
+            "Machu Picchu",
+            "Abancay & Humantai",
+            "Urubamba to Wayqecha",
+            "Wayqecha & Manu National Park"
+          ]
+        }
+      ]
+    }
+  ]
+}
