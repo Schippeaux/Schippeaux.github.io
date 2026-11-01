@@ -18,6 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SITE = json.loads((ROOT / "data" / "site.json").read_text(encoding="utf-8"))
 PUBLIC = json.loads((ROOT / "data" / "public.json").read_text(encoding="utf-8"))
+ROUTES_PATH = ROOT / "data" / "routes.json"
+ROUTES = json.loads(ROUTES_PATH.read_text(encoding="utf-8")) if ROUTES_PATH.exists() else {}
 WIDTHS = (800, 1400, 2000, 2800)
 MONTHS = "January February March April May June July August September October November December".split()
 IMAGE_BASE = SITE.get("image_base", "https://lh3.googleusercontent.com/d").rstrip("/")
@@ -89,6 +91,7 @@ def page(title, body, extra_head="", body_class=""):
   </footer>
   <script src="{asset('/assets/viewer.js')}" defer></script>
   <script src="{asset('/assets/site.js')}" defer></script>
+  <script src="{asset('/assets/map.js')}" defer></script>
 </body>
 </html>
 """
@@ -215,6 +218,23 @@ def build_section(s):
     write(path, page(s["title"], body, body_class="section-page"))
 
 
+def route_payload(s, idx):
+    """Cumulative map points/tracks for chapters 0..idx of this section (public chapters only),
+    or None if the section has no route data at all."""
+    routes = ROUTES.get(s["slug"])
+    if not routes:
+        return None
+    points, tracks = [], []
+    for c in s["chapters"][:idx + 1]:
+        r = routes.get(str(c["number"]))
+        if not r:
+            continue
+        points.extend(r["points"])
+        if r.get("track"):
+            tracks.append({"coords": r["track"], "precision": r["precision"]})
+    return {"points": points, "tracks": tracks} if points else None
+
+
 def build_chapter(s, idx):
     c = s["chapters"][idx]
     photos = [{k: p.get(k) for k in ("id", "w", "h", "desc")} for p in c["photos"]]
@@ -235,10 +255,16 @@ def build_chapter(s, idx):
     title = s["title"] if single else c["title"]
     # Single-chapter sections skip the section page, so show the section's description here
     text = paragraphs(((s.get("text") or "") + "\n\n" if single else "") + (c.get("text") or ""))
+    route = route_payload(s, idx)
+    map_html = '<aside class="chapter-map" id="chapter-map"></aside>' if route else ''
+    route_script = (f'\n  <script type="application/json" id="route-data">'
+                     f'{json.dumps(route, ensure_ascii=False).replace("</", "<\\/")}</script>') if route else ''
+    text_html = f'<div class="chapter-text">{text}</div>' if text else ''
+    main_html = f'<div class="chapter-main">{text_html}{nav}</div>'
     info = (f"""
-  <section class="chapter-info">
-    {f'<div class="chapter-text">{text}</div>' if text else ''}{nav}
-  </section>""" if text or nav else "")
+  <section class="chapter-info{' with-map' if route else ''}">
+    {main_html}{map_html}
+  </section>{route_script}""" if text or nav or route else "")
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">
       <div class="chapter-name">

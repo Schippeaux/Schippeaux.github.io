@@ -242,6 +242,36 @@ img.loaded { opacity: 1; }
 .chapter-text { max-width: 36em; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.5; }
 .chapter-text p + p { margin-top: 1em; }
 
+/* Chapter page with a route map: text left, map right */
+.chapter-info.with-map {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 38%);
+  gap: 4vw;
+  align-items: start;
+}
+.chapter-info.with-map .chapter-main { max-width: none; min-width: 0; }
+.chapter-info.with-map .chapter-text { max-width: none; }
+.chapter-map {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--frame);
+  border: 1px solid var(--rule);
+}
+/* OSM tiles are light by default; invert them to match the site's dark theme.
+   Markers/lines live in separate Leaflet panes so they're unaffected. */
+.chapter-map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(.82) saturate(.6) contrast(.9);
+}
+.chapter-map .leaflet-control-attribution {
+  background: rgba(11,11,11,.6); color: var(--muted); font-size: 9px;
+}
+.chapter-map .leaflet-control-attribution a { color: var(--muted); }
+.chapter-map .leaflet-tooltip {
+  background: rgba(11,11,11,.85); color: var(--fg); border: 1px solid var(--rule);
+  font: 300 11px/1.4 var(--sans); letter-spacing: .04em; box-shadow: none;
+}
+.chapter-map .leaflet-tooltip-top:before { border-top-color: rgba(11,11,11,.85); }
+
 .chapter-nav {
   display: grid; grid-template-columns: 1fr 1fr;
   border-top: 1px solid var(--rule);
@@ -280,4 +310,6 @@ img.loaded { opacity: 1; }
   .chapter-nav { grid-template-columns: 1fr; }
   .chapter-nav .next { text-align: left; border-top: 1px solid var(--rule); }
   .chapter-nav a { padding: 5vh 0; }
+  .chapter-info.with-map { grid-template-columns: 1fr; gap: 4vh; }
+  .chapter-map { aspect-ratio: 16 / 10; }
 }
