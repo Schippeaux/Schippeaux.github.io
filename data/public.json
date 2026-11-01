@@ -2,6 +2,7 @@
  "sections": {
   "usa-2025": {
    "cover": "1oqPk1WUhtluI1KCZPSX16j-xihB6VX7V",
+   "text": "",
    "chapters": [
     {
      "slug": "preparation-arrival",
@@ -435,16 +436,16 @@
        "desc": ""
       },
       {
-       "id": "1cHeLEptJSkT77k1NdVxF-hYwtR82eQGA",
-       "w": 7728,
-       "h": 4347,
+       "id": "1af-JoxToYF0xqoBGF0NKcj06XcwaQoyM",
+       "w": 6699,
+       "h": 3768,
        "date": "2025-06-22",
        "desc": ""
       },
       {
-       "id": "1af-JoxToYF0xqoBGF0NKcj06XcwaQoyM",
-       "w": 6699,
-       "h": 3768,
+       "id": "1cHeLEptJSkT77k1NdVxF-hYwtR82eQGA",
+       "w": 7728,
+       "h": 4347,
        "date": "2025-06-22",
        "desc": ""
       },
@@ -460,7 +461,7 @@
        "w": 3285,
        "h": 1848,
        "date": "2025-06-22",
-       "desc": ""
+       "desc": "Thank you to the Griswolds for hosting me for a night in their treehouse.  Amazing."
       }
      ]
     }
