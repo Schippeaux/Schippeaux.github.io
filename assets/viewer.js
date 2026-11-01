@@ -27,6 +27,7 @@
         </div>
         <div class="reel" role="list"></div>`;
       this.stage = root.querySelector('.stage');
+      this.frame = root.querySelector('.frame');
       this.img = root.querySelector('.main');
       this.desc = root.querySelector('.desc');
       this.reel = root.querySelector('.reel');
@@ -34,6 +35,20 @@
       root.querySelector('.prev').addEventListener('click', () => this.show(this.index - 1));
       root.querySelector('.next').addEventListener('click', () => this.show(this.index + 1));
       this.img.addEventListener('load', () => this.img.classList.add('loaded'));
+      // Click the photo to go fullscreen (chrome hidden, filmstrip tucked off the bottom
+      // edge - hover or touch its sliver to bring it up); click again to exit. Off by default
+      // for the editor, which needs its own chrome on screen while editing.
+      if (opts.fullscreenClick !== false) {
+        this.frame.addEventListener('click', e => {
+          if (e.target.closest('.desc')) return;
+          document.body.classList.toggle('fullscreen');
+        });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape' && document.body.classList.contains('fullscreen')) {
+            document.body.classList.remove('fullscreen');
+          }
+        });
+      }
       // − / + minimises the description; the choice sticks while browsing and between visits
       try { this.descMin = localStorage.getItem('desc-min') === '1'; } catch { this.descMin = false; }
       this.desc.querySelector('.desc-toggle').addEventListener('click', e => {

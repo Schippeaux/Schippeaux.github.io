@@ -154,12 +154,25 @@ img.loaded { opacity: 1; }
   place-items: center;
   padding: 8px 72px;
 }
-.frame { position: relative; display: inline-block; }
+/* The frame gets a definite height (the real available space) so the photo is bounded by
+   whichever axis is tighter - otherwise a landscape photo in a tall, narrow viewport (phones)
+   only ever fills the width and renders tiny, with most of the screen's height unused. */
+.frame {
+  position: relative;
+  width: 100%;
+  height: calc(100svh - var(--topbar-h) - var(--head-h, 0px) - var(--reel-h) - 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .frame .main {
-  max-width: 100%;
-  max-height: calc(100svh - var(--topbar-h) - var(--head-h, 0px) - var(--reel-h) - 16px);
-  width: auto;
-  height: auto;
+  /* object-fit:contain (not max-width/max-height+auto) is what actually lets the photo grow
+     to use whichever axis has more room - width:auto/height:auto only ever shrinks to the
+     image's own aspect-fit at the narrower axis, so a landscape photo in a tall phone frame
+     stayed small even though max-height was never hit. */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   background: none;
 }
 .arrow {
@@ -204,6 +217,28 @@ img.loaded { opacity: 1; }
   overflow-x: auto; overflow-y: hidden;
   padding: 10px var(--gutter) 6px;
 }
+
+/* Fullscreen mode: click the photo to hide all chrome; the filmstrip lives just off the
+   bottom edge and slides up on hover (or touch, via focus-within) over its sliver. */
+body.fullscreen .topbar,
+body.fullscreen .chapter-bar {
+  opacity: 0; pointer-events: none; transition: opacity .3s ease;
+}
+body.fullscreen .chapter-top { --head-h: 0px; }
+body.fullscreen { --reel-h: 0px; }
+body.fullscreen .viewer { grid-template-rows: 1fr 0; }
+body.fullscreen .frame .main { cursor: zoom-out; }
+.frame .main { cursor: zoom-in; }
+body.fullscreen .reel {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  height: 112px;
+  padding: 26px var(--gutter) 14px;
+  background: linear-gradient(to top, rgba(0,0,0,.92), transparent);
+  transform: translateY(calc(100% - 14px));
+  transition: transform .25s ease;
+}
+body.fullscreen .reel:hover,
+body.fullscreen .reel:focus-within { transform: translateY(0); }
 /* A thick, easy-to-grab scrollbar under the thumbnails */
 .reel::-webkit-scrollbar { height: 14px; }
 .reel::-webkit-scrollbar-track { background: #161616; border-radius: 7px; }
@@ -304,4 +339,5 @@ img.loaded { opacity: 1; }
   .chapter-nav .next { text-align: left; border-top: 1px solid var(--rule); }
   .chapter-nav a { padding: 5vh 0; }
   .chapter-map { max-width: none; aspect-ratio: 4 / 3; margin-top: 3vh; }
+  body.fullscreen .reel { height: 94px; padding: 20px 16px 10px; }
 }

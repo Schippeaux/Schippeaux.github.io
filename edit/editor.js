@@ -121,7 +121,7 @@
   function publicData() {
     const out = { sections: {} };
     for (const [slug, sec] of Object.entries(state.data.sections)) {
-      const chapters = sec.chapters.map(c => {
+      const chapters = sec.chapters.filter(c => c.public !== false).map(c => {
         const photos = c.photos.filter(p => p.public).map(({ id, w, h, date, desc }) => ({ id, w, h, date, desc: desc || '' }));
         if (!photos.length) return null;
         const cover = photos.some(p => p.id === c.cover) ? c.cover : photos[0].id;
@@ -226,18 +226,16 @@
     const rows = chapters.length
       ? chapters.map(c => {
           const cover = c.photos.find(p => p.id === c.cover) || c.photos[0];
-          const allPublic = c.photos.length > 0 && c.photos.every(p => p.public);
-          const anyPublic = c.photos.some(p => p.public);
+          const chapterOn = c.public !== false;
           return `
-          <li class="toc-row">
-            <label class="toggle ch-public" title="Make every photo in this chapter public, or hide the whole chapter">
-              <input type="checkbox" class="ch-public-toggle" data-folder="${esc(c.folder_id)}"
-                ${allPublic ? 'checked' : ''} ${!allPublic && anyPublic ? 'data-mixed="1"' : ''}>
+          <li class="toc-row${chapterOn ? '' : ' off'}">
+            <label class="toggle ch-public" title="Publish this whole chapter, or take it off the site - doesn't change which of its photos you've picked as public">
+              <input type="checkbox" class="ch-public-toggle" data-folder="${esc(c.folder_id)}" ${chapterOn ? 'checked' : ''}>
             </label>
             <a href="#/${slug}/${c.slug}">
               <span class="num">${pad(c.number)}</span>
               <span class="ch-title">${esc(c.title)}</span>
-              <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} public<span class="count">★ ${c.insta.length}</span></span>
+              <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} photos public${chapterOn ? '' : ' · chapter off'}<span class="count">★ ${c.insta.length}</span></span>
               <span class="ch-thumb">${cover ? `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">` : ''}</span>
             </a>
           </li>`;
@@ -254,16 +252,15 @@
         ${s ? `<label class="field section-desc">Section description
           <textarea id="section-text" rows="5" placeholder="What this section is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
         </label>` : ''}
-        ${rows ? `<p class="eyebrow">Chapters${chapters.length ? ' · tick to publish a whole chapter at once' : ''}</p><ol class="toc">${rows}</ol>` : ''}
+        ${rows ? `<p class="eyebrow">Chapters${chapters.length ? ' · tick to take a whole chapter on or off the site, independent of which photos in it are public' : ''}</p><ol class="toc">${rows}</ol>` : ''}
       </section>`;
     if (s) {
       $('section-text').addEventListener('input', e => { s.text = e.target.value; setDirty(); });
       $('section-view').querySelectorAll('.ch-public-toggle').forEach(cb => {
-        if (cb.dataset.mixed) cb.indeterminate = true;
         cb.addEventListener('change', () => {
           const c = s.chapters.find(x => x.folder_id === cb.dataset.folder);
           if (!c) return;
-          c.photos.forEach(p => { p.public = cb.checked; });
+          c.public = cb.checked;  // chapter-level switch only - never touches c.photos[].public
           setDirty();
           renderSection(slug);
         });
@@ -302,6 +299,7 @@
     $('chapter-text').value = c.text || '';
     if (!state.viewer) {
       state.viewer = new Viewer($('ed-viewer'), c.photos, {
+        fullscreenClick: false,
         decorateThumb: decorate,
         onShow: () => syncPhotoTools(),
         onThumbClick: (e, i) => {
