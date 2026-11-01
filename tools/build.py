@@ -260,10 +260,9 @@ def build_chapter(s, idx):
     route_script = (f'\n  <script type="application/json" id="route-data">'
                      f'{json.dumps(route, ensure_ascii=False).replace("</", "<\\/")}</script>') if route else ''
     text_html = f'<div class="chapter-text">{text}</div>' if text else ''
-    main_html = f'<div class="chapter-main">{text_html}{nav}</div>'
     info = (f"""
   <section class="chapter-info{' with-map' if route else ''}">
-    {main_html}{map_html}
+    {text_html}{map_html}{nav}
   </section>{route_script}""" if text or nav or route else "")
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">

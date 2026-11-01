@@ -226,13 +226,21 @@
     const rows = chapters.length
       ? chapters.map(c => {
           const cover = c.photos.find(p => p.id === c.cover) || c.photos[0];
+          const allPublic = c.photos.length > 0 && c.photos.every(p => p.public);
+          const anyPublic = c.photos.some(p => p.public);
           return `
-          <li><a href="#/${slug}/${c.slug}">
-            <span class="num">${pad(c.number)}</span>
-            <span class="ch-title">${esc(c.title)}</span>
-            <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} public<span class="count">★ ${c.insta.length}</span></span>
-            <span class="ch-thumb">${cover ? `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">` : ''}</span>
-          </a></li>`;
+          <li class="toc-row">
+            <label class="toggle ch-public" title="Make every photo in this chapter public, or hide the whole chapter">
+              <input type="checkbox" class="ch-public-toggle" data-folder="${esc(c.folder_id)}"
+                ${allPublic ? 'checked' : ''} ${!allPublic && anyPublic ? 'data-mixed="1"' : ''}>
+            </label>
+            <a href="#/${slug}/${c.slug}">
+              <span class="num">${pad(c.number)}</span>
+              <span class="ch-title">${esc(c.title)}</span>
+              <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} public<span class="count">★ ${c.insta.length}</span></span>
+              <span class="ch-thumb">${cover ? `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">` : ''}</span>
+            </a>
+          </li>`;
         }).join('')
       : (meta.planned || []).map((name, i) => `
           <li class="pending"><span class="num">${pad(i + 1)}</span><span class="ch-title">${esc(name)}</span><span class="ch-meta">No photos yet</span></li>`).join('');
@@ -246,9 +254,21 @@
         ${s ? `<label class="field section-desc">Section description
           <textarea id="section-text" rows="5" placeholder="What this section is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
         </label>` : ''}
-        ${rows ? `<p class="eyebrow">Chapters</p><ol class="toc">${rows}</ol>` : ''}
+        ${rows ? `<p class="eyebrow">Chapters${chapters.length ? ' · tick to publish a whole chapter at once' : ''}</p><ol class="toc">${rows}</ol>` : ''}
       </section>`;
-    if (s) $('section-text').addEventListener('input', e => { s.text = e.target.value; setDirty(); });
+    if (s) {
+      $('section-text').addEventListener('input', e => { s.text = e.target.value; setDirty(); });
+      $('section-view').querySelectorAll('.ch-public-toggle').forEach(cb => {
+        if (cb.dataset.mixed) cb.indeterminate = true;
+        cb.addEventListener('change', () => {
+          const c = s.chapters.find(x => x.folder_id === cb.dataset.folder);
+          if (!c) return;
+          c.photos.forEach(p => { p.public = cb.checked; });
+          setDirty();
+          renderSection(slug);
+        });
+      });
+    }
     showView('section-view');
   }
 

@@ -47,14 +47,19 @@
       maxZoom: 19,
     }).addTo(map);
 
+    // Muted brown-gray for everything travelled so far, a deep accent for the leg/point this
+    // chapter just added - so the map reads as "the route so far, with where we are now".
+    const OLD = '#6b6459', LATEST = '#9c3b2e';
     const bounds = [];
-    (data.tracks || []).forEach((t) => {
+    const lastTrackIdx = (data.tracks || []).length - 1;
+    (data.tracks || []).forEach((t, i) => {
       if (!t.coords || t.coords.length < 2) return;
+      const latest = i === lastTrackIdx;
       L.polyline(t.coords, {
-        color: '#e9e6e1',
-        weight: 2,
-        opacity: t.precision === 'approx' ? 0.45 : 0.75,
-        dashArray: t.precision === 'approx' ? '2 6' : null,
+        color: latest ? LATEST : OLD,
+        weight: latest ? 3.5 : 2,
+        opacity: t.precision === 'approx' ? (latest ? 0.75 : 0.4) : (latest ? 0.92 : 0.55),
+        dashArray: t.precision === 'approx' ? '2 7' : null,
       }).addTo(map);
       t.coords.forEach((c) => bounds.push(c));
     });
@@ -63,11 +68,11 @@
     data.points.forEach((p, i) => {
       const latest = i === lastIdx;
       L.circleMarker([p.lat, p.lon], {
-        radius: latest ? 5.5 : 3,
-        color: '#e9e6e1',
-        fillColor: latest ? '#e9e6e1' : '#8a867f',
-        fillOpacity: latest ? 1 : 0.75,
-        weight: latest ? 1.5 : 1,
+        radius: latest ? 6.5 : 3,
+        color: latest ? '#fff' : OLD,
+        fillColor: latest ? LATEST : OLD,
+        fillOpacity: latest ? 1 : 0.65,
+        weight: latest ? 2 : 1,
         opacity: 1,
       }).bindTooltip(p.name, { direction: 'top', offset: [0, -4] }).addTo(map);
       bounds.push([p.lat, p.lon]);
