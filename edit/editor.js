@@ -121,7 +121,8 @@
   function publicData() {
     const out = { sections: {} };
     for (const [slug, sec] of Object.entries(state.data.sections)) {
-      const chapters = sec.chapters.filter(c => c.public !== false).map(c => {
+      // A chapter with no explicit public flag defaults OFF - publishing is opt-in per chapter.
+      const chapters = sec.chapters.filter(c => c.public === true).map(c => {
         const photos = c.photos.filter(p => p.public).map(({ id, w, h, date, desc }) => ({ id, w, h, date, desc: desc || '' }));
         if (!photos.length) return null;
         const cover = photos.some(p => p.id === c.cover) ? c.cover : photos[0].id;
@@ -226,7 +227,7 @@
     const rows = chapters.length
       ? chapters.map(c => {
           const cover = c.photos.find(p => p.id === c.cover) || c.photos[0];
-          const chapterOn = c.public !== false;
+          const chapterOn = c.public === true;
           return `
           <li class="toc-row${chapterOn ? '' : ' off'}">
             <label class="toggle ch-public" title="Publish this whole chapter, or take it off the site - doesn't change which of its photos you've picked as public">
