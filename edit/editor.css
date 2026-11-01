@@ -57,8 +57,31 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 /* Whole-chapter publish toggle, next to each row in the chapter list */
 .toc li.toc-row { display: flex; align-items: center; gap: 16px; }
 .toc li.toc-row > a { flex: 1; min-width: 0; }
+/* Custom box instead of the native checkbox + accent-color, which renders as a near-invisible
+   grey outline on a dark background in most browsers. */
 .ch-public { padding: 0; border: 0; flex: none; }
-.ch-public input { accent-color: var(--fg); width: 18px; height: 18px; cursor: pointer; }
+.ch-public input {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px; flex: none;
+  border: 1.5px solid var(--muted);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background .15s, border-color .15s;
+}
+.ch-public input:hover { border-color: var(--fg); }
+.ch-public input:checked {
+  background: var(--fg);
+  border-color: var(--fg);
+}
+.ch-public input:checked::after {
+  content: "";
+  position: absolute; left: 6px; top: 2px;
+  width: 5px; height: 10px;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
 .toc li.toc-row.off > a { opacity: .4; }
 
 .ed-main { display: grid; grid-template-columns: 1fr var(--side-w); min-height: calc(100svh - 58px); }
