@@ -2,9 +2,14 @@
 // Shared by the public chapter pages and the editor.
 (() => {
   const WIDTHS = [800, 1400, 2000, 2800];
+  const SIZES = '(max-width: 700px) 100vw, 80vw';
   // Photo host: the Cloudflare cache when configured (data/site.json "image_base"), else Drive
   const meta = document.querySelector('meta[name="image-base"]');
   const url = (id, size) => `${Viewer.imageBase}/${id}=${size}`;
+  const srcsetFor = p => WIDTHS.map(w => `${url(p.id, 'w' + w)} ${w}w`).join(', ');
+  // How many photos ahead/behind to keep warm. Forward browsing is far more common than back,
+  // so look further ahead than behind.
+  const PREFETCH_AHEAD = 2, PREFETCH_BEHIND = 1;
 
   class Viewer {
     constructor(root, photos, opts = {}) {
@@ -38,6 +43,17 @@
         this.layoutDesc();
       });
       window.addEventListener('resize', () => this.layoutDesc());
+      // Reusable <link rel=preload> elements: imagesrcset/imagesizes let the browser resolve
+      // the same width it would actually pick for the <img>, so the cache warm-up can't miss
+      // the real request the way a single fixed-width Image() guess can.
+      this.preloadLinks = Array.from({ length: PREFETCH_AHEAD + PREFETCH_BEHIND }, () => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.imageSizes = SIZES;
+        document.head.append(link);
+        return link;
+      });
       this.reel.addEventListener('click', e => {
         const t = e.target.closest('.thumb');
         if (!t) return;
@@ -99,14 +115,20 @@
         this.img.dataset.id = p.id;
         this.img.width = p.w;
         this.img.height = p.h;
-        this.img.srcset = WIDTHS.map(w => `${url(p.id, 'w' + w)} ${w}w`).join(', ');
-        this.img.sizes = '(max-width: 700px) 100vw, 80vw';
+        this.img.srcset = srcsetFor(p);
+        this.img.sizes = SIZES;
         this.img.src = url(p.id, 'w2000');
-        // Warm the neighbours so arrowing feels instant
-        for (const n of [i + 1, i - 1]) {
-          const q = this.photos[(n + this.photos.length) % this.photos.length];
-          if (q) new Image().src = url(q.id, 'w2000');
-        }
+        // Warm the next few neighbours (more ahead than behind) at the exact same
+        // srcset/sizes as the real <img>, so whichever width the browser picks on
+        // arrival is already cached.
+        const offsets = [];
+        for (let k = 1; k <= PREFETCH_AHEAD; k++) offsets.push(k);
+        for (let k = 1; k <= PREFETCH_BEHIND; k++) offsets.push(-k);
+        offsets.forEach((n, slot) => {
+          const q = this.photos[(i + n + this.photos.length) % this.photos.length];
+          const link = this.preloadLinks[slot];
+          if (q && link) link.imageSrcset = srcsetFor(q);
+        });
       }
       [...this.reel.children].forEach((t, n) => t.classList.toggle('active', n === i));
       const active = this.reel.children[i];
