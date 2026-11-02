@@ -86,8 +86,9 @@
             <label class="toggle"><input type="checkbox" id="t-public"> Public</label>
             <label class="toggle"><input type="checkbox" id="t-insta"> Instagram</label>
             <button class="btn small" id="cover-chapter">Use as chapter cover</button>
-            <button class="btn small" id="cover-section">Use as section cover</button>
+            <button class="btn small" id="cover-section">Use as journey cover</button>
             <button class="btn small" id="cover-home">Use as homepage cover</button>
+            <label class="toggle"><input type="checkbox" id="t-bestof"> Best-Of</label>
             <span class="ed-pos" id="photo-pos"></span>
           </div>
           <label class="field">Photo description
@@ -105,12 +106,17 @@
 
       <aside class="ed-side">
         <header>
-          <button class="side-toggle" id="side-toggle" aria-label="Collapse Instagram panel" aria-expanded="true">›</button>
-          <p class="eyebrow">Instagram</p>
-          <span class="insta-count" id="insta-count"></span>
+          <button class="side-toggle" id="side-toggle" aria-label="Collapse panel" aria-expanded="true">›</button>
+          <div class="side-tabs eyebrow" role="tablist">
+            <button class="side-tab on" id="tab-insta" data-tab="insta" role="tab" aria-selected="true">Instagram</button>
+            <button class="side-tab" id="tab-bestof" data-tab="bestof" role="tab" aria-selected="false">Best-Of</button>
+          </div>
+          <span class="insta-count" id="side-count"></span>
         </header>
         <ol class="insta-list" id="insta-list"></ol>
+        <ol class="insta-list" id="bestof-list" hidden></ol>
         <p class="hint" id="insta-empty">Tick “Instagram” on up to 10 photos in this chapter. Drag to reorder.</p>
+        <p class="hint" id="bestof-empty" hidden>Tick “Best-Of” on photos anywhere in this journey. Drag to reorder.</p>
       </aside>
     </main>
   </div>

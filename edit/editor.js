@@ -99,7 +99,7 @@
 
   // ---------- data ----------
   function mergeBatch(batch) {
-    const sec = state.data.sections[batch.section] ??= { cover: null, chapters: [] };
+    const sec = state.data.sections[batch.section] ??= { cover: null, chapters: [], best_of: [] };
     if (!sec.cover && batch.cover) sec.cover = batch.cover;
     for (const ch of batch.chapters) {
       let c = sec.chapters.find(x => x.folder_id === ch.folder_id);
@@ -130,7 +130,9 @@
       }).filter(Boolean);
       if (!chapters.length) continue;
       const all = chapters.flatMap(c => c.photos);
+      const bestOf = (sec.best_of || []).filter(id => all.some(p => p.id === id));
       out.sections[slug] = { cover: all.some(p => p.id === sec.cover) ? sec.cover : chapters[0].cover, text: sec.text || '', chapters };
+      if (bestOf.length) out.sections[slug].best_of = bestOf;
     }
     // Homepage cover only if that photo is public; otherwise the build falls back to a section cover
     const publicIds = new Set(Object.values(out.sections).flatMap(s => s.chapters.flatMap(c => c.photos.map(p => p.id))));
@@ -220,8 +222,53 @@
     showView('home-view');
   }
 
+  // Resolve a journey's best-of ids to photo objects, drawn from across all its chapters,
+  // and quietly drop any id whose photo no longer exists.
+  function resolveBestof(s) {
+    const byId = new Map(s.chapters.flatMap(c => c.photos).map(p => [p.id, p]));
+    s.best_of = (s.best_of || []).filter(id => byId.has(id));
+    return s.best_of.map(id => byId.get(id));
+  }
+
+  let bestofGridSortable = null;
+  function renderBestofGrid(s, slug) {
+    const byId = new Map(s.chapters.flatMap(c => c.photos).map(p => [p.id, p]));
+    const grid = $('bestof-arrange');
+    grid.innerHTML = s.best_of.map((id, i) => {
+      const p = byId.get(id);
+      return `
+      <button class="tile" data-id="${id}" title="${i + 1}">
+        <img src="${thumbUrl(id, 'h300')}" alt="" loading="lazy" class="loaded" style="aspect-ratio:${p.w}/${p.h}">
+        <span class="n">${i + 1}</span>
+        <span class="rm" title="Remove from Best-Of">✕</span>
+      </button>`;
+    }).join('');
+    grid.querySelectorAll('.rm').forEach(btn => btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = e.target.closest('.tile').dataset.id;
+      s.best_of = s.best_of.filter(x => x !== id);
+      setDirty();
+      if (s.best_of.length) renderBestofGrid(s, slug);
+      else renderSection(slug);
+    }));
+    if (bestofGridSortable) bestofGridSortable.destroy();
+    bestofGridSortable = Sortable.create(grid, {
+      animation: 150, delay: 150, delayOnTouchOnly: true, forceFallback: true,
+      onEnd: () => {
+        s.best_of = [...grid.querySelectorAll('.tile')].map(t => t.dataset.id);
+        setDirty();
+      },
+    });
+  }
+  function openBestofArrange(s, slug) {
+    $('bestof-slideshow').hidden = true;
+    $('bestof-arrange-wrap').hidden = false;
+    renderBestofGrid(s, slug);
+  }
+
   function renderSection(slug) {
     const meta = sectionMeta(slug), s = state.data.sections[slug];
+    if (s) s.best_of ??= [];
     setCrumbs([['Editor', '#/'], [meta.title]]);
     const chapters = s ? s.chapters : [];
     const rows = chapters.length
@@ -243,6 +290,18 @@
         }).join('')
       : (meta.planned || []).map((name, i) => `
           <li class="pending"><span class="num">${pad(i + 1)}</span><span class="ch-title">${esc(name)}</span><span class="ch-meta">No photos yet</span></li>`).join('');
+    const bestOf = s ? s.best_of : [];
+    const bestofBlock = s ? `
+        <div class="bestof-head">
+          <p class="eyebrow">Best-of slideshow${bestOf.length ? ' · click to reorder' : ''}</p>
+          ${bestOf.length ? `
+            <div class="bestof-slideshow" id="bestof-slideshow"></div>
+            <div class="bestof-arrange-wrap" id="bestof-arrange-wrap" hidden>
+              <div class="arrange" id="bestof-arrange"></div>
+              <button class="btn small" id="bestof-done">Done reordering</button>
+            </div>`
+            : '<p class="hint">Tick “Best-Of” on photos while browsing chapters to build this journey\'s slideshow.</p>'}
+        </div>` : '';
     $('section-view').innerHTML = `
       <header class="page-head">
         <p class="eyebrow">${esc(meta.place)} · ${esc(meta.year)}</p>
@@ -250,8 +309,9 @@
         ${chapters.length ? '' : '<p class="status">No photos indexed yet</p>'}
       </header>
       <section class="contents">
-        ${s ? `<label class="field section-desc">Section description
-          <textarea id="section-text" rows="5" placeholder="What this section is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
+        ${bestofBlock}
+        ${s ? `<label class="field section-desc">Journey description
+          <textarea id="section-text" rows="5" placeholder="What this journey is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
         </label>` : ''}
         ${rows ? `<p class="eyebrow">Chapters${chapters.length ? ' · tick to take a whole chapter on or off the site, independent of which photos in it are public' : ''}</p><ol class="toc">${rows}</ol>` : ''}
       </section>`;
@@ -266,6 +326,14 @@
           renderSection(slug);
         });
       });
+      if (bestOf.length) {
+        new Viewer($('bestof-slideshow'), resolveBestof(s), { fullscreenClick: false });
+        $('bestof-slideshow').addEventListener('click', e => {
+          if (e.target.closest('.arrow')) return;
+          openBestofArrange(s, slug);
+        });
+        $('bestof-done').addEventListener('click', () => renderSection(slug));
+      }
     }
     showView('section-view');
   }
@@ -274,7 +342,7 @@
     $('chapter-view').classList.toggle('side-collapsed', on);
     $('side-toggle').textContent = on ? '‹' : '›';
     $('side-toggle').setAttribute('aria-expanded', String(!on));
-    $('side-toggle').setAttribute('aria-label', on ? 'Expand Instagram panel' : 'Collapse Instagram panel');
+    $('side-toggle').setAttribute('aria-label', on ? 'Expand panel' : 'Collapse panel');
     try { localStorage.setItem('ed-side-collapsed', on ? '1' : ''); } catch {}
   }
 
@@ -283,7 +351,8 @@
   // plain click in the grid. Moves and visibility changes can be undone.
   const sel = new Set();
   let anchorId = null, pickMode = false, arranging = false, undoStack = [];
-  let reelSortable = null, gridSortable = null, instaSortable = null;
+  let reelSortable = null, gridSortable = null, instaSortable = null, bestofSideSortable = null;
+  let sideTab = 'insta', pendingShowId = null;
 
   function decorate(el, p) {
     const ch = chapter();
@@ -320,8 +389,15 @@
     });
     setArranging(arranging);
     renderInsta();
+    renderBestofSidebar();
+    setSideTab(sideTab);
     syncPhotoTools();
     updateSelBar();
+    if (pendingShowId) {
+      const idx = c.photos.findIndex(p => p.id === pendingShowId);
+      pendingShowId = null;
+      if (idx >= 0) state.viewer.show(idx);
+    }
   }
 
   // Re-render everything that shows the chapter's photos, keeping the current photo in view
@@ -330,14 +406,15 @@
     state.viewer.setPhotos(c.photos, state.viewer.current?.id);
     if (arranging) renderGrid();
     renderInsta();
+    renderBestofSidebar();
     syncPhotoTools();
     updateSelBar();
   }
 
-  // ---- undo: remembers order, visibility and Instagram picks (not descriptions/text) ----
+  // ---- undo: remembers order, visibility, Instagram and journey Best-Of picks (not descriptions/text) ----
   function checkpoint() {
     const c = chapter();
-    undoStack.push({ order: c.photos.map(p => p.id), pub: c.photos.map(p => p.public), insta: [...c.insta] });
+    undoStack.push({ order: c.photos.map(p => p.id), pub: c.photos.map(p => p.public), insta: [...c.insta], bestOf: [...(sec().best_of || [])] });
     if (undoStack.length > 50) undoStack.shift();
     $('undo-btn').disabled = false;
   }
@@ -350,6 +427,7 @@
     c.photos.splice(0, c.photos.length, ...snap.order.map(id => byId.get(id)).filter(Boolean));
     c.photos.forEach((p, i) => { p.public = snap.pub[i]; });
     c.insta = snap.insta;
+    sec().best_of = snap.bestOf;
     refreshPhotos();
     setDirty();
   }
@@ -503,13 +581,33 @@
     if (!c || !p) return;
     $('t-public').checked = !!p.public;
     $('t-insta').checked = c.insta.includes(p.id);
+    $('t-bestof').checked = (sec().best_of || []).includes(p.id);
     $('photo-desc').value = p.desc || '';
     $('cover-chapter').textContent = c.cover === p.id ? 'Chapter cover ✓' : 'Use as chapter cover';
-    $('cover-section').textContent = sec().cover === p.id ? 'Section cover ✓' : 'Use as section cover';
+    $('cover-section').textContent = sec().cover === p.id ? 'Journey cover ✓' : 'Use as journey cover';
     $('cover-home').textContent = state.data.home_cover === p.id ? 'Homepage cover ✓' : 'Use as homepage cover';
     const visible = c.photos.filter(x => x.public).length;
     $('photo-pos').textContent = `${state.viewer.index + 1} / ${c.photos.length} · ${visible} public`;
     [...$('insta-list').children].forEach(li => li.classList.toggle('active', li.dataset.id === p.id));
+    [...$('bestof-list').children].forEach(li => li.classList.toggle('active', li.dataset.id === p.id));
+  }
+
+  // ---- sidebar: two tabs sharing the same look, Instagram (chapter-scoped) and
+  // Best-Of (journey-scoped - drawn from any chapter in this journey) ----
+  function setSideTab(tab) {
+    sideTab = tab;
+    $('tab-insta').classList.toggle('on', tab === 'insta');
+    $('tab-bestof').classList.toggle('on', tab === 'bestof');
+    $('tab-insta').setAttribute('aria-selected', String(tab === 'insta'));
+    $('tab-bestof').setAttribute('aria-selected', String(tab === 'bestof'));
+    $('insta-list').hidden = tab !== 'insta';
+    $('bestof-list').hidden = tab !== 'bestof';
+    $('insta-empty').hidden = tab !== 'insta' || chapter().insta.length > 0;
+    $('bestof-empty').hidden = tab !== 'bestof' || (sec().best_of || []).length > 0;
+    $('side-count').textContent = tab === 'insta'
+      ? `${chapter().insta.length} / ${INSTA_MAX}`
+      : `${(sec().best_of || []).length}`;
+    try { localStorage.setItem('ed-side-tab', tab); } catch {}
   }
 
   function renderInsta() {
@@ -529,8 +627,8 @@
       });
       list.append(li);
     });
-    $('insta-count').textContent = `${c.insta.length} / ${INSTA_MAX}`;
-    $('insta-empty').hidden = c.insta.length > 0;
+    if (sideTab === 'insta') $('side-count').textContent = `${c.insta.length} / ${INSTA_MAX}`;
+    $('insta-empty').hidden = sideTab !== 'insta' || c.insta.length > 0;
     if (instaSortable) instaSortable.destroy();
     instaSortable = Sortable.create(list, {
       animation: 150, delay: 150, delayOnTouchOnly: true, forceFallback: true,
@@ -554,12 +652,70 @@
     setDirty();
   }
 
+  // Best-Of lives on the journey, not the chapter: its list can include photos from any
+  // chapter, so clicking an entry may need to jump to a different chapter first.
+  function renderBestofSidebar() {
+    const s = sec();
+    const list = $('bestof-list');
+    list.innerHTML = '';
+    const byId = new Map(s.chapters.flatMap(c => c.photos).map(p => [p.id, p]));
+    s.best_of = (s.best_of || []).filter(id => byId.has(id));
+    s.best_of.forEach((id, n) => {
+      const li = document.createElement('li');
+      li.dataset.id = id;
+      li.innerHTML = `<span class="n">${n + 1}</span><img src="${thumbUrl(id, 'w400')}" alt="" class="loaded"><button class="rm" title="Remove from Best-Of">✕</button>`;
+      li.querySelector('.rm').addEventListener('click', e => { e.stopPropagation(); toggleBestof(id); });
+      li.addEventListener('click', () => jumpToPhoto(id));
+      list.append(li);
+    });
+    if (sideTab === 'bestof') $('side-count').textContent = `${s.best_of.length}`;
+    $('bestof-empty').hidden = sideTab !== 'bestof' || s.best_of.length > 0;
+    if (bestofSideSortable) bestofSideSortable.destroy();
+    bestofSideSortable = Sortable.create(list, {
+      animation: 150, delay: 150, delayOnTouchOnly: true, forceFallback: true,
+      onEnd: () => {
+        checkpoint();
+        sec().best_of = [...list.children].map(li => li.dataset.id);
+        renderBestofSidebar();
+        setDirty();
+      },
+    });
+  }
+
+  function toggleBestof(id) {
+    const s = sec();
+    s.best_of ??= [];
+    if (s.best_of.includes(id)) { checkpoint(); s.best_of = s.best_of.filter(x => x !== id); }
+    else { checkpoint(); s.best_of.push(id); }
+    renderBestofSidebar();
+    state.viewer.refresh();
+    syncPhotoTools();
+    setDirty();
+  }
+
+  // Show a photo that may belong to a different chapter than the one currently open.
+  function jumpToPhoto(id) {
+    const s = sec();
+    const idx = s.chapters.findIndex(c => c.photos.some(p => p.id === id));
+    if (idx < 0) return;
+    if (idx === state.chapterIdx) {
+      if (arranging) setArranging(false);
+      state.viewer.show(chapter().photos.findIndex(p => p.id === id));
+    } else {
+      pendingShowId = id;
+      location.hash = `#/${state.section}/${s.chapters[idx].slug}`;
+    }
+  }
+
   function bindWorkspace() {
     window.addEventListener('hashchange', route);
     $('side-toggle').addEventListener('click', () => setSideCollapsed(!$('chapter-view').classList.contains('side-collapsed')));
     let collapsed = false;
     try { collapsed = localStorage.getItem('ed-side-collapsed') === '1'; } catch {}
     setSideCollapsed(collapsed);
+    try { sideTab = localStorage.getItem('ed-side-tab') === 'bestof' ? 'bestof' : 'insta'; } catch {}
+    $('tab-insta').addEventListener('click', () => setSideTab('insta'));
+    $('tab-bestof').addEventListener('click', () => setSideTab('bestof'));
     bindArrange();
     const setBarHeight = () => document.body.style.setProperty('--bar-h', `${document.querySelector('.ed-bar').offsetHeight}px`);
     new ResizeObserver(setBarHeight).observe(document.querySelector('.ed-bar'));
@@ -569,6 +725,7 @@
       state.viewer.refresh(); syncPhotoTools(); setDirty();
     });
     $('t-insta').addEventListener('change', () => toggleInsta(state.viewer.current.id));
+    $('t-bestof').addEventListener('change', () => toggleBestof(state.viewer.current.id));
     $('photo-desc').addEventListener('input', e => {
       state.viewer.current.desc = e.target.value;
       state.viewer.refresh(); setDirty();

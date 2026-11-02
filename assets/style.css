@@ -69,6 +69,15 @@ img.loaded { opacity: 1; }
 .hero-text .eyebrow { color: var(--fg); opacity: .8; }
 .hero h1 { font-size: clamp(48px, 9vw, 150px); line-height: .95; margin-top: .25em; }
 
+/* A journey's best-of slideshow, standing in for the hero image: fills the same full-bleed
+   area, crops to cover (no letterboxing), auto-advances, no filmstrip - it's a header. */
+.hero-slideshow .viewer { position: absolute; inset: 0; height: 100%; padding: 0; display: block; }
+.hero-slideshow .stage { height: 100%; padding: 0; }
+.hero-slideshow .frame { height: 100%; }
+.hero-slideshow .frame .main { object-fit: cover; cursor: default; }
+.hero-slideshow .reel, .hero-slideshow .desc { display: none; }
+.hero-slideshow .arrow { z-index: 2; }
+
 /* Plain page heading */
 .page-head { padding: 28vh var(--gutter) 8vh; }
 .page-head h1 { font-size: clamp(48px, 9vw, 150px); line-height: .95; margin-top: .25em; }

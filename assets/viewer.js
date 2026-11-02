@@ -92,6 +92,19 @@
         startX = null;
       });
 
+      // Autoplay (for a decorative header slideshow, not the main chapter viewer): advances
+      // every opts.autoplay ms, pauses on hover, and resets its timer after manual navigation.
+      if (opts.autoplay) {
+        let timer;
+        const tick = () => { timer = setTimeout(() => { this.show(this.index + 1); tick(); }, opts.autoplay); };
+        const restart = () => { clearTimeout(timer); tick(); };
+        tick();
+        root.addEventListener('mouseenter', () => clearTimeout(timer));
+        root.addEventListener('mouseleave', restart);
+        root.querySelector('.prev').addEventListener('click', restart);
+        root.querySelector('.next').addEventListener('click', restart);
+      }
+
       const start = opts.hash ? parseInt(location.hash.slice(1), 10) - 1 : 0;
       this.setPhotos(photos, null, Number.isFinite(start) ? start : 0);
     }

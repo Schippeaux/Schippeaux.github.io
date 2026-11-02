@@ -107,8 +107,11 @@ def load_section(group, section):
     pub = PUBLIC.get("sections", {}).get(section["slug"], {})
     chapters = [c for c in pub.get("chapters", []) if c["photos"]]
     photos = [p for c in chapters for p in c["photos"]]
+    best_of_ids = pub.get("best_of", [])
+    best_of = [find(photos, i) for i in best_of_ids if any(p["id"] == i for p in photos)]
     s = {**section, "group": group["slug"], "chapters": chapters, "photos": photos, "text": pub.get("text", ""),
          "cover_photo": find(photos, pub.get("cover")) if photos else None,
+         "best_of": best_of,
          "planned": section.get("planned", [])}
     s["base"] = f"/{group['slug']}/{section['slug']}/"
     s["url"] = f"{s['base']}{chapters[0]['slug']}/" if len(chapters) == 1 else s["base"]
@@ -182,7 +185,19 @@ def build_section(s):
         write(path, f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url={s["url"]}">'
                     f'<link rel="canonical" href="{s["url"]}"><a href="{s["url"]}">{escape(s["title"])}</a>\n')
         return
-    if s["cover_photo"]:
+    best_of_script = ""
+    if s["best_of"]:
+        best_of_photos = [{k: p.get(k) for k in ("id", "w", "h")} for p in s["best_of"]]
+        best_of_data = json.dumps(best_of_photos, ensure_ascii=False).replace("</", "<\\/")
+        head = f"""  <header class="hero hero-slideshow">
+    <div class="viewer" id="best-of-viewer"></div>
+    <div class="hero-text">
+      <p class="eyebrow">{escape(s['place'])} · {escape(s['year'])}</p>
+      <h1>{escape(s['title'])}</h1>
+    </div>
+  </header>"""
+        best_of_script = f'\n  <script type="application/json" id="best-of-photos">{best_of_data}</script>'
+    elif s["cover_photo"]:
         head = f"""  <header class="hero">
     {img(s['cover_photo'], '100vw', 'hero-img', eager=True)}
     <div class="hero-text">
@@ -214,7 +229,7 @@ def build_section(s):
     body = f"""{head}
   <section class="contents">
     {intro}{toc}
-  </section>"""
+  </section>{best_of_script}"""
     write(path, page(s["title"], body, body_class="section-page"))
 
 
