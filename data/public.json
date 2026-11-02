@@ -308,6 +308,106 @@
        "desc": "Thank you to the Griswolds for hosting me for a night in their treehouse.  Amazing."
       }
      ]
+    },
+    {
+     "slug": "north-bend",
+     "number": 3,
+     "title": "North Bend",
+     "text": "",
+     "cover": "1RhZRv2OjqNfBtX009OUbLZyaygwMo4vv",
+     "photos": [
+      {
+       "id": "1RhZRv2OjqNfBtX009OUbLZyaygwMo4vv",
+       "w": 7620,
+       "h": 4285,
+       "date": "2025-06-23",
+       "desc": "The famous scene from the intro of Twin Peaks"
+      },
+      {
+       "id": "12eGvw17sAgocxkTKmpeXWO_p_4Ru-hbZ",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-23",
+       "desc": "\"Diane, a small town is not unlike a river—lots of hidden currents and eddies, each holding its own secret... If you ever find yourself in this neck of the woods, you must come here. It's a place where a step off the road means a step into the wild.\" - Dale Cooper"
+      },
+      {
+       "id": "1MjTN8EjQk5_18P-MjiF1K35UnPcUxBcf",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-23",
+       "desc": "I came across a guy resting on a log in the river bed, reading a book, with his Bengal cat exploring freely around him.  Said once he chased it down over 10 miles with an air tracker that it wears after it got lost.  Wild."
+      },
+      {
+       "id": "1ljk_ygvNWw1IMDBgO8OzrWarChKrsEVO",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-23",
+       "desc": ""
+      },
+      {
+       "id": "1er2FYebY-0DGVdvpMuhYBLHRn0-wbWV9",
+       "w": 7613,
+       "h": 4281,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1_qGmrTCSsw4dN1c6L7NcVvBqlXEg6tIE",
+       "w": 3285,
+       "h": 1848,
+       "date": "2025-06-24",
+       "desc": "Coffee, black as midnight on a moonless night."
+      },
+      {
+       "id": "1YCdNi42lx7hETTLGQEn5d9hQENjgDDNa",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1yEzRcsyjkk6xDO9ws41x3mUFWqRpHRRl",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-24",
+       "desc": ""
+      },
+      {
+       "id": "1gAsWwktEoAcUqgz6pQJ_IjHxG73PNFvM",
+       "w": 6810,
+       "h": 3831,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1xbflsl71yiOI5RHZoq0yqU2TfVADLXlE",
+       "w": 5152,
+       "h": 7728,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1r_A39bw6hZH-S1sieKJdJuv9J1Edhnig",
+       "w": 1753,
+       "h": 2922,
+       "date": "2025-06-23",
+       "desc": "Thank you Del C. for putting me up for a couple of nights in his majestic treehouse.  That was two different treehouses over two nights.  How lucky!"
+      },
+      {
+       "id": "1COHsQOgcIviQGKEpQRl0tXtjEgY2uV_5",
+       "w": 3285,
+       "h": 1848,
+       "date": "2025-06-23",
+       "desc": ""
+      },
+      {
+       "id": "1o3qhR1nE9krtkCII5QNXwLc2loKEY65D",
+       "w": 6699,
+       "h": 3768,
+       "date": "2025-06-25",
+       "desc": "New skill unlocked"
+      }
+     ]
     }
    ]
   }
