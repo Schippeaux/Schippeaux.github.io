@@ -461,6 +461,7 @@
     const n = sel.size;
     $('sel-actions').hidden = !n;
     $('sel-count').textContent = `${n} selected`;
+    if (n) populateMoveChapterOptions();
     $('sel-hint').textContent = pickMode
       ? 'Now click the photo to move them in front of. Esc to cancel.'
       : n ? '' : arranging
@@ -506,6 +507,42 @@
     checkpoint();
     chapter().photos.forEach(p => { if (sel.has(p.id)) p.public = pub; });
     redecorate(); syncPhotoTools(); setDirty();
+  }
+
+  // Move the selected photos out of this chapter and onto the end of another chapter in the
+  // same journey (cross-chapter - moveSelection above only reorders within one chapter). They
+  // land at the end of the target; drag them into exact position there with Arrange, same as
+  // any other reorder. Dropped from this chapter's Instagram picks too, since those ids would
+  // otherwise dangle; best-of is untouched since it's already journey-wide, not chapter-scoped.
+  function moveToChapter(targetIdx) {
+    const c = chapter();
+    const target = sec().chapters[targetIdx];
+    if (!target || target === c) return;
+    checkpoint();
+    const moving = c.photos.filter(p => sel.has(p.id));
+    // Reassign rather than splice-in-place: the viewer still holds this exact array
+    // reference until refreshPhotos() below calls setPhotos(), so mutating it now would
+    // desync it from the still-on-screen (stale) reel/grid DOM that clearSelection()'s
+    // redecorate() is about to touch.
+    c.photos = c.photos.filter(p => !sel.has(p.id));
+    target.photos.push(...moving);
+    c.insta = (c.insta || []).filter(id => !sel.has(id));
+    setArranging(false);
+    clearSelection();
+    refreshPhotos();
+    setDirty();
+    toast(`Moved ${moving.length} photo${moving.length > 1 ? 's' : ''} to "${target.title}". Switch to that chapter and drag them into position in Arrange.`, 4500);
+  }
+
+  function populateMoveChapterOptions() {
+    const select = $('sel-move-chapter');
+    const s = sec();
+    if (!select || !s) return;
+    const current = select.value;
+    select.innerHTML = '<option value="">Move to chapter…</option>' + s.chapters.map((c, i) =>
+      i === state.chapterIdx ? '' : `<option value="${i}">Ch. ${c.number} - ${esc(c.title)}</option>`
+    ).join('');
+    select.value = current;
   }
 
   // ---- Arrange grid ----
@@ -563,6 +600,11 @@
       else if (act === 'public') setVisibility(true);
       else if (act === 'hide') setVisibility(false);
       else if (act === 'clear') clearSelection();
+    });
+    $('sel-move-chapter').addEventListener('change', e => {
+      const idx = e.target.value;
+      e.target.value = '';
+      if (idx !== '') moveToChapter(parseInt(idx, 10));
     });
     document.addEventListener('keydown', e => {
       if ($('chapter-view').hidden || e.target.closest?.('input, textarea, select')) return;

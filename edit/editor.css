@@ -10,6 +10,10 @@ body.editor { --topbar-h: 0px; --reel-h: 112px; --side-w: 260px; }
 .btn:disabled { opacity: .35; cursor: default; }
 .btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 .btn.small { padding: 6px 10px; }
+#sel-move-chapter.btn.small {
+  width: auto; background: var(--bg);
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+}
 
 input[type=text], input[type=password], textarea, select {
   font: 300 14px/1.5 var(--sans); color: var(--fg);
