@@ -49,17 +49,20 @@
 
     // Muted brown-gray for everything travelled so far, a deep accent for the leg/point this
     // chapter just added - so the map reads as "the route so far, with where we are now".
-    const OLD = '#6b6459', LATEST = '#9c3b2e';
+    // A "driven" segment (a lift in a car, not cycled) always renders flat grey and dashed,
+    // regardless of how recent it is - it should read as "not ridden", not "freshest leg".
+    const OLD = '#6b6459', LATEST = '#9c3b2e', DRIVEN = '#8c8c8c';
     const bounds = [];
     const lastTrackIdx = (data.tracks || []).length - 1;
     (data.tracks || []).forEach((t, i) => {
       if (!t.coords || t.coords.length < 2) return;
       const latest = i === lastTrackIdx;
+      const driven = t.precision === 'driven';
       L.polyline(t.coords, {
-        color: latest ? LATEST : OLD,
-        weight: latest ? 3.5 : 2,
-        opacity: t.precision === 'approx' ? (latest ? 0.75 : 0.4) : (latest ? 0.92 : 0.55),
-        dashArray: t.precision === 'approx' ? '2 7' : null,
+        color: driven ? DRIVEN : (latest ? LATEST : OLD),
+        weight: driven ? 2.5 : (latest ? 3.5 : 2),
+        opacity: driven ? 0.7 : (t.precision === 'approx' ? (latest ? 0.75 : 0.4) : (latest ? 0.92 : 0.55)),
+        dashArray: driven ? '4 6' : (t.precision === 'approx' ? '2 7' : null),
       }).addTo(map);
       t.coords.forEach((c) => bounds.push(c));
     });

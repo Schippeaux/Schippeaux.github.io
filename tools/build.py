@@ -235,7 +235,8 @@ def build_section(s):
 
 def route_payload(s, idx):
     """Cumulative map points/tracks for chapters 0..idx of this section (public chapters only),
-    or None if the section has no route data at all."""
+    or None if the section has no route data at all. A chapter can carry several track
+    segments with different precision (e.g. cycled / driven / cycled again within one day)."""
     routes = ROUTES.get(s["slug"])
     if not routes:
         return None
@@ -245,8 +246,9 @@ def route_payload(s, idx):
         if not r:
             continue
         points.extend(r["points"])
-        if r.get("track"):
-            tracks.append({"coords": r["track"], "precision": r["precision"]})
+        for seg in r.get("segments", []):
+            if seg.get("coords"):
+                tracks.append({"coords": seg["coords"], "precision": seg["precision"]})
     return {"points": points, "tracks": tracks} if points else None
 
 
@@ -275,9 +277,11 @@ def build_chapter(s, idx):
     route_script = (f'\n  <script type="application/json" id="route-data">'
                      f'{json.dumps(route, ensure_ascii=False).replace("</", "<\\/")}</script>') if route else ''
     text_html = f'<div class="chapter-text">{text}</div>' if text else ''
+    top_row = (f'<div class="chapter-info-row{" with-map" if route else ""}">{text_html}{map_html}</div>'
+               if text_html or map_html else '')
     info = (f"""
-  <section class="chapter-info{' with-map' if route else ''}">
-    {text_html}{map_html}{nav}
+  <section class="chapter-info">
+    {top_row}{nav}
   </section>{route_script}""" if text or nav or route else "")
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">

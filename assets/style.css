@@ -286,12 +286,19 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
 .chapter-text { max-width: 36em; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.5; }
 .chapter-text p + p { margin-top: 1em; }
 
-/* Chapter page with a route map: full width, matching the description's own width */
+/* Chapter page with a route map: text and a large map side by side */
+.chapter-info-row.with-map {
+  display: flex;
+  align-items: flex-start;
+  gap: 5vw;
+}
+.chapter-info-row.with-map .chapter-text { flex: 1 1 36em; }
 .chapter-map {
+  flex: 1 1 54em;
   width: 100%;
-  max-width: 36em;
+  min-width: 0;
   aspect-ratio: 16 / 10;
-  margin-top: 4vh;
+  align-self: stretch;
   background: var(--frame);
   border: 1px solid var(--rule);
 }
@@ -347,6 +354,7 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
   .chapter-nav { grid-template-columns: 1fr; }
   .chapter-nav .next { text-align: left; border-top: 1px solid var(--rule); }
   .chapter-nav a { padding: 5vh 0; }
-  .chapter-map { max-width: none; aspect-ratio: 4 / 3; margin-top: 3vh; }
+  .chapter-info-row.with-map { flex-direction: column; gap: 0; }
+  .chapter-map { flex: none; width: 100%; aspect-ratio: 4 / 3; margin-top: 3vh; align-self: auto; }
   body.fullscreen .reel { height: 94px; padding: 20px 16px 10px; }
 }
