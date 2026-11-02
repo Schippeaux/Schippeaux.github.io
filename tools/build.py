@@ -236,12 +236,23 @@ def build_section(s):
 def route_payload(s, idx):
     """Cumulative map points/tracks for chapters 0..idx of this section (public chapters only),
     or None if the section has no route data at all. A chapter can carry several track
-    segments with different precision (e.g. cycled / driven / cycled again within one day)."""
+    segments with different precision (e.g. cycled / driven / cycled again within one day).
+
+    Also carries this chapter's own distance/elevation "profile" (cycled distance only - a
+    driven segment contributes nothing to it, per the gap deliberately left in chapter_profile
+    when routes.json was built) for the bottom slider, plus trip stats: this leg's own
+    distance/climb, and the running total across every chapter up to and including this one
+    that has stats recorded. Chapters with no GPS-derived elevation data simply have no
+    "profile"/"stats" and are skipped when summing totals, so older untracked legs don't
+    break the running total - they just don't contribute to it."""
     routes = ROUTES.get(s["slug"])
     if not routes:
         return None
     points, tracks = [], []
-    for c in s["chapters"][:idx + 1]:
+    total_km, total_gain = 0.0, 0.0
+    have_totals = False
+    this_profile, this_gaps, this_stats = None, None, None
+    for i, c in enumerate(s["chapters"][:idx + 1]):
         r = routes.get(str(c["number"]))
         if not r:
             continue
@@ -249,7 +260,28 @@ def route_payload(s, idx):
         for seg in r.get("segments", []):
             if seg.get("coords"):
                 tracks.append({"coords": seg["coords"], "precision": seg["precision"]})
-    return {"points": points, "tracks": tracks} if points else None
+        if r.get("stats"):
+            total_km += r["stats"]["dist_km"]
+            total_gain += r["stats"]["gain_m"]
+            have_totals = True
+        if i == idx:
+            this_profile = r.get("profile")
+            this_gaps = r.get("profile_gaps")
+            this_stats = r.get("stats")
+    if not points:
+        return None
+    out = {"points": points, "tracks": tracks}
+    if this_profile:
+        out["profile"] = this_profile
+        if this_gaps:
+            out["profile_gaps"] = this_gaps
+    if this_stats:
+        out["stats"] = {
+            "leg_km": this_stats["dist_km"], "leg_gain_m": this_stats["gain_m"],
+            "total_km": round(total_km, 1) if have_totals else None,
+            "total_gain_m": round(total_gain, 1) if have_totals else None,
+        }
+    return out
 
 
 def build_chapter(s, idx):
@@ -274,6 +306,10 @@ def build_chapter(s, idx):
     text = paragraphs(((s.get("text") or "") + "\n\n" if single else "") + (c.get("text") or ""))
     route = route_payload(s, idx)
     map_html = '<aside class="chapter-map" id="chapter-map"></aside>' if route else ''
+    # The elevation/distance slider and trip-stats strip below the map+text row, only when this
+    # chapter has GPS-derived elevation data (route_payload leaves out "profile"/"stats" otherwise).
+    profile_html = '<div class="route-profile" id="route-profile"></div>' if route and route.get("profile") else ''
+    stats_html = '<div class="route-stats" id="route-stats"></div>' if route and route.get("stats") else ''
     route_script = (f'\n  <script type="application/json" id="route-data">'
                      f'{json.dumps(route, ensure_ascii=False).replace("</", "<\\/")}</script>') if route else ''
     text_html = f'<div class="chapter-text">{text}</div>' if text else ''
@@ -281,7 +317,7 @@ def build_chapter(s, idx):
                if text_html or map_html else '')
     info = (f"""
   <section class="chapter-info">
-    {top_row}{nav}
+    {top_row}{profile_html}{stats_html}{nav}
   </section>{route_script}""" if text or nav or route else "")
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">

@@ -302,9 +302,10 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
   background: var(--frame);
   border: 1px solid var(--rule);
 }
-/* OSM tiles come in full colour; mute them to a pale, desaturated map style (labels kept). */
+/* OSM tiles come in full colour; keep them pale (brightened) but let park green and water
+   blue read clearly rather than washing everything down to grey. */
 .chapter-map .leaflet-tile-pane {
-  filter: grayscale(.55) brightness(1.14) saturate(.4) contrast(.92);
+  filter: grayscale(.2) brightness(1.08) saturate(1.35) contrast(.97);
 }
 .chapter-map .leaflet-control-attribution {
   background: rgba(255,255,255,.7); color: #555; font-size: 9px;
@@ -315,6 +316,41 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
   font: 300 11px/1.4 var(--sans); letter-spacing: .04em; box-shadow: none;
 }
 .chapter-map .leaflet-tooltip-top:before { border-top-color: rgba(255,255,255,.92); }
+
+/* Elevation/distance slider for the current chapter's own leg, down the bottom of the map+text
+   row. Hover or drag to scrub; the dot follows on the map above. */
+.route-profile {
+  position: relative;
+  margin-top: 4vh;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--rule);
+}
+.profile-svg { display: block; width: 100%; height: 150px; touch-action: none; cursor: crosshair; }
+.profile-area { --profile-fill-top: rgba(242,163,60,.28); --profile-fill-bottom: rgba(242,163,60,0); }
+.profile-line { stroke: #d98a2e; stroke-width: 1.6; }
+.grid-line { stroke: var(--rule); stroke-width: 1; }
+.grid-label { font: 300 10px/1 var(--sans); fill: var(--faint); letter-spacing: .03em; }
+.gap-line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
+.gap-label { font: 400 9px/1 var(--sans); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.scrub-line { stroke: var(--fg); stroke-width: 1; }
+.scrub-dot { fill: #f2a33c; stroke: #fff; stroke-width: 1.5; }
+.profile-readout {
+  position: absolute; top: 14px; transform: translateX(-50%);
+  font: 400 11px/1 var(--sans); letter-spacing: .03em; color: var(--fg);
+  background: var(--frame); border: 1px solid var(--rule);
+  padding: 4px 8px; white-space: nowrap; pointer-events: none;
+}
+
+/* Trip stats strip below the slider */
+.route-stats {
+  display: flex; flex-wrap: wrap; gap: 4vw;
+  margin-top: 3vh; padding-top: 2.5vh; border-top: 1px solid var(--rule);
+}
+.route-stats .stat { display: flex; flex-direction: column; gap: .3em; }
+.route-stats .stat-value { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 30px); line-height: 1; }
+.route-stats .stat-label {
+  font: 400 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+}
 
 .chapter-nav {
   display: grid; grid-template-columns: 1fr 1fr;
