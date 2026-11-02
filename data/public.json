@@ -313,22 +313,22 @@
      "slug": "north-bend",
      "number": 3,
      "title": "North Bend",
-     "text": "Riding from Seattle to North Bend was a treat.  Campuses set in forests.  Bridges hopping from island to island.  Tree lined trails.  Also highways.  I learned a lesson about just letting RideWithGPS curate your journey.  I probably should have trusted my senses better and not just followed it down into a valley and up a near vertical hillside, forcing me to carry my bike.  It spat me out, sweaty and covered in debris at some kind of sterile golf village that looked like it was out of Edward Scissohands.  \n\nAnyway, I made it to North Bend and stayed with a kind family who let me sleep in their treehouse for a couple of nights.  North Bend is where a lot of Twin Peaks was filmed, in particular the scenes in the opening sequence.  Very wholesome vibes, I can see why Agent Cooper fell in love with the place.  It's a land where you can forget about the rest of the world and its accelerating decay.\n\n",
-     "cover": "1RhZRv2OjqNfBtX009OUbLZyaygwMo4vv",
+     "text": "Riding from Seattle to North Bend was a treat.  Campuses set in forests.  Bridges hopping from island to island.  Tree lined trails.  Also highways.  I learned a lesson about just letting RideWithGPS curate your journey.  I probably should have trusted my senses better and not just followed it blindly.  It took me down into a valley and up a near vertical climb, carrying my bike for parts.  It spat me out, sweaty and covered in debris at some kind of sterile golf village that looked like it was out of Edward Scissorhands.\n\nAnyway, I made it to North Bend and stayed with a kind family who let me sleep in their treehouse for a couple of nights.  North Bend is where a lot of Twin Peaks was filmed, in particular the scenes in the opening sequence and the diner.  Wholesome vibes, I can see why Agent Cooper fell in love with the place.  I stayed two nights here, spending a day just exploring the town, swimming in the river and washing my clothes.  Good times.\n",
+     "cover": "12eGvw17sAgocxkTKmpeXWO_p_4Ru-hbZ",
      "photos": [
-      {
-       "id": "1RhZRv2OjqNfBtX009OUbLZyaygwMo4vv",
-       "w": 7620,
-       "h": 4285,
-       "date": "2025-06-23",
-       "desc": "The famous scene from the intro of Twin Peaks"
-      },
       {
        "id": "12eGvw17sAgocxkTKmpeXWO_p_4Ru-hbZ",
        "w": 7728,
        "h": 4347,
        "date": "2025-06-23",
        "desc": "\"Diane, a small town is not unlike a river—lots of hidden currents and eddies, each holding its own secret... If you ever find yourself in this neck of the woods, you must come here. It's a place where a step off the road means a step into the wild.\" - Dale Cooper"
+      },
+      {
+       "id": "1RhZRv2OjqNfBtX009OUbLZyaygwMo4vv",
+       "w": 7620,
+       "h": 4285,
+       "date": "2025-06-23",
+       "desc": "The famous scene from the intro of Twin Peaks"
       },
       {
        "id": "1MjTN8EjQk5_18P-MjiF1K35UnPcUxBcf",
@@ -359,17 +359,17 @@
        "desc": "Coffee, black as midnight on a moonless night."
       },
       {
-       "id": "1YCdNi42lx7hETTLGQEn5d9hQENjgDDNa",
-       "w": 7728,
-       "h": 5152,
+       "id": "1xbflsl71yiOI5RHZoq0yqU2TfVADLXlE",
+       "w": 5152,
+       "h": 7728,
        "date": "2025-06-25",
        "desc": ""
       },
       {
-       "id": "1yEzRcsyjkk6xDO9ws41x3mUFWqRpHRRl",
+       "id": "1YCdNi42lx7hETTLGQEn5d9hQENjgDDNa",
        "w": 7728,
-       "h": 4347,
-       "date": "2025-06-24",
+       "h": 5152,
+       "date": "2025-06-25",
        "desc": ""
       },
       {
@@ -380,10 +380,10 @@
        "desc": ""
       },
       {
-       "id": "1xbflsl71yiOI5RHZoq0yqU2TfVADLXlE",
-       "w": 5152,
-       "h": 7728,
-       "date": "2025-06-25",
+       "id": "1yEzRcsyjkk6xDO9ws41x3mUFWqRpHRRl",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-24",
        "desc": ""
       },
       {
@@ -411,9 +411,10 @@
     }
    ],
    "best_of": [
-    "1Io2eOfYUTIbX34GlrQZdF57kCW3UG4AX",
-    "1184lRBFXuofXdcv66Jbl3DwcLbM0Oiru",
-    "1af-JoxToYF0xqoBGF0NKcj06XcwaQoyM"
+    "1lcWzEaslb9XKxXhqOTHPdiBZyatfsxK5",
+    "1GzFyPLzq2LFgxlR3ZDUXQpv-2rbGUbpW",
+    "1mWEu9RPb_LGgLOp-kGreILpToHeOqDxo",
+    "1oqPk1WUhtluI1KCZPSX16j-xihB6VX7V"
    ]
   }
  }
