@@ -10,6 +10,7 @@
   --reel-h: 112px;
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: Inter, system-ui, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -286,19 +287,26 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
 .chapter-text { max-width: 36em; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.5; }
 .chapter-text p + p { margin-top: 1em; }
 
-/* Chapter page with a route map: text and a large map side by side */
+/* Chapter page with a route map: text and a map+stats column side by side. The column
+   sticks in place (position: sticky) as the text scrolls past it - it only scrolls away
+   once the text runs out, since its containing block is the flex row, sized by whichever
+   side is tallest. Mobile drops the sticky behaviour entirely (see media query below). */
 .chapter-info-row.with-map {
   display: flex;
   align-items: flex-start;
   gap: 5vw;
 }
 .chapter-info-row.with-map .chapter-text { flex: 1 1 36em; }
-.chapter-map {
-  flex: 1 1 54em;
-  width: 100%;
+.chapter-map-col {
+  flex: 0 0 min(30vw, 400px);
+  width: min(30vw, 400px);
   min-width: 0;
-  aspect-ratio: 16 / 10;
-  align-self: stretch;
+  position: sticky;
+  top: calc(var(--topbar-h) + 4vh);
+}
+.chapter-map {
+  width: 100%;
+  aspect-ratio: 3 / 5;
   background: var(--frame);
   border: 1px solid var(--rule);
 }
@@ -329,27 +337,31 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
 .profile-area { --profile-fill-top: rgba(242,163,60,.28); --profile-fill-bottom: rgba(242,163,60,0); }
 .profile-line { stroke: #d98a2e; stroke-width: 1.6; }
 .grid-line { stroke: var(--rule); stroke-width: 1; }
-.grid-label { font: 300 10px/1 var(--sans); fill: var(--faint); letter-spacing: .03em; }
+/* Lighter (brighter grey, not the near-invisible --faint) and a touch larger, so the
+   elevation scale is actually readable at a glance rather than something to squint at. */
+.grid-label { font: 400 11px/1 var(--mono); fill: var(--muted); letter-spacing: .01em; }
 .gap-line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
 .gap-label { font: 400 9px/1 var(--sans); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
 .scrub-line { stroke: var(--fg); stroke-width: 1; }
 .scrub-dot { fill: #f2a33c; stroke: #fff; stroke-width: 1.5; }
 .profile-readout {
   position: absolute; top: 14px; transform: translateX(-50%);
-  font: 400 11px/1 var(--sans); letter-spacing: .03em; color: var(--fg);
+  font: 400 12px/1 var(--mono); letter-spacing: 0; color: var(--fg);
   background: var(--frame); border: 1px solid var(--rule);
   padding: 4px 8px; white-space: nowrap; pointer-events: none;
 }
 
-/* Trip stats strip below the slider */
+/* Trip stats below the slider, at the same width as the map/graph above. Total-trip
+   figures sit on their own line above the current leg's, per Ciaran's request. */
 .route-stats {
-  display: flex; flex-wrap: wrap; gap: 4vw;
+  display: flex; flex-direction: column; gap: 2vh;
   margin-top: 3vh; padding-top: 2.5vh; border-top: 1px solid var(--rule);
 }
+.route-stats .stat-row { display: flex; gap: 2.5em; }
 .route-stats .stat { display: flex; flex-direction: column; gap: .3em; }
-.route-stats .stat-value { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 30px); line-height: 1; }
+.route-stats .stat-value { font-family: var(--mono); font-size: clamp(18px, 1.8vw, 24px); line-height: 1; }
 .route-stats .stat-label {
-  font: 400 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+  font: 400 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
 }
 
 .chapter-nav {
@@ -391,6 +403,7 @@ body.fullscreen .reel:focus-within { transform: translateY(0); }
   .chapter-nav .next { text-align: left; border-top: 1px solid var(--rule); }
   .chapter-nav a { padding: 5vh 0; }
   .chapter-info-row.with-map { flex-direction: column; gap: 0; }
-  .chapter-map { flex: none; width: 100%; aspect-ratio: 4 / 3; margin-top: 3vh; align-self: auto; }
+  .chapter-map-col { position: static; top: auto; flex: none; width: 100%; margin-top: 3vh; }
+  .chapter-map { width: 100%; aspect-ratio: 4 / 3; }
   body.fullscreen .reel { height: 94px; padding: 20px 16px 10px; }
 }

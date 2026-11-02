@@ -206,14 +206,17 @@
     if (!el || !s) return;
     const km = n => `${n.toFixed(1)} km`;
     const m = n => `${Math.round(n).toLocaleString()} m`;
-    const cells = [
-      ['This leg', km(s.leg_km)],
-      ['Climbed', m(s.leg_gain_m)],
-    ];
-    if (s.total_km != null) cells.push(['Trip so far', km(s.total_km)]);
-    if (s.total_gain_m != null) cells.push(['Climbed so far', m(s.total_gain_m)]);
-    el.innerHTML = cells.map(([label, value]) =>
+    const row = cells => `<div class="stat-row">${cells.map(([label, value]) =>
       `<div class="stat"><span class="stat-value">${value}</span><span class="stat-label">${label}</span></div>`
-    ).join('');
+    ).join('')}</div>`;
+
+    let html = '';
+    // Trip-so-far totals on their own line, above this leg's figures.
+    const totals = [];
+    if (s.total_km != null) totals.push(['Total Distance', km(s.total_km)]);
+    if (s.total_gain_m != null) totals.push(['Total Elevation', m(s.total_gain_m)]);
+    if (totals.length) html += row(totals);
+    html += row([['Distance', km(s.leg_km)], ['Elevation', m(s.leg_gain_m)]]);
+    el.innerHTML = html;
   }
 })();

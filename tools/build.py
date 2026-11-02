@@ -76,7 +76,7 @@ def page(title, body, extra_head="", body_class=""):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="{escape(IMAGE_BASE.rsplit('/', 1)[0] if IMAGE_BASE.endswith('/d') else IMAGE_BASE)}">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{asset('/assets/style.css')}">{extra_head}
 </head>
 <body class="{body_class}">
@@ -305,11 +305,17 @@ def build_chapter(s, idx):
     # Single-chapter sections skip the section page, so show the section's description here
     text = paragraphs(((s.get("text") or "") + "\n\n" if single else "") + (c.get("text") or ""))
     route = route_payload(s, idx)
-    map_html = '<aside class="chapter-map" id="chapter-map"></aside>' if route else ''
-    # The elevation/distance slider and trip-stats strip below the map+text row, only when this
-    # chapter has GPS-derived elevation data (route_payload leaves out "profile"/"stats" otherwise).
-    profile_html = '<div class="route-profile" id="route-profile"></div>' if route and route.get("profile") else ''
-    stats_html = '<div class="route-stats" id="route-stats"></div>' if route and route.get("stats") else ''
+    # Map, elevation/distance slider, and trip-stats all live together in one sticky column
+    # beside the text (see .chapter-map-col) - it stays in place as the text scrolls past it
+    # on desktop, and drops to a plain block below the text on mobile. Profile/stats are only
+    # added when this chapter has GPS-derived elevation data (route_payload leaves those keys
+    # out otherwise).
+    map_html = ''
+    if route:
+        profile_html = '<div class="route-profile" id="route-profile"></div>' if route.get("profile") else ''
+        stats_html = '<div class="route-stats" id="route-stats"></div>' if route.get("stats") else ''
+        map_html = (f'<div class="chapter-map-col"><aside class="chapter-map" id="chapter-map">'
+                    f'</aside>{profile_html}{stats_html}</div>')
     route_script = (f'\n  <script type="application/json" id="route-data">'
                      f'{json.dumps(route, ensure_ascii=False).replace("</", "<\\/")}</script>') if route else ''
     text_html = f'<div class="chapter-text">{text}</div>' if text else ''
@@ -317,7 +323,7 @@ def build_chapter(s, idx):
                if text_html or map_html else '')
     info = (f"""
   <section class="chapter-info">
-    {top_row}{profile_html}{stats_html}{nav}
+    {top_row}{nav}
   </section>{route_script}""" if text or nav or route else "")
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">
