@@ -408,13 +408,186 @@
        "desc": "New skill unlocked"
       }
      ]
+    },
+    {
+     "slug": "john-wayne-trail-snoqualmie-pass-ellensburg",
+     "number": 4,
+     "title": "John Wayne Trail, Snoqualmie Pass, Ellensburg",
+     "text": "The Palouse to Cascades State Park Trail aka John Wayne Pioneer Trail aka Iron Horse Trail, is an old railroad track converted into biking trail, running from North Bend all the way across the state of Washington to the Washington / Idaho border.  \n\nI jumped on it at the start at Rattlesnake Lake, near North Bend.  Old rail lines make great bike trails.  The grades are consistently low and easy to ride, and they take you through some fantastic landscapes.\n\nWashington state consists of two parts.  The temperate, cool and wet rainforested side of the Cascade Mountains.  And the other side which is like Mars.  Dry and hot as f*ck (though I think Mars is cold?).  Once you pass over the Cascade Mountains it becomes a dustbowl.  It's astonishing.  This segment of the journey was lovely.  I passed through a long railroad tunnel in total darkness but for my torch.  Camped in a rainforest.  Passed through some charming old school cowboy towns.  Camping at Cle Elum Lake was something.  Some redneck woke us all up at 6am as he ripped open the engine of his boat at a dam which acted as a loudspeaker.  What hell he unleashed.  \n\nI spent another night next to the Yakima river and shared the site with 3 other bike packers from Seattle.  Legends whose names I can't remember.  But they lent me a can opener which I was still lacking, and they shared their booze with me.  Good company!\n\nDescending from the Cascade Mountains I got to Ellensberg.  I'd only heard of it before as the home of singer Mark Lanegan.  He didn't have nice things to say about it.  But he didn't have nice things to say about anything.  I thought it was charming.  Hot as f.  But the architecture was nice.  There was a bit of hipster cool here and there but mostly it's a hub for a farming community.  I was put up for a night by a couple who gave me a nice feed and a warm bed.  Greatly appreciated!  He had spent some time living in Buenos Aires it so happens, working for the US consulate...",
+     "cover": "1V2qq32gljjkBdh3-2pvcxjY-cKH38i2C",
+     "photos": [
+      {
+       "id": "1V2qq32gljjkBdh3-2pvcxjY-cKH38i2C",
+       "w": 7629,
+       "h": 4291,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "13pkhtUntRwpZC2mFKJ7wvHtl7I9xFCGe",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-27",
+       "desc": ""
+      },
+      {
+       "id": "1I_bMWX8CSRy0KtV5Uzl0QvKd-3rEO7LR",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1oM2PJotxmVzaF7u1srYv5fslY7Quqb1U",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1cRDU0L1hTsJgnSDAAmzL0VD2MeZcyZ5f",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-25",
+       "desc": ""
+      },
+      {
+       "id": "1xTzhtXzQ0L47J_2V-vQ3QShoyJuJLyqM",
+       "w": 7452,
+       "h": 4192,
+       "date": "2025-06-26",
+       "desc": "Snoqualmie Tunnel"
+      },
+      {
+       "id": "1aISWh9xhvc0bgALDZNgG2gbTZWp0WKrd",
+       "w": 4994,
+       "h": 7492,
+       "date": "2025-06-26",
+       "desc": ""
+      },
+      {
+       "id": "1t50OBbkMBnbUvdtDULH-tIRJpNo8yk2-",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-26",
+       "desc": ""
+      },
+      {
+       "id": "1swDb1sYlD2uw5JcvN52gjr3MI3sPiJlz",
+       "w": 7336,
+       "h": 4126,
+       "date": "2025-06-26",
+       "desc": ""
+      },
+      {
+       "id": "1nxhTTqPeZBbLKGOP8s3FNFYXo6MzniPU",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-26",
+       "desc": "Kachess Lake"
+      },
+      {
+       "id": "1KhEXOzjYP7z_A8Nge-1AIPMa-84lNnYe",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-27",
+       "desc": ""
+      },
+      {
+       "id": "1fdRhGsj6e8ApXS1dvy7rZdUUEJw5eNdj",
+       "w": 5152,
+       "h": 7728,
+       "date": "2025-06-25",
+       "desc": "Carter Creek Campground"
+      },
+      {
+       "id": "1gFOgJDZXRgW4H-Q8TJ3MT2Dup2cJ7BNY",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-25",
+       "desc": "Carter Creek Campground"
+      },
+      {
+       "id": "1Pl7m6PXmCwVEmJt5tFGcr2FY6WySXfJn",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-27",
+       "desc": "Why compromise?"
+      },
+      {
+       "id": "1mDrIQA9QsabgYxpT04hQsrS6RUutet4V",
+       "w": 5152,
+       "h": 7728,
+       "date": "2025-06-27",
+       "desc": "Roslyn"
+      },
+      {
+       "id": "1pAhbLm1kyxVbcw1Vxj8PaeM80tppFI3o",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-27",
+       "desc": ""
+      },
+      {
+       "id": "1Ln1mTh3RcVhwVxCXsM3pIxEoto1CwHXj",
+       "w": 7658,
+       "h": 4307,
+       "date": "2025-06-28",
+       "desc": "Roslyn."
+      },
+      {
+       "id": "1wOKJNPOG7LTPvMaIs7AmvAnaGIARVJNH",
+       "w": 7298,
+       "h": 4105,
+       "date": "2025-06-28",
+       "desc": ""
+      },
+      {
+       "id": "1Q0V_IabI4PXez5EDm4qXcm3RDh4tNUUN",
+       "w": 7689,
+       "h": 4324,
+       "date": "2025-06-28",
+       "desc": ""
+      },
+      {
+       "id": "1tR9-WMSZlLSbcqgVNUQWzz_y2_QhfQn0",
+       "w": 3633,
+       "h": 5450,
+       "date": "2025-06-30",
+       "desc": "Ellensberg"
+      },
+      {
+       "id": "1hZgcrIof2sx4im4Z-eztw5Lv8uhmhxf0",
+       "w": 6544,
+       "h": 3680,
+       "date": "2025-06-30",
+       "desc": "Ellensberg"
+      },
+      {
+       "id": "1vsnsc5e2tXXBSdFNaPSoQhAn8V5234gW",
+       "w": 7728,
+       "h": 4347,
+       "date": "2025-06-30",
+       "desc": "Fanciest 420 Ever"
+      },
+      {
+       "id": "1zeGEXBea6WPGR9GuKtXkgXEgF4MnTS5Z",
+       "w": 5726,
+       "h": 3221,
+       "date": "2025-07-01",
+       "desc": "Ellensberg"
+      }
+     ]
     }
    ],
    "best_of": [
     "1lcWzEaslb9XKxXhqOTHPdiBZyatfsxK5",
     "1GzFyPLzq2LFgxlR3ZDUXQpv-2rbGUbpW",
     "1mWEu9RPb_LGgLOp-kGreILpToHeOqDxo",
-    "1oqPk1WUhtluI1KCZPSX16j-xihB6VX7V"
+    "1oqPk1WUhtluI1KCZPSX16j-xihB6VX7V",
+    "13pkhtUntRwpZC2mFKJ7wvHtl7I9xFCGe",
+    "1swDb1sYlD2uw5JcvN52gjr3MI3sPiJlz",
+    "1zeGEXBea6WPGR9GuKtXkgXEgF4MnTS5Z"
    ]
   }
  }
