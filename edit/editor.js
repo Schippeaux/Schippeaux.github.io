@@ -151,8 +151,9 @@
         if (!photos.length) return null;
         const cover = photos.some(p => p.id === c.cover) ? c.cover : photos[0].id;
         const out = { slug: c.slug, number: c.number, title: c.title, text: c.text || '', cover, photos };
-        if (c.day_start != null) out.day_start = c.day_start;
-        if (c.day_end != null) out.day_end = c.day_end;
+        // Require both ends of the range - a half-set pair (one field edited, the other
+        // still blank) would reach the site as e.g. "Day 12-null"; just wait for both.
+        if (c.day_start != null && c.day_end != null) { out.day_start = c.day_start; out.day_end = c.day_end; }
         return out;
       }).filter(Boolean);
       if (!chapters.length) continue;
@@ -189,6 +190,12 @@
   const chapter = () => sec() && sec().chapters[state.chapterIdx];
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const pad = n => String(n).padStart(2, '0');
+  const WEEKDAY_SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
+  const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function fmtItinDate(r) {
+    const [, m, d] = r.date.split('-').map(Number);
+    return `${WEEKDAY_SHORT[r.weekday] || r.weekday} ${d} ${MONTHS_SHORT[m - 1]}`;
+  }
   const thumbUrl = (id, size) => Viewer.url(id, size);
   const sectionMeta = slug => {
     for (const g of state.site.groups) for (const s of g.sections) if (s.slug === slug) return s;
@@ -321,6 +328,25 @@
         }).join('')
       : (meta.planned || []).map((name, i) => `
           <li class="pending"><span class="num">${pad(i + 1)}</span><span class="ch-title">${esc(name)}</span><span class="ch-meta">No photos yet</span></li>`).join('');
+    const itin = s && s.itinerary;
+    const itinBlock = itin && itin.length ? `
+      <details class="itinerary-edit">
+        <summary>Itinerary · ${itin.length} days · edit place &amp; activities</summary>
+        <div class="itin-edit-table-wrap">
+          <table class="itin-edit-table">
+            <thead><tr><th>Day</th><th>Date</th><th>Place</th><th>Activities</th></tr></thead>
+            <tbody>
+              ${itin.map((r, i) => `
+              <tr>
+                <td class="it-day">${r.day}</td>
+                <td class="it-date">${esc(fmtItinDate(r))}</td>
+                <td><input type="text" class="itin-place" data-i="${i}" value="${esc(r.place)}"></td>
+                <td><input type="text" class="itin-activities" data-i="${i}" value="${esc(r.activities || '')}"></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </details>` : '';
     const bestOf = s ? s.best_of : [];
     const bestofBlock = s ? `
         <div class="bestof-head">
@@ -344,10 +370,19 @@
         ${s ? `<label class="field section-desc">Journey description
           <textarea id="section-text" rows="5" placeholder="What this journey is about. Shown above the chapter list. Blank line = new paragraph.">${esc(s.text || '')}</textarea>
         </label>` : ''}
+        ${itinBlock}
         ${rows ? `<p class="eyebrow">Chapters${chapters.length ? ' · tick to take a whole chapter on or off the site, independent of which photos in it are public' : ''}</p><ol class="toc">${rows}</ol>` : ''}
       </section>`;
     if (s) {
       $('section-text').addEventListener('input', e => { s.text = e.target.value; setDirty(); });
+      if (itin && itin.length) {
+        $('section-view').querySelectorAll('.itin-place').forEach(inp => {
+          inp.addEventListener('input', e => { itin[+e.target.dataset.i].place = e.target.value; setDirty(); });
+        });
+        $('section-view').querySelectorAll('.itin-activities').forEach(inp => {
+          inp.addEventListener('input', e => { itin[+e.target.dataset.i].activities = e.target.value; setDirty(); });
+        });
+      }
       $('section-view').querySelectorAll('.ch-public-toggle').forEach(cb => {
         cb.addEventListener('change', () => {
           const c = s.chapters.find(x => x.folder_id === cb.dataset.folder);
@@ -398,6 +433,8 @@
     sel.clear(); anchorId = null; pickMode = false; undoStack = [];
     $('chapter-title').value = c.title;
     $('chapter-text').value = c.text || '';
+    $('chapter-day-start').value = c.day_start ?? '';
+    $('chapter-day-end').value = c.day_end ?? '';
     if (!state.viewer) {
       state.viewer = new Viewer($('ed-viewer'), c.photos, {
         fullscreenClick: false,
@@ -809,6 +846,13 @@
       setDirty();
     });
     $('chapter-text').addEventListener('input', e => { chapter().text = e.target.value; setDirty(); });
+    const dayField = (id, key) => $(id).addEventListener('input', e => {
+      const v = e.target.value.trim();
+      chapter()[key] = v === '' ? null : Number(v);
+      setDirty();
+    });
+    dayField('chapter-day-start', 'day_start');
+    dayField('chapter-day-end', 'day_end');
     $('cover-chapter').addEventListener('click', () => { chapter().cover = state.viewer.current.id; state.viewer.refresh(); syncPhotoTools(); setDirty(); });
     $('cover-section').addEventListener('click', () => { sec().cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
     $('cover-home').addEventListener('click', () => { state.data.home_cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });

@@ -77,6 +77,8 @@ def chapter_day_label(itinerary, day_start, day_end):
     day numbers, or nothing at all."""
     if day_start is None:
         return ""
+    if day_end is None:
+        day_end = day_start
     day_bit = f"Day {day_start}" if day_start == day_end else f"Day {day_start}–{day_end}"
     by_day = {r["day"]: r for r in itinerary}
     a, b = by_day.get(day_start), by_day.get(day_end)

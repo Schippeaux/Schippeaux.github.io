@@ -15,7 +15,7 @@ body.editor { --topbar-h: 0px; --reel-h: 112px; --side-w: 260px; }
   font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
 }
 
-input[type=text], input[type=password], textarea, select {
+input[type=text], input[type=number], input[type=password], textarea, select {
   font: 300 14px/1.5 var(--sans); color: var(--fg);
   background: #141414; border: 1px solid var(--rule);
   padding: 9px 11px; width: 100%;
@@ -103,6 +103,31 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
 .toggle input { accent-color: var(--fg); width: 15px; height: 15px; }
 .ed-pos { margin-left: auto; font-size: 12px; color: var(--faint); }
 .ed-chapter { max-width: 900px; }
+.day-range-fields { display: flex; gap: 14px; }
+.day-field { max-width: 120px; }
+
+/* Itinerary editing (on the journey page) */
+.itinerary-edit { margin: 24px 0; border: 1px solid var(--rule); }
+.itinerary-edit summary {
+  padding: 12px 16px; cursor: pointer; font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--muted);
+}
+.itinerary-edit summary:hover { color: var(--fg); }
+.itin-edit-table-wrap { max-height: 60vh; overflow-y: auto; border-top: 1px solid var(--rule); }
+.itin-edit-table { width: 100%; border-collapse: collapse; }
+.itin-edit-table th {
+  position: sticky; top: 0; background: var(--bg); text-align: left;
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
+  padding: 8px 10px; border-bottom: 1px solid var(--rule);
+}
+.itin-edit-table td { padding: 4px 10px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.itin-edit-table td.it-day, .itin-edit-table td.it-date {
+  font: 300 12px/1.5 var(--mono); color: var(--faint); white-space: nowrap;
+}
+.itin-edit-table td.it-day { width: 2.5em; }
+.itin-edit-table input[type=text] { border: none; background: transparent; padding: 7px 4px; }
+.itin-edit-table input[type=text]:focus { background: #141414; border: 1px solid var(--rule); }
+.itin-edit-table td:has(> .itin-place) { width: 22%; }
 
 /* Thumbnail badges */
 .ed-viewer .thumb { opacity: .85; cursor: grab; }
