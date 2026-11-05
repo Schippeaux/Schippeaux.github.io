@@ -228,7 +228,9 @@
        "date": "2025-06-20",
        "desc": ""
       }
-     ]
+     ],
+     "day_start": 1,
+     "day_end": 5
     },
     {
      "slug": "seattle-part-ii",
@@ -307,7 +309,9 @@
        "date": "2025-06-22",
        "desc": "Thank you to the Griswolds for hosting me for a night in their treehouse.  Amazing."
       }
-     ]
+     ],
+     "day_start": 6,
+     "day_end": 9
     },
     {
      "slug": "north-bend",
@@ -407,7 +411,9 @@
        "date": "2025-06-25",
        "desc": "New skill unlocked"
       }
-     ]
+     ],
+     "day_start": 10,
+     "day_end": 11
     },
     {
      "slug": "john-wayne-trail-snoqualmie-pass-ellensburg",
@@ -605,7 +611,9 @@
        "date": "2025-07-01",
        "desc": "Ellensberg"
       }
-     ]
+     ],
+     "day_start": 12,
+     "day_end": 17
     },
     {
      "slug": "ellensburg-to-beverly-dunes",
@@ -726,7 +734,9 @@
        "date": "2025-07-01",
        "desc": "Dusk"
       }
-     ]
+     ],
+     "day_start": 18,
+     "day_end": 18
     },
     {
      "slug": "beverly-dunes-to-ancient-lakes",
@@ -791,7 +801,9 @@
        "date": "2025-07-04",
        "desc": ""
       }
-     ]
+     ],
+     "day_start": 19,
+     "day_end": 20
     }
    ],
    "best_of": [
@@ -806,7 +818,743 @@
     "1x06FTu_MIK-tg9hPW3nlfHJmvdK21NkW",
     "1FkohD15XoUciBaH8gfN4tjslxHpfI3DW",
     "1JqWWHhkYEQerfCsdvb5d1R-nQZlbN_bU"
-   ]
+   ],
+   "itinerary": [
+    {
+     "day": 1,
+     "weekday": "Saturday",
+     "date": "2025-06-14",
+     "place": "Seattle",
+     "activities": "",
+     "lat": 47.6062,
+     "lon": -122.3321
+    },
+    {
+     "day": 2,
+     "weekday": "Sunday",
+     "date": "2025-06-15",
+     "place": "Seattle",
+     "activities": "",
+     "lat": 47.6062,
+     "lon": -122.3321
+    },
+    {
+     "day": 3,
+     "weekday": "Monday",
+     "date": "2025-06-16",
+     "place": "Oak Bay Campground",
+     "activities": ""
+    },
+    {
+     "day": 4,
+     "weekday": "Tuesday",
+     "date": "2025-06-17",
+     "place": "Salish Trails RV & Campground Park",
+     "activities": ""
+    },
+    {
+     "day": 5,
+     "weekday": "Wednesday",
+     "date": "2025-06-18",
+     "place": "Lake Crescent",
+     "activities": "",
+     "lat": 48.0575,
+     "lon": -123.8249
+    },
+    {
+     "day": 6,
+     "weekday": "Thursday",
+     "date": "2025-06-19",
+     "place": "Poulsbo",
+     "activities": "",
+     "lat": 47.7368,
+     "lon": -122.6467
+    },
+    {
+     "day": 7,
+     "weekday": "Friday",
+     "date": "2025-06-20",
+     "place": "Port Orchard",
+     "activities": ""
+    },
+    {
+     "day": 8,
+     "weekday": "Saturday",
+     "date": "2025-06-21",
+     "place": "Vashon Island",
+     "activities": ""
+    },
+    {
+     "day": 9,
+     "weekday": "Sunday",
+     "date": "2025-06-22",
+     "place": "Bellevue",
+     "activities": "Warm Showers host"
+    },
+    {
+     "day": 10,
+     "weekday": "Monday",
+     "date": "2025-06-23",
+     "place": "North Bend",
+     "activities": "Warm Showers host",
+     "lat": 47.4945,
+     "lon": -121.7868
+    },
+    {
+     "day": 11,
+     "weekday": "Tuesday",
+     "date": "2025-06-24",
+     "place": "North Bend",
+     "activities": "Warm Showers host",
+     "lat": 47.4945,
+     "lon": -121.7868
+    },
+    {
+     "day": 12,
+     "weekday": "Wednesday",
+     "date": "2025-06-25",
+     "place": "Carter Creek Campground",
+     "activities": ""
+    },
+    {
+     "day": 13,
+     "weekday": "Thursday",
+     "date": "2025-06-26",
+     "place": "Roaring Creek Campground",
+     "activities": ""
+    },
+    {
+     "day": 14,
+     "weekday": "Friday",
+     "date": "2025-06-27",
+     "place": "Wish Poosh Campground",
+     "activities": ""
+    },
+    {
+     "day": 15,
+     "weekday": "Saturday",
+     "date": "2025-06-28",
+     "place": "Ponderosa Campground",
+     "activities": ""
+    },
+    {
+     "day": 16,
+     "weekday": "Sunday",
+     "date": "2025-06-29",
+     "place": "Ponderosa Campground",
+     "activities": ""
+    },
+    {
+     "day": 17,
+     "weekday": "Monday",
+     "date": "2025-06-30",
+     "place": "Ellensburg",
+     "activities": "",
+     "lat": 46.9965,
+     "lon": -120.5478
+    },
+    {
+     "day": 18,
+     "weekday": "Tuesday",
+     "date": "2025-07-01",
+     "place": "Beverly Dunes Campground",
+     "activities": "",
+     "lat": 46.82985,
+     "lon": -119.89648
+    },
+    {
+     "day": 19,
+     "weekday": "Wednesday",
+     "date": "2025-07-02",
+     "place": "Hotel",
+     "activities": "Long stretch from the Dunes through farms"
+    },
+    {
+     "day": 20,
+     "weekday": "Thursday",
+     "date": "2025-07-03",
+     "place": "Ancient Lakes",
+     "activities": "Gorge Amphitheatre",
+     "lat": 47.2152,
+     "lon": -119.8716
+    },
+    {
+     "day": 21,
+     "weekday": "Friday",
+     "date": "2025-07-04",
+     "place": "The Gorge Amphitheatre",
+     "activities": "Tipper & Friends",
+     "lat": 47.0975,
+     "lon": -119.9847
+    },
+    {
+     "day": 22,
+     "weekday": "Saturday",
+     "date": "2025-07-05",
+     "place": "The Gorge Amphitheatre",
+     "activities": "Tipper & Friends",
+     "lat": 47.0975,
+     "lon": -119.9847
+    },
+    {
+     "day": 23,
+     "weekday": "Sunday",
+     "date": "2025-07-06",
+     "place": "The Gorge Amphitheatre",
+     "activities": "Tipper & Friends",
+     "lat": 47.0975,
+     "lon": -119.9847
+    },
+    {
+     "day": 24,
+     "weekday": "Monday",
+     "date": "2025-07-07",
+     "place": "The Dalles",
+     "activities": "",
+     "lat": 45.5946,
+     "lon": -121.1787
+    },
+    {
+     "day": 25,
+     "weekday": "Tuesday",
+     "date": "2025-07-08",
+     "place": "Hood River",
+     "activities": "Tucker County Park",
+     "lat": 45.65128,
+     "lon": -121.56081
+    },
+    {
+     "day": 26,
+     "weekday": "Wednesday",
+     "date": "2025-07-09",
+     "place": "Wild Camp By Creek",
+     "activities": ""
+    },
+    {
+     "day": 27,
+     "weekday": "Thursday",
+     "date": "2025-07-10",
+     "place": "McNeil Campground",
+     "activities": "",
+     "lat": 45.38513,
+     "lon": -121.86747
+    },
+    {
+     "day": 28,
+     "weekday": "Friday",
+     "date": "2025-07-11",
+     "place": "McNeil Campground",
+     "activities": "",
+     "lat": 45.38513,
+     "lon": -121.86747
+    },
+    {
+     "day": 29,
+     "weekday": "Saturday",
+     "date": "2025-07-12",
+     "place": "Gresham",
+     "activities": "Staying at Ross' cousin's"
+    },
+    {
+     "day": 30,
+     "weekday": "Sunday",
+     "date": "2025-07-13",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 31,
+     "weekday": "Monday",
+     "date": "2025-07-14",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 32,
+     "weekday": "Tuesday",
+     "date": "2025-07-15",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 33,
+     "weekday": "Wednesday",
+     "date": "2025-07-16",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 34,
+     "weekday": "Thursday",
+     "date": "2025-07-17",
+     "place": "Chicago",
+     "activities": "Unity Temple. Father John Misty",
+     "lat": 41.8781,
+     "lon": -87.6298
+    },
+    {
+     "day": 35,
+     "weekday": "Friday",
+     "date": "2025-07-18",
+     "place": "Chicago",
+     "activities": "River Cruise. The Rookery",
+     "lat": 41.8781,
+     "lon": -87.6298
+    },
+    {
+     "day": 36,
+     "weekday": "Saturday",
+     "date": "2025-07-19",
+     "place": "Chicago",
+     "activities": "Phish",
+     "lat": 41.8781,
+     "lon": -87.6298
+    },
+    {
+     "day": 37,
+     "weekday": "Sunday",
+     "date": "2025-07-20",
+     "place": "Chicago",
+     "activities": "Phish",
+     "lat": 41.8781,
+     "lon": -87.6298
+    },
+    {
+     "day": 38,
+     "weekday": "Monday",
+     "date": "2025-07-21",
+     "place": "Chicago",
+     "activities": "Bike cruise around Lake Michigan. Fly to Portland, PDX 11:04pm",
+     "lat": 41.8781,
+     "lon": -87.6298
+    },
+    {
+     "day": 39,
+     "weekday": "Tuesday",
+     "date": "2025-07-22",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 40,
+     "weekday": "Wednesday",
+     "date": "2025-07-23",
+     "place": "Portland",
+     "activities": "Hire car",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 41,
+     "weekday": "Thursday",
+     "date": "2025-07-24",
+     "place": "Bend, Oregon",
+     "activities": "",
+     "lat": 44.0582,
+     "lon": -121.3153
+    },
+    {
+     "day": 42,
+     "weekday": "Friday",
+     "date": "2025-07-25",
+     "place": "Crater Lake",
+     "activities": "",
+     "lat": 42.8683,
+     "lon": -122.169
+    },
+    {
+     "day": 43,
+     "weekday": "Saturday",
+     "date": "2025-07-26",
+     "place": "Fort Sage OHV",
+     "activities": "Near Honey Lake, California",
+     "lat": 40.0141,
+     "lon": -120.1321
+    },
+    {
+     "day": 44,
+     "weekday": "Sunday",
+     "date": "2025-07-27",
+     "place": "Reno, Nevada",
+     "activities": "",
+     "lat": 39.4285,
+     "lon": -119.7897
+    },
+    {
+     "day": 45,
+     "weekday": "Monday",
+     "date": "2025-07-28",
+     "place": "Lake Tahoe",
+     "activities": "En route to Yosemite NP, California",
+     "lat": 38.9399,
+     "lon": -119.9772
+    },
+    {
+     "day": 46,
+     "weekday": "Tuesday",
+     "date": "2025-07-29",
+     "place": "Yosemite NP, California",
+     "activities": "",
+     "lat": 37.749,
+     "lon": -119.5866
+    },
+    {
+     "day": 47,
+     "weekday": "Wednesday",
+     "date": "2025-07-30",
+     "place": "Yosemite NP, California",
+     "activities": "The road to Zion",
+     "lat": 37.749,
+     "lon": -119.5866
+    },
+    {
+     "day": 48,
+     "weekday": "Thursday",
+     "date": "2025-07-31",
+     "place": "Zion NP, Utah",
+     "activities": "Chill day",
+     "lat": 37.2018,
+     "lon": -112.9884
+    },
+    {
+     "day": 49,
+     "weekday": "Friday",
+     "date": "2025-08-01",
+     "place": "Bryce Canyon, Utah",
+     "activities": "Zion NP",
+     "lat": 37.6301,
+     "lon": -112.1651
+    },
+    {
+     "day": 50,
+     "weekday": "Saturday",
+     "date": "2025-08-02",
+     "place": "Moab, Utah",
+     "activities": "Bryce Canyon. Goblin Valley",
+     "lat": 38.5733,
+     "lon": -109.5508
+    },
+    {
+     "day": 51,
+     "weekday": "Sunday",
+     "date": "2025-08-03",
+     "place": "Valley of the Gods, Utah",
+     "activities": "Moab NP",
+     "lat": 37.2674,
+     "lon": -109.8226
+    },
+    {
+     "day": 52,
+     "weekday": "Monday",
+     "date": "2025-08-04",
+     "place": "Monument Valley, Utah",
+     "activities": "Grand Canyon"
+    },
+    {
+     "day": 53,
+     "weekday": "Tuesday",
+     "date": "2025-08-05",
+     "place": "Grand Canyon",
+     "activities": "Mojave Desert",
+     "lat": 34.4214,
+     "lon": -115.9199
+    },
+    {
+     "day": 54,
+     "weekday": "Wednesday",
+     "date": "2025-08-06",
+     "place": "Palm Springs",
+     "activities": ""
+    },
+    {
+     "day": 55,
+     "weekday": "Thursday",
+     "date": "2025-08-07",
+     "place": "Mammoth Lakes",
+     "activities": ""
+    },
+    {
+     "day": 56,
+     "weekday": "Friday",
+     "date": "2025-08-08",
+     "place": "Black Rock Playa",
+     "activities": "",
+     "lat": 40.7539,
+     "lon": -119.2774
+    },
+    {
+     "day": 57,
+     "weekday": "Saturday",
+     "date": "2025-08-09",
+     "place": "Pyramid Lake",
+     "activities": "",
+     "lat": 39.881,
+     "lon": -119.5064
+    },
+    {
+     "day": 58,
+     "weekday": "Sunday",
+     "date": "2025-08-10",
+     "place": "Pyramid Lake",
+     "activities": "",
+     "lat": 39.881,
+     "lon": -119.5064
+    },
+    {
+     "day": 59,
+     "weekday": "Monday",
+     "date": "2025-08-11",
+     "place": "Mount Shasta",
+     "activities": "",
+     "lat": 41.3099,
+     "lon": -122.3106
+    },
+    {
+     "day": 60,
+     "weekday": "Tuesday",
+     "date": "2025-08-12",
+     "place": "Portland",
+     "activities": "Arrived back",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 61,
+     "weekday": "Wednesday",
+     "date": "2025-08-13",
+     "place": "Portland",
+     "activities": "Returned the hire car",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 62,
+     "weekday": "Thursday",
+     "date": "2025-08-14",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 63,
+     "weekday": "Friday",
+     "date": "2025-08-15",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 64,
+     "weekday": "Saturday",
+     "date": "2025-08-16",
+     "place": "Portland",
+     "activities": "",
+     "lat": 45.5152,
+     "lon": -122.6784
+    },
+    {
+     "day": 65,
+     "weekday": "Sunday",
+     "date": "2025-08-17",
+     "place": "Amtrak to Klamath Falls",
+     "activities": "2:22pm - 10pm, 8 hrs"
+    },
+    {
+     "day": 66,
+     "weekday": "Monday",
+     "date": "2025-08-18",
+     "place": "Crescent City",
+     "activities": "Klamath Falls to Crescent City by Point bus, 10am-4:45pm, 7 hrs",
+     "lat": 41.3591,
+     "lon": -124.0293
+    },
+    {
+     "day": 67,
+     "weekday": "Tuesday",
+     "date": "2025-08-19",
+     "place": "Flint Ridge Camp",
+     "activities": "Crescent City to Flint Ridge, near the Klamath River",
+     "lat": 41.5271,
+     "lon": -124.0791
+    },
+    {
+     "day": 68,
+     "weekday": "Wednesday",
+     "date": "2025-08-20",
+     "place": "Gold Bluffs Beach",
+     "activities": "",
+     "lat": 41.3838,
+     "lon": -124.0685
+    },
+    {
+     "day": 69,
+     "weekday": "Thursday",
+     "date": "2025-08-21",
+     "place": "Big Lagoon County Park",
+     "activities": ""
+    },
+    {
+     "day": 70,
+     "weekday": "Friday",
+     "date": "2025-08-22",
+     "place": "Eureka",
+     "activities": "",
+     "lat": 40.8049,
+     "lon": -124.1576
+    },
+    {
+     "day": 71,
+     "weekday": "Saturday",
+     "date": "2025-08-23",
+     "place": "Burlington Campground",
+     "activities": "",
+     "lat": 40.3082,
+     "lon": -123.9077
+    },
+    {
+     "day": 72,
+     "weekday": "Sunday",
+     "date": "2025-08-24",
+     "place": "Burlington Campground",
+     "activities": "",
+     "lat": 40.3082,
+     "lon": -123.9077
+    },
+    {
+     "day": 73,
+     "weekday": "Monday",
+     "date": "2025-08-25",
+     "place": "Huckleberry Campground",
+     "activities": "Ross flies out",
+     "lat": 40.0227,
+     "lon": -123.7942
+    },
+    {
+     "day": 74,
+     "weekday": "Tuesday",
+     "date": "2025-08-26",
+     "place": "Pinewood Campground",
+     "activities": "",
+     "lat": 39.491,
+     "lon": -123.7899
+    },
+    {
+     "day": 75,
+     "weekday": "Wednesday",
+     "date": "2025-08-27",
+     "place": "Navarro River",
+     "activities": "Warm Showers host",
+     "lat": 39.1881,
+     "lon": -123.7424
+    },
+    {
+     "day": 76,
+     "weekday": "Thursday",
+     "date": "2025-08-28",
+     "place": "Gualala Point Campground",
+     "activities": "",
+     "lat": 38.7637,
+     "lon": -123.516
+    },
+    {
+     "day": 77,
+     "weekday": "Friday",
+     "date": "2025-08-29",
+     "place": "Camp Taylor",
+     "activities": "",
+     "lat": 38.0201,
+     "lon": -122.7341
+    },
+    {
+     "day": 78,
+     "weekday": "Saturday",
+     "date": "2025-08-30",
+     "place": "Camp Taylor",
+     "activities": "Marin Museum of Bicycling. Repack Hill",
+     "lat": 38.0201,
+     "lon": -122.7341
+    },
+    {
+     "day": 79,
+     "weekday": "Sunday",
+     "date": "2025-08-31",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 80,
+     "weekday": "Monday",
+     "date": "2025-09-01",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 81,
+     "weekday": "Tuesday",
+     "date": "2025-09-02",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 82,
+     "weekday": "Wednesday",
+     "date": "2025-09-03",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 83,
+     "weekday": "Thursday",
+     "date": "2025-09-04",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 84,
+     "weekday": "Friday",
+     "date": "2025-09-05",
+     "place": "San Francisco",
+     "activities": ""
+    },
+    {
+     "day": 85,
+     "weekday": "Saturday",
+     "date": "2025-09-06",
+     "place": "San Francisco",
+     "activities": "Left the USA"
+    },
+    {
+     "day": 86,
+     "weekday": "Sunday",
+     "date": "2025-09-07",
+     "place": "Buenos Aires, Argentina",
+     "activities": ""
+    }
+   ],
+   "flight": {
+    "from": [
+     45.5152,
+     -122.6784
+    ],
+    "from_label": "Portland",
+    "to": [
+     41.8781,
+     -87.6298
+    ],
+    "to_label": "Chicago"
+   }
   }
  }
 }
