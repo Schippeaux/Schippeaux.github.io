@@ -98,7 +98,13 @@
   }
 
   // ---------- data ----------
+  // Inbox batches come in two kinds: the original photo batches from tools/drive_index.py
+  // (no "kind" field, run on Ciaran's own machine with Drive access) and itinerary batches
+  // (kind: "itinerary") built the same way - encrypted with data/inbox-key.pem - for seeding
+  // trip-day/place data that doesn't need Drive access at all. Both merge the same way: new
+  // inbox files are picked up and merged on the next editor login (see unlock()).
   function mergeBatch(batch) {
+    if (batch.kind === 'itinerary') return mergeItineraryBatch(batch);
     const sec = state.data.sections[batch.section] ??= { cover: null, chapters: [], best_of: [] };
     if (!sec.cover && batch.cover) sec.cover = batch.cover;
     for (const ch of batch.chapters) {
@@ -118,6 +124,24 @@
     sec.chapters.sort((a, b) => a.number - b.number);
   }
 
+  // Seeds (or replaces) a journey's day-by-day itinerary table, and tags existing chapters
+  // with a day range by slug (a chapter's slug is fixed once created, unlike its title - see
+  // CLAUDE.md). A full-table replace is fine here since this only ever runs once, before any
+  // live edits exist to clobber; if a correction batch is ever sent after Ciaran has edited
+  // the itinerary live, it would overwrite those edits, so that's a one-way door to use with
+  // care, not a general sync mechanism.
+  function mergeItineraryBatch(batch) {
+    const sec = state.data.sections[batch.section] ??= { cover: null, chapters: [], best_of: [] };
+    if (batch.itinerary) sec.itinerary = batch.itinerary;
+    if (batch.flight) sec.flight = batch.flight;
+    if (batch.chapter_days) {
+      for (const c of sec.chapters) {
+        const d = batch.chapter_days[c.slug];
+        if (d) Object.assign(c, { day_start: d.day_start, day_end: d.day_end });
+      }
+    }
+  }
+
   function publicData() {
     const out = { sections: {} };
     for (const [slug, sec] of Object.entries(state.data.sections)) {
@@ -126,13 +150,20 @@
         const photos = c.photos.filter(p => p.public).map(({ id, w, h, date, desc }) => ({ id, w, h, date, desc: desc || '' }));
         if (!photos.length) return null;
         const cover = photos.some(p => p.id === c.cover) ? c.cover : photos[0].id;
-        return { slug: c.slug, number: c.number, title: c.title, text: c.text || '', cover, photos };
+        const out = { slug: c.slug, number: c.number, title: c.title, text: c.text || '', cover, photos };
+        if (c.day_start != null) out.day_start = c.day_start;
+        if (c.day_end != null) out.day_end = c.day_end;
+        return out;
       }).filter(Boolean);
       if (!chapters.length) continue;
       const all = chapters.flatMap(c => c.photos);
       const bestOf = (sec.best_of || []).filter(id => all.some(p => p.id === id));
       out.sections[slug] = { cover: all.some(p => p.id === sec.cover) ? sec.cover : chapters[0].cover, text: sec.text || '', chapters };
       if (bestOf.length) out.sections[slug].best_of = bestOf;
+      // Itinerary/flight aren't gated on any chapter's public flag like photos are - once
+      // typed in, they're trip-level facts (dates, places), not something with a hide toggle.
+      if (sec.itinerary && sec.itinerary.length) out.sections[slug].itinerary = sec.itinerary;
+      if (sec.flight) out.sections[slug].flight = sec.flight;
     }
     // Homepage cover only if that photo is public; otherwise the build falls back to a section cover
     const publicIds = new Set(Object.values(out.sections).flatMap(s => s.chapters.flatMap(c => c.photos.map(p => p.id))));

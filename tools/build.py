@@ -59,6 +59,33 @@ def find(photos, file_id):
     return next((p for p in photos if p["id"] == file_id), photos[0])
 
 
+def _date_span(da, db):
+    """'18 June 2025' or '25 – 30 June 2025' or '29 Jun – 2 Jul 2025' etc."""
+    if da == db:
+        return f"{da.day} {MONTHS[da.month - 1]} {da.year}"
+    if (da.year, da.month) == (db.year, db.month):
+        return f"{da.day}–{db.day} {MONTHS[da.month - 1]} {da.year}"
+    if da.year == db.year:
+        return f"{da.day} {MONTHS[da.month - 1][:3]} – {db.day} {MONTHS[db.month - 1][:3]} {da.year}"
+    return f"{da.day} {MONTHS[da.month - 1][:3]} {da.year} – {db.day} {MONTHS[db.month - 1][:3]} {db.year}"
+
+
+def chapter_day_label(itinerary, day_start, day_end):
+    """'Day 12 – 17 · 25 – 30 June 2025' near a chapter's title, from the day range the
+    editor records on the chapter plus the journey's own itinerary table (for the actual
+    calendar dates) - either piece can be missing, so this degrades gracefully to just the
+    day numbers, or nothing at all."""
+    if day_start is None:
+        return ""
+    day_bit = f"Day {day_start}" if day_start == day_end else f"Day {day_start}–{day_end}"
+    by_day = {r["day"]: r for r in itinerary}
+    a, b = by_day.get(day_start), by_day.get(day_end)
+    if not a or not b:
+        return day_bit
+    date_bit = _date_span(date.fromisoformat(a["date"]), date.fromisoformat(b["date"]))
+    return f"{day_bit} · {date_bit}"
+
+
 def paragraphs(text):
     return "".join(f"<p>{escape(p.strip())}</p>" for p in text.split("\n\n") if p.strip())
 
@@ -92,6 +119,7 @@ def page(title, body, extra_head="", body_class=""):
   <script src="{asset('/assets/viewer.js')}" defer></script>
   <script src="{asset('/assets/site.js')}" defer></script>
   <script src="{asset('/assets/map.js')}" defer></script>
+  <script src="{asset('/assets/itinerary-map.js')}" defer></script>
 </body>
 </html>
 """
@@ -112,7 +140,9 @@ def load_section(group, section):
     s = {**section, "group": group["slug"], "chapters": chapters, "photos": photos, "text": pub.get("text", ""),
          "cover_photo": find(photos, pub.get("cover")) if photos else None,
          "best_of": best_of,
-         "planned": section.get("planned", [])}
+         "planned": section.get("planned", []),
+         "itinerary": pub.get("itinerary", []),
+         "flight": pub.get("flight")}
     s["base"] = f"/{group['slug']}/{section['slug']}/"
     s["url"] = f"{s['base']}{chapters[0]['slug']}/" if len(chapters) == 1 else s["base"]
     return s
@@ -226,11 +256,65 @@ def build_section(s):
     toc = f'<p class="eyebrow">Contents</p>\n    <ol class="toc">{rows}\n    </ol>' if rows else ""
     text = paragraphs(s.get("text") or "")
     intro = f'<div class="section-text">{text}</div>\n    ' if text else ""
+    itinerary_btn = (f'<a class="btn-itinerary" href="{s["base"]}itinerary/">Day-by-day itinerary</a>\n    '
+                      if s["itinerary"] else "")
     body = f"""{head}
   <section class="contents">
-    {intro}{toc}
+    {intro}{itinerary_btn}{toc}
   </section>{best_of_script}"""
     write(path, page(s["title"], body, body_class="section-page"))
+
+
+def build_itinerary(s):
+    itinerary = s["itinerary"]
+    if not itinerary:
+        return
+    # One marker per distinct pinned location, carrying every day logged there (in order) -
+    # a multi-night stop like Chicago or The Gorge shows each day's own activities on hover,
+    # not just a blurred-together summary. Days with no lat/lon (most campgrounds along the
+    # way - see chat for why) simply don't get a dot, same as the itinerary table's intent.
+    markers = []
+    by_coord = {}
+    for r in itinerary:
+        if "lat" not in r:
+            continue
+        key = (r["lat"], r["lon"])
+        m = by_coord.get(key)
+        if not m:
+            m = {"lat": r["lat"], "lon": r["lon"], "place": r["place"], "entries": []}
+            by_coord[key] = m
+            markers.append(m)
+        m["entries"].append({"day": r["day"], "weekday": r["weekday"], "date": r["date"], "activities": r["activities"]})
+
+    rows = "".join(f"""
+      <tr>
+        <td class="it-day">{r['day']}</td>
+        <td class="it-date">{escape(date.fromisoformat(r['date']).strftime('%a %-d %b'))}</td>
+        <td class="it-place">{escape(r['place'])}</td>
+        <td class="it-activities">{escape(r['activities'])}</td>
+      </tr>""" for r in itinerary)
+
+    span = _date_span(date.fromisoformat(itinerary[0]["date"]), date.fromisoformat(itinerary[-1]["date"]))
+    map_data = {"markers": markers}
+    if s.get("flight"):
+        map_data["flight"] = s["flight"]
+    map_script = f'\n  <script type="application/json" id="itinerary-data">{json.dumps(map_data, ensure_ascii=False).replace("</", "<\\/")}</script>'
+
+    body = f"""  <header class="page-head">
+    <p class="eyebrow"><a href="{s['base']}">{escape(s['title'])}</a> · Itinerary</p>
+    <h1>{len(itinerary)} days</h1>
+    <p class="status">{span}</p>
+  </header>
+  <section class="contents itinerary-page">
+    <aside class="itinerary-map" id="itinerary-map"></aside>
+    <table class="itinerary-table">
+      <thead><tr><th>Day</th><th>Date</th><th>Place</th><th>Activities</th></tr></thead>
+      <tbody>{rows}
+      </tbody>
+    </table>
+  </section>{map_script}"""
+    write(f"{s['group']}/{s['slug']}/itinerary/index.html",
+          page(f"Itinerary · {s['title']}", body, body_class="itinerary"))
 
 
 def route_payload(s, idx):
@@ -325,11 +409,14 @@ def build_chapter(s, idx):
   <section class="chapter-info">
     {top_row}{nav}
   </section>{route_script}""" if text or nav or route else "")
+    day_label = chapter_day_label(s["itinerary"], c.get("day_start"), c.get("day_end"))
+    day_html = f'<p class="chapter-days">{escape(day_label)}</p>' if day_label else ''
     body = f"""  <div class="chapter-top">
     <header class="chapter-bar">
       <div class="chapter-name">
         <p class="eyebrow">{crumb}</p>
         <h1>{escape(title)}</h1>
+        {day_html}
       </div>
       <p class="meta">{date_range(c['photos'])} · {len(photos)} photographs</p>
     </header>
@@ -355,7 +442,11 @@ def main():
         prune(ROOT / g["slug"], {s["slug"] for s in g["sections"]})
         for s in g["sections"]:
             build_section(s)
-            prune(ROOT / g["slug"] / s["slug"], {c["slug"] for c in s["chapters"]})
+            build_itinerary(s)
+            keep = {c["slug"] for c in s["chapters"]}
+            if s["itinerary"]:
+                keep.add("itinerary")
+            prune(ROOT / g["slug"] / s["slug"], keep)
             for i in range(len(s["chapters"])):
                 build_chapter(s, i)
             print(f"{g['slug']}/{s['slug']}: {len(s['chapters'])} chapters, {len(s['photos'])} photos")
