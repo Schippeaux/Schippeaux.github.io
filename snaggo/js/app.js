@@ -552,7 +552,7 @@ async function renderAudioList(defectId, clips) {
     const placeholder = hasTranscript
       ? ''
       : clip.transcriptNote
-      ? `${clip.transcriptNote} — add a transcript manually, or transcribe this clip on the PC later.`
+      ? clip.transcriptNote
       : 'No live transcript captured — add one manually, or transcribe this clip on the PC later.';
     const item = el(`
       <li class="audio-item">
@@ -649,7 +649,7 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim
           : 'No speech was recognised during this recording';
       }
     } else {
-      transcriptNote = "Live transcript isn't supported on this browser";
+      transcriptNote = "This browser has no built-in speech recognition — tap this box and use your keyboard's own dictation mic";
     }
     transcriber = null;
     const { blob, mimeType } = await recorder.stop();
@@ -670,7 +670,7 @@ function wireRecordButton(defectId) {
         preview.classList.remove('live-transcript-error');
         preview.textContent = Media.isSpeechRecognitionSupported()
           ? 'Listening…'
-          : "Recording (live transcript isn't supported on this device — audio only)";
+          : 'Recording — this browser has no built-in speech recognition, so this clip will be audio only (tap the transcript box after stopping to dictate with your keyboard instead)';
       }
     },
     onInterim: (finalText, interim) => {
@@ -690,6 +690,22 @@ function wireRecordButton(defectId) {
     onStop: () => {
       if (preview) preview.hidden = true;
     },
-    onSaved: () => renderDefectDetail(defectId),
+    onSaved: async () => {
+      await renderDefectDetail(defectId);
+      // No live transcript on this browser (e.g. iOS Safari, which has no
+      // SpeechRecognition API at all — not something a web page can add).
+      // The closest we can get to "one button": jump straight to the new
+      // clip's transcript box so the keyboard — with its own dictation mic
+      // — is already up, ready for a single tap instead of having to find
+      // and tap into the field first.
+      if (!Media.isSpeechRecognitionSupported()) {
+        const boxes = document.querySelectorAll('.audio-transcript');
+        const last = boxes[boxes.length - 1];
+        if (last) {
+          last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          last.focus();
+        }
+      }
+    },
   });
 }

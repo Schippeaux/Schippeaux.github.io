@@ -7,4 +7,4 @@
 // CACHE_NAME to the same value in the same commit — that second part is
 // what actually forces the service worker to fetch fresh files; see the
 // comment at the top of sw.js.
-const SNAGGO_VERSION = '2026-11-06.3';
+const SNAGGO_VERSION = '2026-11-06.4';
