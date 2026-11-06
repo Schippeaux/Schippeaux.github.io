@@ -40,6 +40,24 @@ async function render() {
 
 // ---- helpers -----------------------------------------------------------
 
+function describeSpeechError(code) {
+  switch (code) {
+    case 'not-allowed':
+    case 'service-not-allowed':
+      return 'Microphone/speech permission was blocked for this page';
+    case 'network':
+      return 'No network — live transcription needs a connection';
+    case 'audio-capture':
+      return "Couldn't access the microphone for speech recognition";
+    case 'aborted':
+      return 'Speech recognition was interrupted';
+    case 'language-not-supported':
+      return "This device's speech service doesn't support the current language";
+    default:
+      return `Live transcription failed (${code})`;
+  }
+}
+
 function splitDefectCode(id) {
   const idx = id.lastIndexOf('-');
   return { roomCode: id.slice(0, idx), number: id.slice(idx + 1) };
@@ -376,6 +394,9 @@ async function renderAreaDetail(areaId) {
 
     wireInlineRecorder(row.querySelector('.record-btn'), defect.id, {
       onSaved: () => toast(`Dictation saved to ${defect.id}`),
+      onError: (code) => {
+        if (code !== 'unsupported') toast(describeSpeechError(code) + ' — still recording audio');
+      },
     });
 
     row.querySelector('.comment-btn').addEventListener('click', async (e) => {
@@ -528,14 +549,19 @@ async function renderAudioList(defectId, clips) {
     const url = URL.createObjectURL(clip.blob);
     const when = new Date(clip.createdAt).toLocaleString();
     const hasTranscript = !!(clip.transcriptRaw || '').trim();
+    const placeholder = hasTranscript
+      ? ''
+      : clip.transcriptNote
+      ? `${clip.transcriptNote} — add a transcript manually, or transcribe this clip on the PC later.`
+      : 'No live transcript captured — add one manually, or transcribe this clip on the PC later.';
     const item = el(`
       <li class="audio-item">
+        <audio controls src="${url}" class="audio-player"></audio>
         <div class="audio-item-row">
-          <audio controls src="${url}"></audio>
           <span class="audio-meta">Dictation ${i + 1} · ${escapeHtml(when)}</span>
           <button class="row-delete" title="Delete">&times;</button>
         </div>
-        <textarea class="audio-transcript" rows="2" placeholder="${hasTranscript ? '' : 'No live transcript captured — add one manually, or transcribe this clip on the PC later.'}">${escapeHtml(clip.transcriptRaw || '')}</textarea>
+        <textarea class="audio-transcript" rows="2" placeholder="${escapeHtml(placeholder)}">${escapeHtml(clip.transcriptRaw || '')}</textarea>
         <div class="audio-transcript-actions">
           <button class="btn-link save-transcript">Save</button>
           <button class="btn-link add-to-comments">Add to comments</button>
@@ -576,7 +602,7 @@ async function renderAudioList(defectId, clips) {
 // defect list. Runs audio capture and the phone's own live dictation side
 // by side where dictation is supported — one button instead of "record
 // audio" and "transcribe it" as separate steps.
-function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim } = {}) {
+function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim, onError } = {}) {
   let recorder = null;
   let transcriber = null;
 
@@ -590,9 +616,16 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim
         btn.classList.add('recording');
         if (Media.isSpeechRecognitionSupported()) {
           transcriber = Media.createLiveTranscriber();
-          transcriber.start((finalText, interim) => {
-            if (onInterim) onInterim(finalText, interim);
-          });
+          transcriber.start(
+            (finalText, interim) => {
+              if (onInterim) onInterim(finalText, interim);
+            },
+            (errorCode) => {
+              if (onError) onError(errorCode);
+            }
+          );
+        } else if (onError) {
+          onError('unsupported');
         }
         if (onStart) onStart(btn);
       } catch (err) {
@@ -603,10 +636,24 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim
     }
     btn.disabled = true;
     if (onStop) onStop(btn);
-    const transcriptRaw = transcriber ? transcriber.stop() : '';
+    let transcriptRaw = '';
+    let transcriptNote = '';
+    if (transcriber) {
+      const result = transcriber.stop();
+      transcriptRaw = result.text;
+      if (!transcriptRaw) {
+        transcriptNote = result.lastError
+          ? describeSpeechError(result.lastError)
+          : result.sawResult
+          ? '' // got results but they were empty/silence — leave note blank
+          : 'No speech was recognised during this recording';
+      }
+    } else {
+      transcriptNote = "Live transcript isn't supported on this browser";
+    }
     transcriber = null;
     const { blob, mimeType } = await recorder.stop();
-    await Snaggo.addAudio(defectId, blob, mimeType, transcriptRaw);
+    await Snaggo.addAudio(defectId, blob, mimeType, transcriptRaw, transcriptNote);
     recorder = null;
     if (onSaved) await onSaved();
   });
@@ -620,13 +667,25 @@ function wireRecordButton(defectId) {
       b.textContent = '■ Stop';
       if (preview) {
         preview.hidden = false;
+        preview.classList.remove('live-transcript-error');
         preview.textContent = Media.isSpeechRecognitionSupported()
           ? 'Listening…'
           : "Recording (live transcript isn't supported on this device — audio only)";
       }
     },
     onInterim: (finalText, interim) => {
-      if (preview) preview.textContent = [finalText, interim].filter(Boolean).join(' ') || 'Listening…';
+      if (preview && !preview.classList.contains('live-transcript-error')) {
+        preview.textContent = [finalText, interim].filter(Boolean).join(' ') || 'Listening…';
+      }
+    },
+    onError: (code) => {
+      if (preview) {
+        preview.classList.add('live-transcript-error');
+        preview.textContent =
+          code === 'unsupported'
+            ? "Recording (live transcript isn't supported on this device — audio only)"
+            : describeSpeechError(code) + ' — still recording audio';
+      }
     },
     onStop: () => {
       if (preview) preview.hidden = true;

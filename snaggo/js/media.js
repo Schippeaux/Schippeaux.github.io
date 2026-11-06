@@ -116,8 +116,12 @@ const Media = {
     let finalText = '';
     let active = false;
     let onInterim = null;
+    let onErrorCb = null;
+    let sawResult = false;
+    let lastError = null;
 
     recognition.addEventListener('result', (e) => {
+      sawResult = true;
       let interim = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const res = e.results[i];
@@ -143,14 +147,25 @@ const Media = {
       }
     });
 
-    recognition.addEventListener('error', () => {
-      /* 'no-speech' / 'aborted' etc. — the 'end' handler decides whether to restart */
+    recognition.addEventListener('error', (e) => {
+      // 'no-speech' fires routinely on any gap in talking — not a real
+      // error, the 'end' handler just restarts listening. Everything
+      // else (not-allowed, network, audio-capture, service-not-allowed...)
+      // means it's genuinely not going to produce a transcript, so record
+      // it to surface to the person instead of just going quiet.
+      if (e.error !== 'no-speech') {
+        lastError = e.error;
+        if (onErrorCb) onErrorCb(e.error);
+      }
     });
 
     return {
-      start(onInterimUpdate) {
+      start(onInterimUpdate, onError) {
         onInterim = onInterimUpdate || null;
+        onErrorCb = onError || null;
         finalText = '';
+        sawResult = false;
+        lastError = null;
         active = true;
         try {
           recognition.start();
@@ -165,7 +180,7 @@ const Media = {
         } catch (e) {
           /* ignore */
         }
-        return finalText.trim();
+        return { text: finalText.trim(), sawResult, lastError };
       },
     };
   },

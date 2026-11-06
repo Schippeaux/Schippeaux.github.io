@@ -215,7 +215,7 @@ const Snaggo = {
     const clips = await Store.getAllByIndex('audio', 'defectId', defectId);
     return clips.sort((a, b) => a.createdAt - b.createdAt);
   },
-  async addAudio(defectId, blob, mimeType, transcriptRaw = '') {
+  async addAudio(defectId, blob, mimeType, transcriptRaw = '', transcriptNote = '') {
     const id = crypto.randomUUID();
     return Store.put('audio', {
       id,
@@ -229,6 +229,11 @@ const Snaggo = {
       //            just needs the "polish into a professional note" pass;
       // reviewed = transcriptPolished has been applied and reviewed.
       transcriptStatus: transcriptRaw ? 'captured' : 'none',
+      // Why transcriptRaw is empty, when it is — e.g. "not supported on
+      // this browser", "microphone/speech permission blocked", "no network
+      // for speech recognition" — shown in place of the generic placeholder
+      // so it's obvious what actually happened instead of just "nothing".
+      transcriptNote,
       createdAt: Date.now(),
     });
   },
