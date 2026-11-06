@@ -215,18 +215,29 @@ const Snaggo = {
     const clips = await Store.getAllByIndex('audio', 'defectId', defectId);
     return clips.sort((a, b) => a.createdAt - b.createdAt);
   },
-  async addAudio(defectId, blob, mimeType) {
+  async addAudio(defectId, blob, mimeType, transcriptRaw = '') {
     const id = crypto.randomUUID();
     return Store.put('audio', {
       id,
       defectId,
       blob,
       mimeType,
-      transcriptRaw: '',
+      transcriptRaw,
       transcriptPolished: '',
-      transcriptStatus: 'none', // none | pending | reviewed
+      // none = no raw transcript at all (needs PC speech-to-text);
+      // captured = phone's live dictation got a raw transcript already,
+      //            just needs the "polish into a professional note" pass;
+      // reviewed = transcriptPolished has been applied and reviewed.
+      transcriptStatus: transcriptRaw ? 'captured' : 'none',
       createdAt: Date.now(),
     });
+  },
+  async updateAudio(id, fields) {
+    const clip = await Store.get('audio', id);
+    if (!clip) return;
+    const next = { ...clip, ...fields };
+    await Store.put('audio', next);
+    return next;
   },
   async deleteAudio(id) {
     return Store.delete('audio', id);

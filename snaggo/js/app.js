@@ -454,6 +454,7 @@ async function renderDefectDetail(defectId) {
           <h2>Dictation</h2>
           <button id="rec-btn" class="btn btn-record">● Record</button>
         </div>
+        <p id="live-transcript-preview" class="live-transcript" hidden></p>
         <ul class="audio-list" id="audio-list"></ul>
       </section>
 
@@ -524,27 +525,58 @@ async function renderAudioList(defectId, clips) {
   clips.forEach((clip, i) => {
     const url = URL.createObjectURL(clip.blob);
     const when = new Date(clip.createdAt).toLocaleString();
+    const hasTranscript = !!(clip.transcriptRaw || '').trim();
     const item = el(`
       <li class="audio-item">
-        <audio controls src="${url}"></audio>
-        <span class="audio-meta">Dictation ${i + 1} · ${escapeHtml(when)}</span>
-        <button class="row-delete" title="Delete">&times;</button>
+        <div class="audio-item-row">
+          <audio controls src="${url}"></audio>
+          <span class="audio-meta">Dictation ${i + 1} · ${escapeHtml(when)}</span>
+          <button class="row-delete" title="Delete">&times;</button>
+        </div>
+        <textarea class="audio-transcript" rows="2" placeholder="${hasTranscript ? '' : 'No live transcript captured — add one manually, or transcribe this clip on the PC later.'}">${escapeHtml(clip.transcriptRaw || '')}</textarea>
+        <div class="audio-transcript-actions">
+          <button class="btn-link save-transcript">Save</button>
+          <button class="btn-link add-to-comments">Add to comments</button>
+        </div>
       </li>
     `);
+
     item.querySelector('.row-delete').addEventListener('click', async () => {
       if (!confirm('Delete this dictation?')) return;
       await Snaggo.deleteAudio(clip.id);
       await renderDefectDetail(defectId);
     });
+
+    const textarea = item.querySelector('.audio-transcript');
+    item.querySelector('.save-transcript').addEventListener('click', async () => {
+      await Snaggo.updateAudio(clip.id, { transcriptRaw: textarea.value });
+      toast('Transcript saved');
+    });
+    item.querySelector('.add-to-comments').addEventListener('click', async () => {
+      const text = textarea.value.trim();
+      if (!text) {
+        toast('Nothing to add — the transcript is empty');
+        return;
+      }
+      const defect = await Snaggo.getDefect(defectId);
+      const next = defect.comments ? `${defect.comments}\n\n${text}` : text;
+      await Snaggo.updateDefect(defectId, { comments: next });
+      await renderDefectDetail(defectId);
+      toast('Added to comments');
+    });
+
     list.appendChild(item);
   });
 }
 
 // Generic record-toggle wiring, used both by the big "Record" button on the
 // defect detail page and the compact record icon on each row of a room's
-// defect list.
-function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved } = {}) {
+// defect list. Runs audio capture and the phone's own live dictation side
+// by side where dictation is supported — one button instead of "record
+// audio" and "transcribe it" as separate steps.
+function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim } = {}) {
   let recorder = null;
+  let transcriber = null;
 
   btn.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -554,6 +586,12 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved } = {}) {
       try {
         await recorder.start();
         btn.classList.add('recording');
+        if (Media.isSpeechRecognitionSupported()) {
+          transcriber = Media.createLiveTranscriber();
+          transcriber.start((finalText, interim) => {
+            if (onInterim) onInterim(finalText, interim);
+          });
+        }
         if (onStart) onStart(btn);
       } catch (err) {
         toast('Could not start recording: ' + err.message);
@@ -563,8 +601,10 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved } = {}) {
     }
     btn.disabled = true;
     if (onStop) onStop(btn);
+    const transcriptRaw = transcriber ? transcriber.stop() : '';
+    transcriber = null;
     const { blob, mimeType } = await recorder.stop();
-    await Snaggo.addAudio(defectId, blob, mimeType);
+    await Snaggo.addAudio(defectId, blob, mimeType, transcriptRaw);
     recorder = null;
     if (onSaved) await onSaved();
   });
@@ -572,8 +612,23 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved } = {}) {
 
 function wireRecordButton(defectId) {
   const btn = document.getElementById('rec-btn');
+  const preview = document.getElementById('live-transcript-preview');
   wireInlineRecorder(btn, defectId, {
-    onStart: (b) => (b.textContent = '■ Stop'),
+    onStart: (b) => {
+      b.textContent = '■ Stop';
+      if (preview) {
+        preview.hidden = false;
+        preview.textContent = Media.isSpeechRecognitionSupported()
+          ? 'Listening…'
+          : "Recording (live transcript isn't supported on this device — audio only)";
+      }
+    },
+    onInterim: (finalText, interim) => {
+      if (preview) preview.textContent = [finalText, interim].filter(Boolean).join(' ') || 'Listening…';
+    },
+    onStop: () => {
+      if (preview) preview.hidden = true;
+    },
     onSaved: () => renderDefectDetail(defectId),
   });
 }

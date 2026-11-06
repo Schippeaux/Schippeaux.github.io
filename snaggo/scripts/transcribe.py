@@ -5,9 +5,13 @@ Snaggo — dictation transcription (PC-side, run manually after a site visit)
 What this does:
   1. Unzips a Snaggo project export (the .zip you got from "Export project"
      in the app).
-  2. For each dictation in audio/, sends it off for transcription, then asks
-     the model to turn the rough spoken note into a professional defect
-     note.
+  2. For each dictation in audio/: if it already has a raw transcript (the
+     app captures one on-device, via the phone's own live dictation, when
+     the browser supports it — see manifest.json's audio[].transcriptRaw),
+     skip speech-to-text entirely and go straight to polishing it into a
+     professional note. Only clips with no raw transcript (live dictation
+     wasn't supported on that device, or came back empty) get sent through
+     speech-to-text first.
   3. Writes transcriptions.csv next to the unzipped project, with columns:
      defect_id, raw_transcript, polished_notes, suggested_title
 
@@ -16,8 +20,16 @@ Snaggo via "Import transcriptions (.csv)" on the project home screen —
 it matches rows to defects by defect_id and appends the polished note to
 that defect's Comments, tagged "[AI transcription — reviewed]".
 
-STATUS: scaffold only. The actual API call is stubbed — see transcribe_clip()
-below. Wire up Claude or Gemini once you've decided which; both need:
+(Most dictations will already have a raw transcript by the time they reach
+here, since the in-app Record button runs the phone's live dictation
+alongside the audio recording wherever the browser supports it. This script
+mainly earns its keep as the "polish into professional wording" step, with
+speech-to-text kept as a fallback for the devices/browsers where live
+dictation isn't available.)
+
+STATUS: scaffold only. The actual API calls are stubbed — see
+transcribe_clip() and polish_transcript() below. Wire up Claude or Gemini
+once you've decided which; both need:
   - an API key (set via environment variable, see note in transcribe_clip)
   - the `anthropic` or `google-genai` Python package installed
 
@@ -126,9 +138,14 @@ def main():
         if args.skip_existing and entry.get("transcriptPolished"):
             continue
         audio_path = workdir / entry["file"]
-        print(f"Transcribing {audio_path.name} (defect {entry['defectId']})...")
+        raw = (entry.get("transcriptRaw") or "").strip()
+        if raw:
+            print(f"Polishing existing transcript for {audio_path.name} (defect {entry['defectId']})...")
+        else:
+            print(f"No on-device transcript for {audio_path.name} — running speech-to-text (defect {entry['defectId']})...")
         try:
-            raw = transcribe_clip(audio_path)
+            if not raw:
+                raw = transcribe_clip(audio_path)
             polished = polish_transcript(raw)
             title = suggest_title(polished)
         except NotImplementedError as e:

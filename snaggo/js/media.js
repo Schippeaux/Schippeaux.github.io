@@ -90,4 +90,83 @@ const Media = {
       },
     };
   },
+
+  // --- Live speech-to-text (the phone's own dictation engine) -----------
+  // Same idea as the keyboard's mic button, just reachable from one record
+  // button instead of tap field → open keyboard → tap mic. Backed by the
+  // browser's SpeechRecognition API, which on a phone is the OS's own
+  // on-device/cloud dictation — same engine, different entry point.
+  //
+  // Support varies: solid on Android Chrome, present but patchier on iOS
+  // Safari (stops after a pause, ~60s cap on some versions). isSupported()
+  // lets callers fall back to "just record the audio" gracefully.
+  isSpeechRecognitionSupported() {
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  },
+
+  createLiveTranscriber() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return null;
+
+    const recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = navigator.language || 'en-AU';
+
+    let finalText = '';
+    let active = false;
+    let onInterim = null;
+
+    recognition.addEventListener('result', (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        if (res.isFinal) {
+          finalText += (finalText ? ' ' : '') + res[0].transcript.trim();
+        } else {
+          interim += res[0].transcript;
+        }
+      }
+      if (onInterim) onInterim(finalText, interim);
+    });
+
+    recognition.addEventListener('end', () => {
+      // Mobile browsers often end recognition after a short pause even
+      // though the person hasn't hit stop — restart quietly if we're
+      // still meant to be listening.
+      if (active) {
+        try {
+          recognition.start();
+        } catch (e) {
+          /* already running */
+        }
+      }
+    });
+
+    recognition.addEventListener('error', () => {
+      /* 'no-speech' / 'aborted' etc. — the 'end' handler decides whether to restart */
+    });
+
+    return {
+      start(onInterimUpdate) {
+        onInterim = onInterimUpdate || null;
+        finalText = '';
+        active = true;
+        try {
+          recognition.start();
+        } catch (e) {
+          /* ignore double-start */
+        }
+      },
+      stop() {
+        active = false;
+        try {
+          recognition.stop();
+        } catch (e) {
+          /* ignore */
+        }
+        return finalText.trim();
+      },
+    };
+  },
 };

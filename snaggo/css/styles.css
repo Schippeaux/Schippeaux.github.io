@@ -305,16 +305,46 @@ input[type="text"]:focus, textarea:focus, select:focus {
 /* Defect detail */
 .photos-section, .audio-section { margin-top: 20px; }
 
+.live-transcript {
+  margin: 6px 0 0;
+  padding: 10px 12px;
+  background: var(--blue-soft);
+  color: var(--ink);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
 .audio-list { list-style: none; padding: 0; margin: 0; }
 .audio-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.audio-item-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--line);
 }
 .audio-item audio { height: 32px; flex: 1; min-width: 0; }
 .audio-meta { font-size: 0.78rem; color: var(--ink-soft); white-space: nowrap; }
+.audio-transcript {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+.audio-transcript-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 2px 0;
+  cursor: pointer;
+}
 
 /* Toasts */
 #toast-host {
