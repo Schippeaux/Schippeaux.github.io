@@ -234,6 +234,13 @@ input[type="text"]:focus, textarea:focus, select:focus {
 }
 .io-card .btn { flex: 1; min-width: 150px; }
 
+.version-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin: 24px 0 0;
+}
+
 /* Row lists (areas / defects) */
 .row-list {
   list-style: none;

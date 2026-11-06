@@ -164,6 +164,8 @@ async function renderHome() {
         <button id="import-zip-btn" class="btn btn-secondary">Import project (.zip)</button>
         <button id="import-csv-btn" class="btn btn-secondary">Import transcriptions (.csv)</button>
       </section>
+
+      <p class="version-footer">Snaggo ${escapeHtml(typeof SNAGGO_VERSION !== 'undefined' ? SNAGGO_VERSION : '?')}</p>
     </main>
   `;
 

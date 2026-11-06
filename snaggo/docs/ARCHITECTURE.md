@@ -77,6 +77,20 @@ belongs where without opening `manifest.json`.
                                     before importing back)
 ```
 
+## Shipping a change — don't forget the version bump
+
+Every deploy, bump `SNAGGO_VERSION` in `js/version.js`. That one edit does
+two things: it's what shows in the home page footer so you can tell at a
+glance whether a device has actually picked up the new version, and —
+because `sw.js` `importScripts()`s it into its cache name — it's also what
+makes the browser notice the service worker changed and fetch everything
+fresh. Skip it and a device that already has Snaggo open can keep serving
+its old cached JS indefinitely, which looks exactly like "the change didn't
+go live" even though the deploy succeeded. `sw.js` is network-first for the
+app's own files regardless, so this mostly matters for the one edge case of
+a tab that's been open since before the deploy, or a PWA opened while fully
+offline.
+
 ## Open items / decisions deferred on purpose
 
 - **Which model transcribes** (Claude vs Gemini) — `scripts/transcribe.py`
