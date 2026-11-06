@@ -210,6 +210,10 @@ const Snaggo = {
   async deletePhoto(id) {
     return Store.delete('photos', id);
   },
+  async listAllPhotos() {
+    const photos = await Store.getAll('photos');
+    return photos.sort((a, b) => a.createdAt - b.createdAt);
+  },
 
   async listAudio(defectId) {
     const clips = await Store.getAllByIndex('audio', 'defectId', defectId);

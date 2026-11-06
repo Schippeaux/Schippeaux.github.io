@@ -40,6 +40,30 @@ async function render() {
 
 // ---- helpers -----------------------------------------------------------
 
+function photosToFiles(photos) {
+  return photos.map((p, i) => {
+    const ext = (p.blob.type && p.blob.type.split('/')[1]) || 'jpg';
+    return new File([p.blob], `photo_${i + 1}.${ext}`, { type: p.blob.type || 'image/jpeg' });
+  });
+}
+
+async function saveToPhotosFlow(photos, shareTitle) {
+  if (!photos.length) {
+    toast('No photos to save yet');
+    return;
+  }
+  const files = photosToFiles(photos);
+  if (!Media.canShareFiles(files)) {
+    toast("Saving to your gallery isn't supported here — long-press a photo and choose \"Save Image\" instead");
+    return;
+  }
+  try {
+    await Media.shareFiles(files, { title: shareTitle });
+  } catch (err) {
+    if (err.name !== 'AbortError') toast('Could not open the share sheet: ' + err.message);
+  }
+}
+
 function describeSpeechError(code) {
   switch (code) {
     case 'not-allowed':
@@ -178,6 +202,7 @@ async function renderHome() {
       </nav>
 
       <section class="io-card">
+        <button id="save-all-photos-btn" class="btn btn-secondary">Save all photos to gallery</button>
         <button id="export-btn" class="btn btn-secondary">Export project (.zip)</button>
         <button id="import-zip-btn" class="btn btn-secondary">Import project (.zip)</button>
         <button id="import-csv-btn" class="btn btn-secondary">Import transcriptions (.csv)</button>
@@ -201,6 +226,16 @@ async function renderHome() {
       for (const f of files) await Snaggo.addDrawing(f.name, f);
       await renderHome();
     });
+  });
+
+  document.getElementById('save-all-photos-btn').addEventListener('click', async (e) => {
+    e.target.disabled = true;
+    try {
+      const allPhotos = await Snaggo.listAllPhotos();
+      await saveToPhotosFlow(allPhotos, `${project.name || 'Snaggo'} photos`);
+    } finally {
+      e.target.disabled = false;
+    }
   });
 
   document.getElementById('export-btn').addEventListener('click', async (e) => {
@@ -467,7 +502,12 @@ async function renderDefectDetail(defectId) {
       <section class="photos-section">
         <div class="section-head">
           <h2>Photos</h2>
-          <button id="add-photo" class="icon-btn" title="Add photo">+</button>
+          <div class="section-head-actions">
+            <button id="save-photos" class="icon-btn" title="Save photos to your phone's gallery">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3M12 15l-4-4M12 15l4-4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+            </button>
+            <button id="add-photo" class="icon-btn" title="Add photo">+</button>
+          </div>
         </div>
         <div class="photo-grid" id="photo-grid"></div>
       </section>
@@ -508,6 +548,10 @@ async function renderDefectDetail(defectId) {
       for (const f of files) await Snaggo.addPhoto(defectId, f);
       await renderDefectDetail(defectId);
     });
+  });
+  document.getElementById('save-photos').addEventListener('click', async () => {
+    const current = await Snaggo.listPhotos(defectId);
+    await saveToPhotosFlow(current, `${defectId} photos`);
   });
 
   await renderAudioList(defectId, audioClips);

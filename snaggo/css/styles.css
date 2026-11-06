@@ -171,6 +171,10 @@ input[type="text"]:focus, textarea:focus, select:focus {
   color: var(--blue);
   margin: 0;
 }
+.section-head-actions {
+  display: flex;
+  gap: 8px;
+}
 
 .drawing-grid, .photo-grid {
   display: grid;

@@ -11,6 +11,26 @@
 // bare file — nothing about the recorded audio itself goes anywhere online.
 
 const Media = {
+  // --- Saving photos out to the phone's own gallery --------------------
+  // There's no web API that writes silently into Photos/Gallery, or that
+  // targets a specific album — both are deliberately off-limits to web
+  // content, the same category of restriction as the keyboard's dictation
+  // mic. The closest available thing is the OS share sheet: it has a
+  // "Save Image(s)"/"Save to Photos" target built in on both iOS and
+  // Android, so sharing is one tap away from actually landing in the
+  // gallery. canShareFiles() checks whether that's available at all;
+  // shareFiles() opens the sheet with the given photos already attached.
+  canShareFiles(files) {
+    return !!(navigator.share && navigator.canShare && navigator.canShare({ files }));
+  },
+
+  async shareFiles(files, { title } = {}) {
+    if (!this.canShareFiles(files)) {
+      throw new Error("Sharing isn't supported on this browser");
+    }
+    await navigator.share({ files, title });
+  },
+
   pickPhotos(onFiles) {
     const input = document.createElement('input');
     input.type = 'file';
