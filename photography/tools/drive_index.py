@@ -2,13 +2,13 @@
 
 Reads Drive file IDs from Drive for desktop's local metadata database (a copy, never the
 live file) and image size/orientation/date from the photo headers on the G: drive, then
-writes data/inbox/<section>-<time>.json, encrypted with the editor's public key
-(data/inbox-key.pem) so hidden photo IDs never appear in the public repo. The editor
+writes photography/data/inbox/<section>-<time>.json, encrypted with the editor's public key
+(photography/data/inbox-key.pem) so hidden photo IDs never appear in the public repo. The editor
 merges the batch on next login: new photos are added, existing ones keep their
 public/hidden state, order, descriptions and Instagram picks.
 
-  python tools/drive_index.py usa-2025 "G:\\My Drive\\02_PHOTOS\\2025\\USA Bikepacking" --include 3 4 5
-  python tools/drive_index.py usa-2025 "<path>" --include 1 --title "1=Seattle & Olympic National Park"
+  python photography/tools/drive_index.py usa-2025 "G:\\My Drive\\02_PHOTOS\\2025\\USA Bikepacking" --include 3 4 5
+  python photography/tools/drive_index.py usa-2025 "<path>" --include 1 --title "1=Seattle & Olympic National Park"
 
 New photos arrive hidden unless --public is given.
 """
@@ -90,7 +90,7 @@ def sequence_key(name):
 def encrypt_for_editor(payload):
     pem = ROOT / "data" / "inbox-key.pem"
     if not pem.exists():
-        raise SystemExit("data/inbox-key.pem not found: set up the editor at /edit/ first, then git pull")
+        raise SystemExit("photography/data/inbox-key.pem not found: set up the editor at /photography/edit/ first, then git pull")
     public_key = serialization.load_pem_public_key(pem.read_bytes())
     key = AESGCM.generate_key(bit_length=256)
     iv = os.urandom(12)

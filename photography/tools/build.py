@@ -1,6 +1,6 @@
 """Generate the public site from data/site.json and data/public.json.
 
-  python tools/build.py
+  python photography/tools/build.py
 
 Runs on GitHub Actions after every push (see .github/workflows/pages.yml), so the
 generated pages are not committed. data/public.json is written by the editor and only
@@ -16,6 +16,12 @@ from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+# The whole repo is served from schippeaux.github.io's root (a hand-authored splash page
+# lives there, outside this folder) and this site is mounted under /photography/ - every
+# absolute "/..." URL this generator emits needs that prefix, or it'll point one level too
+# high once GitHub Pages serves it. Paths used to READ local files (asset() below) stay
+# ROOT-relative and unprefixed - only the hrefs/srcs written into the HTML get SITE_BASE.
+SITE_BASE = "/photography"
 SITE = json.loads((ROOT / "data" / "site.json").read_text(encoding="utf-8"))
 PUBLIC = json.loads((ROOT / "data" / "public.json").read_text(encoding="utf-8"))
 ROUTES_PATH = ROOT / "data" / "routes.json"
@@ -29,7 +35,7 @@ def asset(path):
     """Link to a file in assets/ with a content hash, so browsers fetch it again when it changes
     (GitHub Pages lets browsers cache files for 10 minutes)."""
     digest = hashlib.sha1((ROOT / path.lstrip("/")).read_bytes()).hexdigest()[:8]
-    return f"{path}?v={digest}"
+    return f"{SITE_BASE}{path}?v={digest}"
 
 
 def img_url(file_id, w):
@@ -110,8 +116,8 @@ def page(title, body, extra_head="", body_class=""):
 </head>
 <body class="{body_class}">
   <nav class="topbar">
-    <a href="/" class="wordmark">{escape(SITE['title'])}</a>
-    <div class="links">{''.join(f'<a href="/{g["slug"]}/">{escape(g.get("nav", g["title"]))}</a>' for g in SITE['groups'])}</div>
+    <a href="{SITE_BASE}/" class="wordmark">{escape(SITE['title'])}</a>
+    <div class="links">{''.join(f'<a href="{SITE_BASE}/{g["slug"]}/">{escape(g.get("nav", g["title"]))}</a>' for g in SITE['groups'])}</div>
   </nav>
 {body}
   <footer class="site-footer">
@@ -145,7 +151,7 @@ def load_section(group, section):
          "planned": section.get("planned", []),
          "itinerary": pub.get("itinerary", []),
          "flight": pub.get("flight")}
-    s["base"] = f"/{group['slug']}/{section['slug']}/"
+    s["base"] = f"{SITE_BASE}/{group['slug']}/{section['slug']}/"
     s["url"] = f"{s['base']}{chapters[0]['slug']}/" if len(chapters) == 1 else s["base"]
     return s
 
@@ -184,7 +190,7 @@ def build_home(groups):
   <section class="index-section">
     <header class="section-head">
       <p class="eyebrow">{len(g['sections'])} sections</p>
-      <h2><a href="/{g['slug']}/">{escape(g['title'])}</a></h2>
+      <h2><a href="{SITE_BASE}/{g['slug']}/">{escape(g['title'])}</a></h2>
     </header>
     {section_list(g['sections'])}
   </section>""" for g in groups)

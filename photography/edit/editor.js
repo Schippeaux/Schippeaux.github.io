@@ -1,13 +1,16 @@
 // Editor: unlocks with a password, edits the encrypted private data, and publishes
-// data/public.json (public photos only) + data/private.json (everything, encrypted)
-// to GitHub in one commit. GitHub Actions then rebuilds the public site.
+// photography/data/public.json (public photos only) + photography/data/private.json
+// (everything, encrypted) to GitHub in one commit. GitHub Actions then rebuilds the
+// public site. The whole repo is a monorepo of several sites, each in its own top-level
+// folder (see CLAUDE.md) - this one's is "photography/", so every path below carries
+// that prefix even though this file itself lives one level down, at photography/edit/.
 //
 // Files in the repo:
-//   data/vault.json       password-encrypted: GitHub token, data key, inbox private key
-//   data/private.json     data-key-encrypted: all sections/chapters/photos incl. hidden
-//   data/public.json      plaintext: public photos only (what the site is built from)
-//   data/inbox-key.pem    public key tools/drive_index.py encrypts new photo batches with
-//   data/inbox/*.json     encrypted batches from drive_index.py, merged here on unlock
+//   photography/data/vault.json       password-encrypted: GitHub token, data key, inbox private key
+//   photography/data/private.json     data-key-encrypted: all sections/chapters/photos incl. hidden
+//   photography/data/public.json      plaintext: public photos only (what the site is built from)
+//   photography/data/inbox-key.pem    public key tools/drive_index.py encrypts new photo batches with
+//   photography/data/inbox/*.json     encrypted batches from drive_index.py, merged here on unlock
 (() => {
   const OWNER = 'Schippeaux', REPO = 'Schippeaux.github.io', BRANCH = 'main';
   const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
@@ -70,10 +73,10 @@
   // Before unlocking there is no token, and GitHub rate-limits anonymous API calls,
   // so fall back to the copy the site itself serves (may lag a minute behind).
   async function readVault() {
-    try { return await readFile('data/vault.json'); }
+    try { return await readFile('photography/data/vault.json'); }
     catch (err) {
       console.warn('GitHub API unavailable, using site copy of vault:', err.message);
-      const r = await fetch('/data/vault.json', { cache: 'no-store' });
+      const r = await fetch('/photography/data/vault.json', { cache: 'no-store' });
       return r.ok ? r.text() : null;
     }
   }
@@ -100,7 +103,7 @@
   // ---------- data ----------
   // Inbox batches come in two kinds: the original photo batches from tools/drive_index.py
   // (no "kind" field, run on Ciaran's own machine with Drive access) and itinerary batches
-  // (kind: "itinerary") built the same way - encrypted with data/inbox-key.pem - for seeding
+  // (kind: "itinerary") built the same way - encrypted with photography/data/inbox-key.pem - for seeding
   // trip-day/place data that doesn't need Drive access at all. Both merge the same way: new
   // inbox files are picked up and merged on the next editor login (see unlock()).
   function mergeBatch(batch) {
@@ -872,8 +875,8 @@
     try {
       const publicJson = JSON.stringify(publicData(), null, 1) + '\n';
       const files = {
-        'data/private.json': JSON.stringify(await seal(state.dataKey, state.data)) + '\n',
-        'data/public.json': publicJson,
+        'photography/data/private.json': JSON.stringify(await seal(state.dataKey, state.data)) + '\n',
+        'photography/data/public.json': publicJson,
       };
       await commit(files, state.inboxPaths, 'Edit photos');
       state.inboxPaths = [];
@@ -896,7 +899,7 @@
     while (run === liveWatch && Date.now() - started < 4 * 60 * 1000) {
       await new Promise(r => setTimeout(r, 6000));
       try {
-        const r = await fetch(`/data/public.json?v=${Date.now()}`, { cache: 'no-store' });
+        const r = await fetch(`/photography/data/public.json?v=${Date.now()}`, { cache: 'no-store' });
         if (r.ok && (await r.text()) === expected) {
           if (run === liveWatch && !state.dirty) {
             $('status').innerHTML = `Live ✓ <a href="${liveUrl()}" target="_blank" rel="noopener">View ↗</a>`;
@@ -924,7 +927,7 @@
       state.secrets.token = token.trim();
       const vault = { v: 1, salt: b64(state.vaultSalt), iterations: ITERATIONS, ...(await seal(state.pwKey, state.secrets)) };
       state.token = state.secrets.token;
-      await commit({ 'data/vault.json': JSON.stringify(vault) + '\n' }, [], 'Replace editor token');
+      await commit({ 'photography/data/vault.json': JSON.stringify(vault) + '\n' }, [], 'Replace editor token');
       toast('Token replaced.');
     } catch (err) { toast(err.message, 8000); }
   }
@@ -940,7 +943,7 @@
     state.dataKey = await importDataKey(state.secrets.dataKey);
 
     const [priv, site, inbox] = await Promise.all([
-      readFile('data/private.json'), readFile('data/site.json'), gh(`/contents/data/inbox?ref=${BRANCH}`),
+      readFile('photography/data/private.json'), readFile('photography/data/site.json'), gh(`/contents/photography/data/inbox?ref=${BRANCH}`),
     ]);
     state.data = priv ? await unseal(state.dataKey, JSON.parse(priv)) : { sections: {} };
     state.site = JSON.parse(site);
@@ -959,7 +962,7 @@
 
   async function setup(token, password) {
     await checkToken(token);
-    if (await readFile('data/vault.json', token)) throw new Error('The editor is already set up. Reload to unlock.');
+    if (await readFile('photography/data/vault.json', token)) throw new Error('The editor is already set up. Reload to unlock.');
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const pwKey = await passwordKey(password, salt);
     const dataKeyRaw = crypto.getRandomValues(new Uint8Array(32));
@@ -972,9 +975,9 @@
     const dataKey = await importDataKey(secrets.dataKey);
     state.token = token;
     await commit({
-      'data/vault.json': JSON.stringify(vault) + '\n',
-      'data/inbox-key.pem': pem,
-      'data/private.json': JSON.stringify(await seal(dataKey, { sections: {} })) + '\n',
+      'photography/data/vault.json': JSON.stringify(vault) + '\n',
+      'photography/data/inbox-key.pem': pem,
+      'photography/data/private.json': JSON.stringify(await seal(dataKey, { sections: {} })) + '\n',
     }, [], 'Set up editor');
   }
 
