@@ -42,11 +42,27 @@ def img_url(file_id, w):
     return f"{IMAGE_BASE}/{file_id}=w{w}"
 
 
+def crop_wrap(photo, img_html):
+    """Wrap an <img> in a crop-positioning span when photo["crop"] (an {x,y,w,h} fractional
+    rectangle) is set, stretch-filling that rectangle into the img's box - mirrors
+    Viewer.cropWrap in assets/viewer.js. Only meaningful for the already-"cover"-style
+    contexts img() is used for (hero/thumbnail covers), never the contain-fit main viewer."""
+    crop = photo.get("crop")
+    if not crop:
+        return img_html
+    style = (f'position:absolute;max-width:none;'
+             f'width:calc(100%/{crop["w"]});height:calc(100%/{crop["h"]});'
+             f'left:calc(-100%*{crop["x"]}/{crop["w"]});top:calc(-100%*{crop["y"]}/{crop["h"]})')
+    styled = img_html.replace("<img ", f'<img style="{style}" ', 1)
+    return f'<span class="crop">{styled}</span>'
+
+
 def img(photo, sizes, cls="", eager=False):
     srcset = ", ".join(f"{img_url(photo['id'], w)} {w}w" for w in WIDTHS)
-    return (f'<img class="{cls}" src="{img_url(photo["id"], 2000)}" srcset="{srcset}" sizes="{sizes}" '
+    html = (f'<img class="{cls}" src="{img_url(photo["id"], 2000)}" srcset="{srcset}" sizes="{sizes}" '
             f'width="{photo["w"]}" height="{photo["h"]}" alt="" '
             f'loading="{"eager" if eager else "lazy"}" decoding="async">')
+    return crop_wrap(photo, html)
 
 
 def date_range(photos):
@@ -225,7 +241,8 @@ def build_section(s):
         return
     best_of_script = ""
     if s["best_of"]:
-        best_of_photos = [{k: p.get(k) for k in ("id", "w", "h")} for p in s["best_of"]]
+        best_of_photos = [{k: v for k in ("id", "w", "h", "crop") if (v := p.get(k)) is not None}
+                          for p in s["best_of"]]
         best_of_data = json.dumps(best_of_photos, ensure_ascii=False).replace("</", "<\\/")
         head = f"""  <header class="hero hero-slideshow">
     <div class="viewer" id="best-of-viewer"></div>

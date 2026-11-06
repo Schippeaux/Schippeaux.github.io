@@ -11,16 +11,47 @@
   // so look further ahead than behind.
   const PREFETCH_AHEAD = 2, PREFETCH_BEHIND = 1;
 
+  // Crop rendering: a photo.crop = {x,y,w,h} (fractions 0-1 of the full image) is rendered
+  // without any backend reprocessing by stretch-filling that rectangle into its container -
+  // the crop rect's edges map exactly onto the container's edges. This only makes sense in
+  // an already-fixed-box, "cover"-style display context (hero/thumbnail/best-of), never in
+  // the free-aspect contain-fit main viewer.
+  const cropImgStyle = c => `position:absolute;max-width:none;` +
+    `width:calc(100%/${c.w});height:calc(100%/${c.h});` +
+    `left:calc(-100%*${c.x}/${c.w});top:calc(-100%*${c.y}/${c.h})`;
+
+  // Apply/clear crop styling on a live <img> element, wrapped in its positioning span.
+  function applyCrop(img, wrap, photo) {
+    if (!wrap) return;
+    if (photo && photo.crop) img.style.cssText = cropImgStyle(photo.crop);
+    else img.style.cssText = '';
+  }
+
+  // Wrap an already-built `<img ...>` HTML string in a crop-positioning span when the photo
+  // has a crop rectangle; otherwise return it unchanged. Used for hand-built thumbnail markup
+  // (editor home/chapter covers etc.) that doesn't go through the Viewer class.
+  function cropWrap(photo, imgHtml) {
+    if (!photo || !photo.crop) return imgHtml;
+    const styled = imgHtml.replace('<img ', `<img style="${cropImgStyle(photo.crop)}" `);
+    return `<span class="crop">${styled}</span>`;
+  }
+
   class Viewer {
     constructor(root, photos, opts = {}) {
       this.root = root;
       this.opts = opts;
       this.index = 0;
+      // cropMain: wrap the main image in a positioning span so a per-photo crop rectangle
+      // (photo.crop = {x,y,w,h}, fractions 0-1) can be rendered by stretch-filling that
+      // rectangle into the frame. Only opt in for already-"cover"-style display contexts
+      // (hero/best-of slideshows) - it's incompatible with the ordinary contain-fit viewer,
+      // which always shows the full photo.
+      const mainEl = opts.cropMain ? '<span class="crop-main"><img class="main" alt=""></span>' : '<img class="main" alt="">';
       root.innerHTML = `
         <div class="stage">
           <button class="arrow prev" aria-label="Previous photo"><span>‹</span></button>
           <div class="frame">
-            <img class="main" alt="">
+            ${mainEl}
             <div class="desc" hidden><p></p><button class="desc-toggle" aria-label="Hide description">−</button></div>
           </div>
           <button class="arrow next" aria-label="Next photo"><span>›</span></button>
@@ -29,6 +60,7 @@
       this.stage = root.querySelector('.stage');
       this.frame = root.querySelector('.frame');
       this.img = root.querySelector('.main');
+      this.cropMainEl = opts.cropMain ? root.querySelector('.crop-main') : null;
       this.desc = root.querySelector('.desc');
       this.reel = root.querySelector('.reel');
 
@@ -146,6 +178,7 @@
         this.img.srcset = srcsetFor(p);
         this.img.sizes = SIZES;
         this.img.src = url(p.id, 'w2000');
+        applyCrop(this.img, this.cropMainEl, p);
         // Warm the next few neighbours (more ahead than behind) at the exact same
         // srcset/sizes as the real <img>, so whichever width the browser picks on
         // arrival is already cached.
@@ -205,5 +238,6 @@
 
   Viewer.imageBase = (meta && meta.content || 'https://lh3.googleusercontent.com/d').replace(/\/$/, '');
   Viewer.url = url;
+  Viewer.cropWrap = cropWrap;
   window.Viewer = Viewer;
 })();

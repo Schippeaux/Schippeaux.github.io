@@ -17,5 +17,5 @@ if (viewerRoot && photoData) {
 const bestOfRoot = document.getElementById('best-of-viewer');
 const bestOfData = document.getElementById('best-of-photos');
 if (bestOfRoot && bestOfData) {
-  new Viewer(bestOfRoot, JSON.parse(bestOfData.textContent), { fullscreenClick: false, autoplay: 5000 });
+  new Viewer(bestOfRoot, JSON.parse(bestOfData.textContent), { fullscreenClick: false, autoplay: 5000, cropMain: true });
 }

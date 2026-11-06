@@ -260,6 +260,26 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
   max-width: calc(100vw - 32px);
 }
 
+.crop-modal {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.crop-modal-inner {
+  background: var(--bg); color: var(--fg);
+  width: min(900px, 100%);
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px;
+}
+.crop-modal-stage {
+  width: 100%; height: min(70vh, 600px);
+  background: #111;
+}
+.crop-modal-stage img { display: block; max-width: 100%; }
+.crop-modal-actions { display: flex; align-items: center; gap: 8px; }
+.crop-modal-actions .spacer { flex: 1; }
+
 @media (max-width: 900px) {
   .ed-bar { flex-wrap: wrap; }
   .ed-status { order: 10; width: 100%; margin: 0; }

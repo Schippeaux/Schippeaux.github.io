@@ -230,6 +230,11 @@ img.loaded { opacity: 1; }
   object-fit: contain;
   background: none;
 }
+/* Crop rendering (see viewer.js): a positioning container for a stretch-filled crop
+   rectangle. All actual crop math is inline style (set in JS/build.py) so it always wins
+   regardless of other object-fit/sizing rules on the image underneath. */
+.crop-main, .crop { position: relative; width: 100%; height: 100%; overflow: hidden; display: block; }
+
 .arrow {
   position: absolute; top: 0; bottom: 0; width: 72px;
   display: grid; place-items: center;

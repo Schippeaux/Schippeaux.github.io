@@ -150,7 +150,7 @@
     for (const [slug, sec] of Object.entries(state.data.sections)) {
       // A chapter with no explicit public flag defaults OFF - publishing is opt-in per chapter.
       const chapters = sec.chapters.filter(c => c.public === true).map(c => {
-        const photos = c.photos.filter(p => p.public).map(({ id, w, h, date, desc }) => ({ id, w, h, date, desc: desc || '' }));
+        const photos = c.photos.filter(p => p.public).map(({ id, w, h, date, desc, crop }) => ({ id, w, h, date, desc: desc || '', ...(crop ? { crop } : {}) }));
         if (!photos.length) return null;
         const cover = photos.some(p => p.id === c.cover) ? c.cover : photos[0].id;
         const out = { slug: c.slug, number: c.number, title: c.title, text: c.text || '', cover, photos };
@@ -255,7 +255,7 @@
             <span class="num">${pad(i + 1)}</span>
             <div class="trip-text"><h3>${esc(meta.title)}</h3><p class="meta">${esc(meta.place)} · ${esc(meta.year)} · ${stats}</p></div>
             <div class="trip-thumb">${cover
-              ? `<img class="thumb loaded" src="${thumbUrl(cover.id, 'w1000')}" alt="">`
+              ? Viewer.cropWrap(cover, `<img class="thumb loaded" src="${thumbUrl(cover.id, 'w1000')}" alt="">`)
               : '<div class="thumb placeholder"><span>No photos yet</span></div>'}</div>
           </a>`;
         }).join('')}</div>
@@ -325,7 +325,7 @@
               <span class="num">${pad(c.number)}</span>
               <span class="ch-title">${esc(c.title)}</span>
               <span class="ch-meta">${c.photos.filter(p => p.public).length} / ${c.photos.length} photos public${chapterOn ? '' : ' · chapter off'}<span class="count">★ ${c.insta.length}</span></span>
-              <span class="ch-thumb">${cover ? `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">` : ''}</span>
+              <span class="ch-thumb">${cover ? Viewer.cropWrap(cover, `<img class="loaded" src="${thumbUrl(cover.id, 'w400')}" alt="">`) : ''}</span>
             </a>
           </li>`;
         }).join('')
@@ -396,7 +396,7 @@
         });
       });
       if (bestOf.length) {
-        new Viewer($('bestof-slideshow'), resolveBestof(s), { fullscreenClick: false });
+        new Viewer($('bestof-slideshow'), resolveBestof(s), { fullscreenClick: false, cropMain: true });
         $('bestof-slideshow').addEventListener('click', e => {
           if (e.target.closest('.arrow')) return;
           openBestofArrange(s, slug);
@@ -699,6 +699,7 @@
     $('cover-chapter').textContent = c.cover === p.id ? 'Chapter cover ✓' : 'Use as chapter cover';
     $('cover-section').textContent = sec().cover === p.id ? 'Journey cover ✓' : 'Use as journey cover';
     $('cover-home').textContent = state.data.home_cover === p.id ? 'Homepage cover ✓' : 'Use as homepage cover';
+    $('crop-btn').textContent = p.crop ? 'Crop ✓' : 'Crop…';
     const visible = c.photos.filter(x => x.public).length;
     $('photo-pos').textContent = `${state.viewer.index + 1} / ${c.photos.length} · ${visible} public`;
     [...$('insta-list').children].forEach(li => li.classList.toggle('active', li.dataset.id === p.id));
@@ -806,6 +807,62 @@
     setDirty();
   }
 
+  // ---- Crop: a true rectangular crop (not just a recentering focal point), stored as
+  // photo.crop = {x,y,w,h} (fractions 0-1 of the photo's full dimensions) and rendered
+  // non-destructively in CSS against the existing Cloudflare-resized image (see
+  // assets/viewer.js / tools/build.py's crop_wrap). Available on every photo, not just
+  // covers - it only visually matters where that photo is used as a chapter/journey/home
+  // cover or in the best-of hero slideshow, but any photo may end up there.
+  const CROPPER_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/cropper/1.6.2/cropper.min.css';
+  const CROPPER_JS = 'https://cdnjs.cloudflare.com/ajax/libs/cropper/1.6.2/cropper.min.js';
+  let cropperLoad = null, cropper = null, cropPhoto = null;
+
+  function loadCropper() {
+    if (cropperLoad) return cropperLoad;
+    const loadCss = href => new Promise(resolve => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet'; link.href = href;
+      link.onload = resolve; link.onerror = resolve;
+      document.head.append(link);
+    });
+    const loadJs = src => new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.append(s);
+    });
+    cropperLoad = Promise.all([loadCss(CROPPER_CSS), loadJs(CROPPER_JS)]);
+    return cropperLoad;
+  }
+
+  function openCropModal(p) {
+    cropPhoto = p;
+    loadCropper().then(() => {
+      const img = $('crop-img');
+      img.src = Viewer.url(p.id, 'w2000');
+      $('crop-modal').hidden = false;
+      if (cropper) cropper.destroy();
+      cropper = new window.Cropper(img, {
+        viewMode: 1,
+        autoCropArea: 1,
+        background: false,
+        ready() {
+          if (p.crop) {
+            cropper.setData({
+              x: p.crop.x * p.w, y: p.crop.y * p.h,
+              width: p.crop.w * p.w, height: p.crop.h * p.h,
+            });
+          }
+        },
+      });
+    });
+  }
+
+  function closeCropModal() {
+    $('crop-modal').hidden = true;
+    if (cropper) { cropper.destroy(); cropper = null; }
+    cropPhoto = null;
+  }
+
   // Show a photo that may belong to a different chapter than the one currently open.
   function jumpToPhoto(id) {
     const s = sec();
@@ -859,6 +916,31 @@
     $('cover-chapter').addEventListener('click', () => { chapter().cover = state.viewer.current.id; state.viewer.refresh(); syncPhotoTools(); setDirty(); });
     $('cover-section').addEventListener('click', () => { sec().cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
     $('cover-home').addEventListener('click', () => { state.data.home_cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
+    $('crop-btn').addEventListener('click', () => openCropModal(state.viewer.current));
+    $('crop-cancel').addEventListener('click', closeCropModal);
+    $('crop-save').addEventListener('click', () => {
+      if (!cropper || !cropPhoto) return;
+      const d = cropper.getData(true);
+      const p = cropPhoto;
+      checkpoint();
+      p.crop = {
+        x: Math.max(0, Math.min(1, d.x / p.w)),
+        y: Math.max(0, Math.min(1, d.y / p.h)),
+        w: Math.max(0.01, Math.min(1, d.width / p.w)),
+        h: Math.max(0.01, Math.min(1, d.height / p.h)),
+      };
+      closeCropModal();
+      syncPhotoTools();
+      setDirty();
+    });
+    $('crop-clear').addEventListener('click', () => {
+      if (!cropPhoto) return;
+      checkpoint();
+      delete cropPhoto.crop;
+      closeCropModal();
+      syncPhotoTools();
+      setDirty();
+    });
     $('save-btn').addEventListener('click', save);
     $('lock-btn').addEventListener('click', () => {
       if (state.dirty && !confirm('Discard unsaved changes and lock?')) return;
