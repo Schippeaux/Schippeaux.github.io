@@ -881,10 +881,16 @@
           autoCropArea: 1,
           background: false,
           ready() {
+            // getData()/setData() work in natural pixel coordinates of whatever image
+            // Cropper actually loaded - the Cloudflare-resized w2000 copy, not the photo's
+            // true full-resolution size (p.w/p.h) - so fractions must be computed against
+            // the loaded image's own naturalWidth/naturalHeight, not p.w/p.h. They're
+            // proportional to the same photo either way, so the fraction is the same.
             if (p.crop) {
+              const { naturalWidth: nw, naturalHeight: nh } = cropper.getImageData();
               cropper.setData({
-                x: p.crop.x * p.w, y: p.crop.y * p.h,
-                width: p.crop.w * p.w, height: p.crop.h * p.h,
+                x: p.crop.x * nw, y: p.crop.y * nh,
+                width: p.crop.w * nw, height: p.crop.h * nh,
               });
             }
           },
@@ -970,13 +976,16 @@
     $('crop-save').addEventListener('click', () => {
       if (!cropper || !cropPhoto) return;
       const d = cropper.getData(true);
+      // Fractions against the loaded (w2000) image's own natural size, not p.w/p.h - see the
+      // comment on the ready() handler above for why.
+      const { naturalWidth: nw, naturalHeight: nh } = cropper.getImageData();
       const p = cropPhoto;
       checkpoint();
       p.crop = {
-        x: Math.max(0, Math.min(1, d.x / p.w)),
-        y: Math.max(0, Math.min(1, d.y / p.h)),
-        w: Math.max(0.01, Math.min(1, d.width / p.w)),
-        h: Math.max(0.01, Math.min(1, d.height / p.h)),
+        x: Math.max(0, Math.min(1, d.x / nw)),
+        y: Math.max(0, Math.min(1, d.y / nh)),
+        w: Math.max(0.01, Math.min(1, d.width / nw)),
+        h: Math.max(0.01, Math.min(1, d.height / nh)),
       };
       closeCropModal();
       syncPhotoTools();
