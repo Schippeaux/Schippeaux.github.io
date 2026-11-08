@@ -396,7 +396,7 @@
         });
       });
       if (bestOf.length) {
-        new Viewer($('bestof-slideshow'), resolveBestof(s), { fullscreenClick: false, cropMain: true });
+        new Viewer($('bestof-slideshow'), resolveBestof(s), { fullscreenClick: false, cropFill: true });
         $('bestof-slideshow').addEventListener('click', e => {
           if (e.target.closest('.arrow')) return;
           openBestofArrange(s, slug);
@@ -813,8 +813,8 @@
   // assets/viewer.js / tools/build.py's crop_wrap). Available on every photo, not just
   // covers - it only visually matters where that photo is used as a chapter/journey/home
   // cover or in the best-of hero slideshow, but any photo may end up there.
-  const CROPPER_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/cropper/1.6.2/cropper.min.css';
-  const CROPPER_JS = 'https://cdnjs.cloudflare.com/ajax/libs/cropper/1.6.2/cropper.min.js';
+  const CROPPER_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css';
+  const CROPPER_JS = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js';
   let cropperLoad = null, cropper = null, cropPhoto = null;
 
   function loadCropper() {
@@ -931,14 +931,17 @@
       };
       closeCropModal();
       syncPhotoTools();
+      if (state.viewer.current === p) state.viewer.refreshCrop();
       setDirty();
     });
     $('crop-clear').addEventListener('click', () => {
       if (!cropPhoto) return;
       checkpoint();
-      delete cropPhoto.crop;
+      const p = cropPhoto;
+      delete p.crop;
       closeCropModal();
       syncPhotoTools();
+      if (state.viewer.current === p) state.viewer.refreshCrop();
       setDirty();
     });
     $('save-btn').addEventListener('click', save);

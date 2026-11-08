@@ -216,9 +216,12 @@ img.loaded { opacity: 1; }
   position: relative;
   width: 100%;
   height: calc(100svh - var(--topbar-h) - var(--head-h, 0px) - var(--reel-h) - 16px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* grid + place-items (not flex) centers .main the same way, but also lets a cropped
+     photo's positioning wrapper (position:absolute content, no in-flow size of its own)
+     resolve its box from aspect-ratio + max-width/max-height - flexbox's auto-sizing
+     doesn't reliably do this when the item has no in-flow content. */
+  display: grid;
+  place-items: center;
 }
 .frame .main {
   /* object-fit:contain (not max-width/max-height+auto) is what actually lets the photo grow

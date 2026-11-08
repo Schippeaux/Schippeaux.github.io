@@ -12,19 +12,43 @@
   const PREFETCH_AHEAD = 2, PREFETCH_BEHIND = 1;
 
   // Crop rendering: a photo.crop = {x,y,w,h} (fractions 0-1 of the full image) is rendered
-  // without any backend reprocessing by stretch-filling that rectangle into its container -
-  // the crop rect's edges map exactly onto the container's edges. This only makes sense in
-  // an already-fixed-box, "cover"-style display context (hero/thumbnail/best-of), never in
-  // the free-aspect contain-fit main viewer.
+  // without any backend reprocessing by stretch-filling that rectangle into a container sized
+  // to exactly the crop rectangle's own aspect ratio - the crop rect's edges map exactly onto
+  // the container's edges, with no distortion since the container's aspect ratio was derived
+  // from the crop itself. Two container shapes:
+  //  - "fill" mode (cover-style contexts: hero/thumbnail covers, best-of slideshow): the
+  //    container always fills 100%/100% of its box (a plain CSS percentage, independent of
+  //    content), cropping further if the box's own aspect ratio doesn't match the crop's -
+  //    same as object-fit:cover would for the whole photo.
+  //  - "contain" mode (the ordinary free-aspect viewer/lightbox): the container should
+  //    letterbox within the frame exactly as object-fit:contain does for a whole photo, using
+  //    the crop's aspect ratio instead of the photo's. CSS aspect-ratio + max-width/max-height
+  //    can't do this on its own here - the wrapper's only content is the absolutely-positioned
+  //    (out-of-flow) <img>, so it has no in-flow content to size against, and both Chromium's
+  //    flex and grid auto-sizing resolve that to a 0x0 box rather than consulting
+  //    aspect-ratio. So this is measured in JS instead (see Viewer#layoutCrop), the same way
+  //    layoutDesc() measures the frame for the description box.
   const cropImgStyle = c => `position:absolute;max-width:none;` +
     `width:calc(100%/${c.w});height:calc(100%/${c.h});` +
     `left:calc(-100%*${c.x}/${c.w});top:calc(-100%*${c.y}/${c.h})`;
 
-  // Apply/clear crop styling on a live <img> element, wrapped in its positioning span.
-  function applyCrop(img, wrap, photo) {
+  // Apply/clear crop styling on a live <img> + its positioning-span wrapper. In fill mode this
+  // alone is enough (percentage sizing, independent of frame measurement); contain mode also
+  // needs layoutCrop() to size the wrapper from the frame's actual pixel box.
+  function applyCrop(img, wrap, photo, fill) {
     if (!wrap) return;
-    if (photo && photo.crop) img.style.cssText = cropImgStyle(photo.crop);
-    else img.style.cssText = '';
+    if (photo && photo.crop) {
+      img.style.cssText = cropImgStyle(photo.crop);
+      wrap.style.cssText = fill
+        ? 'position:relative;width:100%;height:100%;overflow:hidden;display:block'
+        : 'position:relative;overflow:hidden;display:block;margin:auto';
+    } else {
+      img.style.cssText = '';
+      // Fill-mode contexts need the wrapper to keep filling its box even with no crop set
+      // (it's standing in for the plain <img> that normal CSS, e.g. object-fit:cover, sizes);
+      // contain-mode contexts just clear back to a plain unstyled span around the <img>.
+      wrap.style.cssText = fill ? 'position:relative;width:100%;height:100%;display:block' : '';
+    }
   }
 
   // Wrap an already-built `<img ...>` HTML string in a crop-positioning span when the photo
@@ -41,17 +65,14 @@
       this.root = root;
       this.opts = opts;
       this.index = 0;
-      // cropMain: wrap the main image in a positioning span so a per-photo crop rectangle
-      // (photo.crop = {x,y,w,h}, fractions 0-1) can be rendered by stretch-filling that
-      // rectangle into the frame. Only opt in for already-"cover"-style display contexts
-      // (hero/best-of slideshows) - it's incompatible with the ordinary contain-fit viewer,
-      // which always shows the full photo.
-      const mainEl = opts.cropMain ? '<span class="crop-main"><img class="main" alt=""></span>' : '<img class="main" alt="">';
+      // The main image is always wrapped in a positioning span so a per-photo crop rectangle
+      // can be rendered (see applyCrop above). With no crop set, the wrapper is styled to be
+      // a no-op passthrough, so this changes nothing when a photo has no crop.
       root.innerHTML = `
         <div class="stage">
           <button class="arrow prev" aria-label="Previous photo"><span>‹</span></button>
           <div class="frame">
-            ${mainEl}
+            <span class="crop-main"><img class="main" alt=""></span>
             <div class="desc" hidden><p></p><button class="desc-toggle" aria-label="Hide description">−</button></div>
           </div>
           <button class="arrow next" aria-label="Next photo"><span>›</span></button>
@@ -60,7 +81,7 @@
       this.stage = root.querySelector('.stage');
       this.frame = root.querySelector('.frame');
       this.img = root.querySelector('.main');
-      this.cropMainEl = opts.cropMain ? root.querySelector('.crop-main') : null;
+      this.cropWrapEl = root.querySelector('.crop-main');
       this.desc = root.querySelector('.desc');
       this.reel = root.querySelector('.reel');
 
@@ -89,7 +110,7 @@
         try { localStorage.setItem('desc-min', this.descMin ? '1' : ''); } catch {}
         this.layoutDesc();
       });
-      window.addEventListener('resize', () => this.layoutDesc());
+      window.addEventListener('resize', () => { this.layoutDesc(); this.layoutCrop(); });
       // Reusable <link rel=preload> elements: imagesrcset/imagesizes let the browser resolve
       // the same width it would actually pick for the <img>, so the cache warm-up can't miss
       // the real request the way a single fixed-width Image() guess can.
@@ -178,7 +199,8 @@
         this.img.srcset = srcsetFor(p);
         this.img.sizes = SIZES;
         this.img.src = url(p.id, 'w2000');
-        applyCrop(this.img, this.cropMainEl, p);
+        applyCrop(this.img, this.cropWrapEl, p, !!this.opts.cropFill);
+        this.layoutCrop();
         // Warm the next few neighbours (more ahead than behind) at the exact same
         // srcset/sizes as the real <img>, so whichever width the browser picks on
         // arrival is already cached.
@@ -201,6 +223,14 @@
       this.refresh();
       if (this.opts.hash) history.replaceState(null, '', `#${i + 1}`);
       if (this.opts.onShow) this.opts.onShow(i, p);
+    }
+
+    // Re-apply crop to the currently-shown photo without reloading its image - for when the
+    // editor changes photo.crop on the photo already on screen (show()'s image-reload guard
+    // skips re-applying crop since the photo id itself hasn't changed).
+    refreshCrop() {
+      applyCrop(this.img, this.cropWrapEl, this.current, !!this.opts.cropFill);
+      this.layoutCrop();
     }
 
     // Re-apply description and any thumbnail decorations (editor badges) without reloading
@@ -236,7 +266,22 @@
     box.style.width = `${Math.min(textW + chrome + 2, maxW)}px`;
   };
 
-  Viewer.imageBase = (meta && meta.content || 'https://lh3.googleusercontent.com/d').replace(/\/$/, '');
+  // Contain-mode crop sizing: measure the frame's actual pixel box and size the crop wrapper
+  // to the largest box with the crop's aspect ratio that still fits inside it (mirroring what
+  // object-fit:contain would do natively for a whole photo). No-op in fill mode (pure CSS
+  // percentages there, already correct) or when the current photo has no crop.
+  Viewer.prototype.layoutCrop = function () {
+    const wrap = this.cropWrapEl, p = this.current;
+    if (!wrap || this.opts.cropFill || !p || !p.crop) return;
+    const fw = this.frame.clientWidth, fh = this.frame.clientHeight;
+    if (!fw || !fh) return;
+    const cw = p.w * p.crop.w, ch = p.h * p.crop.h;
+    const scale = Math.min(fw / cw, fh / ch);
+    wrap.style.width = `${cw * scale}px`;
+    wrap.style.height = `${ch * scale}px`;
+  };
+
+  Viewer.imageBase =(meta && meta.content || 'https://lh3.googleusercontent.com/d').replace(/\/$/, '');
   Viewer.url = url;
   Viewer.cropWrap = cropWrap;
   window.Viewer = Viewer;

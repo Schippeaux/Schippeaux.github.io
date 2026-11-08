@@ -395,7 +395,8 @@ def route_payload(s, idx):
 
 def build_chapter(s, idx):
     c = s["chapters"][idx]
-    photos = [{k: p.get(k) for k in ("id", "w", "h", "desc")} for p in c["photos"]]
+    photos = [{k: v for k in ("id", "w", "h", "desc", "crop") if (v := p.get(k)) is not None}
+              for p in c["photos"]]
     data = json.dumps(photos, ensure_ascii=False).replace("</", "<\\/")
     single = len(s["chapters"]) == 1
     prev_c = s["chapters"][idx - 1] if idx > 0 else None
