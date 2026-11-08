@@ -136,6 +136,16 @@
     <div class="crop-modal-inner">
       <p class="eyebrow">Crop photo</p>
       <div class="crop-modal-stage"><img id="crop-img" alt=""></div>
+      <div class="crop-modal-ratios" id="crop-ratios" role="group" aria-label="Crop ratio">
+        <button class="btn small on" type="button" data-ratio="free">Free</button>
+        <button class="btn small" type="button" data-ratio="orig">Original</button>
+        <button class="btn small" type="button" data-w="1" data-h="1">1:1</button>
+        <button class="btn small" type="button" data-w="2" data-h="3">2:3</button>
+        <button class="btn small" type="button" data-w="3" data-h="5">3:5</button>
+        <button class="btn small" type="button" data-w="4" data-h="5">4:5</button>
+        <button class="btn small" type="button" data-w="16" data-h="9">16:9</button>
+        <button class="btn small" type="button" id="crop-orientation">⇅ Portrait</button>
+      </div>
       <div class="crop-modal-actions">
         <button class="btn small" id="crop-clear">Clear crop</button>
         <span class="spacer"></span>

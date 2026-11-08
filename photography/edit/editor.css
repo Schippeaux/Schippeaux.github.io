@@ -276,7 +276,19 @@ label { display: grid; gap: 6px; font-size: 11px; letter-spacing: .18em; text-tr
   width: 100%; height: min(70vh, 600px);
   background: #111;
 }
-.crop-modal-stage img { display: block; max-width: 100%; }
+/* Scoped to the original #crop-img only, not `.crop-modal-stage img` generally: Cropper.js
+   builds its own absolutely-positioned clone <img>s inside .crop-modal-stage, sized to the
+   full image at exact pixel precision (deliberately overflowing, clipped via overflow:hidden)
+   - a broader `max-width:100%` rule caught those clones too and broke Cropper's internal size
+   math, which is what caused the black/undraggable crop box and wrong saved crop rectangle. */
+#crop-img { display: block; max-width: 100%; }
+/* style.css's site-wide `img { opacity: 0 }` fade-in-on-load rule (revealed only by a
+   .loaded class our own code adds on load) was leaving Cropper.js's internally-generated
+   clone <img>s permanently invisible, since nothing ever adds .loaded to them - that's what
+   was actually behind the crop photo rendering black. */
+.cropper-container img { opacity: 1; }
+.crop-modal-ratios { display: flex; flex-wrap: wrap; gap: 6px; }
+.crop-modal-ratios button.on { background: var(--fg); color: var(--bg); }
 .crop-modal-actions { display: flex; align-items: center; gap: 8px; }
 .crop-modal-actions .spacer { flex: 1; }
 

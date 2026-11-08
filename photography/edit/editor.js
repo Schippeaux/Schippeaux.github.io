@@ -816,6 +816,9 @@
   const CROPPER_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css';
   const CROPPER_JS = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js';
   let cropperLoad = null, cropper = null, cropPhoto = null;
+  // Selected fixed ratio ({w,h}, pre-orientation) or null for Free/Original; orientation
+  // swaps which of w/h is on top when applying it to cropper.setAspectRatio().
+  let cropRatioWH = null, cropOrientation = 'landscape';
 
   function loadCropper() {
     if (cropperLoad) return cropperLoad;
@@ -834,27 +837,59 @@
     return cropperLoad;
   }
 
+  // Wait for the crop image to actually finish loading before handing it to Cropper.js -
+  // Cropper reads the image's natural size to do its internal math, and a half-loaded image
+  // (natural size 0, or still showing the previous photo) produces exactly the kind of
+  // black/undraggable crop box and wrong saved rectangle this is here to avoid.
+  function loadCropImage(src) {
+    const img = $('crop-img');
+    // Re-assigning .src to the same URL it already has doesn't re-fire 'load' (no re-fetch
+    // happens), which would otherwise hang this forever on a same-photo reopen.
+    if (img.src === src && img.complete && img.naturalWidth > 0) return Promise.resolve(img);
+    return new Promise((resolve, reject) => {
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function setCropRatioUI(activeBtn) {
+    $('crop-ratios').querySelectorAll('button[data-ratio], button[data-w]')
+      .forEach(b => b.classList.toggle('on', b === activeBtn));
+  }
+
+  function applyCropRatio() {
+    if (!cropper) return;
+    if (!cropRatioWH) return;  // Free/Original set the ratio directly when clicked
+    const { w, h } = cropRatioWH;
+    cropper.setAspectRatio(cropOrientation === 'portrait' ? h / w : w / h);
+  }
+
   function openCropModal(p) {
     cropPhoto = p;
-    loadCropper().then(() => {
-      const img = $('crop-img');
-      img.src = Viewer.url(p.id, 'w2000');
-      $('crop-modal').hidden = false;
-      if (cropper) cropper.destroy();
-      cropper = new window.Cropper(img, {
-        viewMode: 1,
-        autoCropArea: 1,
-        background: false,
-        ready() {
-          if (p.crop) {
-            cropper.setData({
-              x: p.crop.x * p.w, y: p.crop.y * p.h,
-              width: p.crop.w * p.w, height: p.crop.h * p.h,
-            });
-          }
-        },
+    cropRatioWH = null;
+    cropOrientation = 'landscape';
+    $('crop-orientation').textContent = '⇅ Portrait';
+    setCropRatioUI($('crop-ratios').querySelector('[data-ratio="free"]'));
+    loadCropper()
+      .then(() => loadCropImage(Viewer.url(p.id, 'w2000')))
+      .then(img => {
+        $('crop-modal').hidden = false;
+        if (cropper) cropper.destroy();
+        cropper = new window.Cropper(img, {
+          viewMode: 1,
+          autoCropArea: 1,
+          background: false,
+          ready() {
+            if (p.crop) {
+              cropper.setData({
+                x: p.crop.x * p.w, y: p.crop.y * p.h,
+                width: p.crop.w * p.w, height: p.crop.h * p.h,
+              });
+            }
+          },
+        });
       });
-    });
   }
 
   function closeCropModal() {
@@ -918,6 +953,20 @@
     $('cover-home').addEventListener('click', () => { state.data.home_cover = state.viewer.current.id; syncPhotoTools(); setDirty(); });
     $('crop-btn').addEventListener('click', () => openCropModal(state.viewer.current));
     $('crop-cancel').addEventListener('click', closeCropModal);
+    $('crop-ratios').addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn || btn.id === 'crop-orientation') return;
+      setCropRatioUI(btn);
+      if (btn.dataset.ratio === 'free') { cropRatioWH = null; cropper?.setAspectRatio(NaN); return; }
+      if (btn.dataset.ratio === 'orig') { cropRatioWH = null; cropper?.setAspectRatio(cropPhoto.w / cropPhoto.h); return; }
+      cropRatioWH = { w: +btn.dataset.w, h: +btn.dataset.h };
+      applyCropRatio();
+    });
+    $('crop-orientation').addEventListener('click', () => {
+      cropOrientation = cropOrientation === 'landscape' ? 'portrait' : 'landscape';
+      $('crop-orientation').textContent = cropOrientation === 'portrait' ? '⇅ Landscape' : '⇅ Portrait';
+      applyCropRatio();
+    });
     $('crop-save').addEventListener('click', () => {
       if (!cropper || !cropPhoto) return;
       const d = cropper.getData(true);
