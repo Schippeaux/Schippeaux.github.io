@@ -804,6 +804,120 @@
      ],
      "day_start": 19,
      "day_end": 20
+    },
+    {
+     "slug": "mojave-desert-california",
+     "number": 26,
+     "title": "Mojave Desert, California",
+     "text": "",
+     "cover": "1NXqWXsA4qpRCrXtAGVyn-mKBCKik0By6",
+     "photos": [
+      {
+       "id": "1NXqWXsA4qpRCrXtAGVyn-mKBCKik0By6",
+       "w": 8160,
+       "h": 3768,
+       "date": "2025-08-05",
+       "desc": "",
+       "crop": {
+        "x": 0.09,
+        "y": 0.05194805194805195,
+        "w": 0.7785,
+        "h": 0.948051948051948
+       }
+      },
+      {
+       "id": "1-ju990F7-ZbEwtSxyyjEdfEKkpSh80x5",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-08-06",
+       "desc": "",
+       "crop": {
+        "x": 0,
+        "y": 0.11252813203300825,
+        "w": 1,
+        "h": 0.8439609902475619
+       }
+      },
+      {
+       "id": "1axHoZmLhBEAX6Ci_qCoK33FKvDiQw1TT",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-08-06",
+       "desc": "",
+       "crop": {
+        "x": 0,
+        "y": 0.12978244561140284,
+        "w": 1,
+        "h": 0.8439609902475619
+       }
+      },
+      {
+       "id": "1DZfW9ziGS-HMyORnn_KQ50fs8_Ehxi1B",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-08-06",
+       "desc": "",
+       "crop": {
+        "x": 0,
+        "y": 0.10952738184546136,
+        "w": 1,
+        "h": 0.8439609902475619
+       }
+      },
+      {
+       "id": "1Hfjy-qxxDKrcZgoaq7uw0CKJh8M2aV8Z",
+       "w": 8160,
+       "h": 3768,
+       "date": "2025-08-05",
+       "desc": "",
+       "crop": {
+        "x": 0.244,
+        "y": 0,
+        "w": 0.6925,
+        "h": 0.8430735930735931
+       }
+      },
+      {
+       "id": "1N7P_jh6IBzRladA0vAjyrkWDt50Me9fK",
+       "w": 1848,
+       "h": 2464,
+       "date": "2025-08-06",
+       "desc": ""
+      },
+      {
+       "id": "1PRA2pW-80J-un4cq5TXNtXOqCOW0PCpM",
+       "w": 7728,
+       "h": 5152,
+       "date": "2025-08-06",
+       "desc": "",
+       "crop": {
+        "x": 0.3135,
+        "y": 0.30607651912978245,
+        "w": 0.6865,
+        "h": 0.5798949737434359
+       }
+      },
+      {
+       "id": "1n42n-OWnxJ43cj3FmLOaZ-nvm6QgAeHX",
+       "w": 6699,
+       "h": 3768,
+       "date": "2025-08-05",
+       "desc": "",
+       "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+       }
+      },
+      {
+       "id": "1bKNCBNWROm8A3qB2IkWQtWsXkTvCA4mi",
+       "w": 7721,
+       "h": 4343,
+       "date": "2025-08-05",
+       "desc": ""
+      }
+     ]
     }
    ],
    "best_of": [
