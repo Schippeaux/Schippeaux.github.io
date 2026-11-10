@@ -1,0 +1,17 @@
+/* Snaggo local folder viewer — small additions on top of ../css/styles.css.
+   Everything else (row-list, area-code, thumb-size-control, lightbox-overlay,
+   photo-grid, field-label, report-table, etc.) is shared with the main app. */
+
+.picker {
+  padding: 32px var(--gap) 0;
+  color: var(--ink-soft);
+}
+.picker p {
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.area-title {
+  font-size: 1.2rem;
+  margin: 18px 4px 4px;
+}
