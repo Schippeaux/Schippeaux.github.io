@@ -5,17 +5,16 @@
 //                      photo & audio entries reference filenames, not blobs.
 //   drawings/*.jpg   — reference drawing images
 //   photos/*.jpg     — defect photos, named <defectCode>_<n>.<ext>
-//   audio/*.webm     — dictations, named <defectCode>_<n>.<ext>
+//   audio/*.webm     — any legacy dictation clips from before audio capture
+//                      was removed from the app (still exported/imported so
+//                      older projects don't lose data, just not recordable
+//                      from the UI any more)
 //
 // That zip is what you move off the phone/tablet by hand (AirDrop, cable,
 // OneDrive, email — whatever). It is never uploaded anywhere by the app.
 //
-// Import accepts either:
-//   - a Snaggo project .zip — always creates a NEW project on this device;
-//     it never touches or replaces a project that's already here.
-//   - a transcriptions .csv (defect_code, raw_transcript, polished_notes,
-//     suggested_title) — merges AI notes into the matching defect's Comments
-//     within the currently open project.
+// Import accepts a Snaggo project .zip — always creates a NEW project on
+// this device; it never touches or replaces a project that's already here.
 
 function extOf(mimeType, fallback) {
   if (!mimeType) return fallback;
@@ -135,15 +134,6 @@ const SnaggoExport = {
       photos,
       audio,
     });
-  },
-
-  async importTranscriptionsCsv(projectId, file) {
-    const text = await file.text();
-    const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
-    if (parsed.errors && parsed.errors.length) {
-      console.warn('CSV parse warnings:', parsed.errors);
-    }
-    return Snaggo.applyTranscriptionRows(projectId, parsed.data);
   },
 
   _download(blob, filename) {

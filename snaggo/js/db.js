@@ -5,7 +5,9 @@
 //   projects   keyPath 'id'                     — { id, name, description, createdAt }
 //   drawings   keyPath 'id', index 'projectId'   — { id, projectId, name, blob, createdAt }
 //   areas      keyPath 'id', index 'projectId'   — { id, projectId, kind: 'external'|'internal',
-//                                                     name, order, createdAt }
+//                                                     name, code, order, createdAt }
+//              `code` is an optional room/area code (e.g. "B1-04") shown in its own column
+//              alongside `name` (e.g. "Corridor") — blank for areas with no natural code.
 //   defects    keyPath 'id' (uuid), index 'areaId' — { id, areaId, code, seq, title, description,
 //                                                       comments, status, complete, targetResolution,
 //                                                       createdAt, updatedAt }
@@ -217,17 +219,24 @@ const Snaggo = {
     const all = await Store.getAllByIndex('areas', 'projectId', projectId);
     return all.filter((a) => a.kind === kind).sort((a, b) => a.order - b.order);
   },
-  async addArea(projectId, kind, name) {
+  async addArea(projectId, kind, name, code = '') {
     const existing = await Snaggo.listAreas(projectId, kind);
     const id = crypto.randomUUID();
     const order = existing.length;
-    return Store.put('areas', { id, projectId, kind, name, order, createdAt: Date.now() });
+    return Store.put('areas', { id, projectId, kind, name, code, order, createdAt: Date.now() });
   },
   async renameArea(id, name) {
     const area = await Store.get('areas', id);
     if (!area) return;
     area.name = name;
     return Store.put('areas', area);
+  },
+  async updateArea(id, fields) {
+    const area = await Store.get('areas', id);
+    if (!area) return;
+    const next = { ...area, ...fields };
+    await Store.put('areas', next);
+    return next;
   },
   async deleteArea(id) {
     const defects = await Store.getAllByIndex('defects', 'areaId', id);
@@ -268,6 +277,8 @@ const Snaggo = {
       status: 'Incomplete',
       complete: false,
       targetResolution: '',
+      dateIdentified: '',
+      subcontractor: '',
       createdAt: now,
       updatedAt: now,
     };
@@ -422,32 +433,5 @@ const Snaggo = {
       await Store.put('audio', { ...a, id: crypto.randomUUID(), defectId: defectIdMap[a.defectId] || a.defectId });
     }
     return projectId;
-  },
-
-  // rows: [{ defect_code, raw_transcript, polished_notes, suggested_title }]
-  // Matched by `code` within the given project — codes are only unique
-  // per-project, not globally, now that a device can hold several.
-  async applyTranscriptionRows(projectId, rows) {
-    const areas = await Store.getAllByIndex('areas', 'projectId', projectId);
-    const byCode = {};
-    for (const area of areas) {
-      for (const d of await Snaggo.listDefects(area.id)) byCode[d.code] = d;
-    }
-    let applied = 0;
-    for (const row of rows) {
-      const code = (row.defect_code || row.defect_id || '').trim();
-      if (!code) continue;
-      const defect = byCode[code];
-      if (!defect) continue;
-      const note = (row.polished_notes || '').trim();
-      if (note) {
-        const tag = `[AI transcription — reviewed]\n${note}`;
-        defect.comments = defect.comments ? `${defect.comments}\n\n${tag}` : tag;
-      }
-      defect.updatedAt = Date.now();
-      await Store.put('defects', defect);
-      applied++;
-    }
-    return applied;
   },
 };

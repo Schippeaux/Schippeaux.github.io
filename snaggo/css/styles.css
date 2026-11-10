@@ -127,21 +127,6 @@ input[type="text"]:focus, textarea:focus, select:focus {
 }
 .btn-secondary { color: var(--blue); border-color: var(--blue-soft); background: var(--blue-soft); }
 .btn-add { width: 100%; margin-top: 14px; font-weight: 500; }
-.btn-record {
-  background: var(--orange-soft);
-  border-color: var(--orange-soft);
-  color: var(--orange);
-  font-weight: 500;
-}
-.btn-record.recording {
-  background: var(--orange);
-  color: #fff;
-  animation: pulse 1.4s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
 
 .icon-btn {
   width: 32px;
@@ -287,6 +272,28 @@ input[type="text"]:focus, textarea:focus, select:focus {
 .count-outstanding { background: var(--orange-soft); color: var(--orange); }
 .count-resolved { background: var(--blue-soft); color: var(--blue); }
 
+/* Area list — Code / Name columns */
+.area-list-head {
+  display: flex;
+  gap: 10px;
+  padding: 0 4px;
+  margin-top: 14px;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.area-list-head .area-code { width: 76px; flex-shrink: 0; }
+.area-code {
+  width: 76px;
+  flex-shrink: 0;
+  color: var(--blue);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .status-badge {
   font-size: 0.75rem;
   border-radius: 999px;
@@ -314,57 +321,52 @@ input[type="text"]:focus, textarea:focus, select:focus {
 .row-delete:hover { background: var(--orange-soft); color: var(--orange); }
 
 /* Defect detail */
-.photos-section, .audio-section { margin-top: 20px; }
+.photos-section { margin-top: 20px; }
 
-.live-transcript {
-  margin: 6px 0 0;
-  padding: 10px 12px;
-  background: var(--blue-soft);
-  color: var(--ink);
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-style: italic;
-}
-.live-transcript.live-transcript-error {
-  background: var(--orange-soft);
-  color: var(--orange);
-  font-style: normal;
-}
-
-.audio-list { list-style: none; padding: 0; margin: 0; }
-.audio-item {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-/* Full width of its own, so the browser's native player menu (playback
-   speed, download — the "..." some browsers add) has room to position
-   itself on screen instead of clipping off the edge of a cramped row. */
-.audio-player { width: 100%; height: 36px; display: block; }
-.audio-item-row {
+/* Photo lightbox — click a thumbnail to open full-size, click anywhere on
+   it (including the enlarged photo itself) to close. */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 4px;
+  justify-content: center;
+  padding: 16px;
+  z-index: 200;
+  cursor: zoom-out;
 }
-.audio-meta { font-size: 0.78rem; color: var(--ink-soft); }
-.audio-transcript {
-  margin-top: 8px;
-  font-size: 0.9rem;
+.lightbox-overlay img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
 }
-.audio-transcript-actions {
+
+/* Thumbnail-size control (room/area page) */
+.thumb-size-control {
   display: flex;
-  gap: 16px;
-  margin-top: 4px;
-}
-.btn-link {
-  background: none;
-  border: none;
-  color: var(--blue);
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
   font-size: 0.82rem;
-  font-weight: 500;
-  padding: 2px 0;
-  cursor: pointer;
+  color: var(--ink-soft);
+}
+.thumb-size-control .icon-btn { font-size: 1rem; }
+
+/* Thumbnail shown inline in a defect row on the room page */
+:root { --thumb-size: 96px; }
+.defect-row-thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  flex-shrink: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--blue-soft);
+  transition: width 0.15s, height 0.15s;
+}
+.defect-row-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
 }
 
 /* Toasts */
@@ -433,11 +435,46 @@ input[type="text"]:focus, textarea:focus, select:focus {
   cursor: pointer;
   flex-shrink: 0;
 }
-.action-btn.record-btn { background: var(--orange-soft); color: var(--orange); }
-.action-btn.record-btn.recording {
-  background: var(--orange);
-  color: #fff;
-  animation: pulse 1.4s infinite;
+
+/* Report (flat table) */
+.report-project-name {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  margin: 2px 0 14px;
+}
+.report-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.report-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 760px;
+  font-size: 0.85rem;
+}
+.report-table th, .report-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  white-space: pre-wrap;
+}
+.report-table th {
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-weight: 500;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+.report-photo-cell img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: zoom-in;
+  display: block;
 }
 
 /* Modal (quick comment entry) */

@@ -34,7 +34,6 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js',
 ];
 
 self.addEventListener('install', (event) => {

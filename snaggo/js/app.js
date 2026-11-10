@@ -11,6 +11,7 @@ const toastHost = document.getElementById('toast-host');
 //   #/project/<id>/tab/<kind>               area list
 //   #/project/<id>/area/<areaId>            defect list
 //   #/project/<id>/defect/<defectId>        defect detail
+//   #/project/<id>/report                   full table report (all areas/defects)
 window.addEventListener('hashchange', render);
 window.addEventListener('DOMContentLoaded', () => {
   if (!location.hash) location.hash = '#/';
@@ -38,6 +39,8 @@ async function render() {
         await renderAreaDetail(projectId, parts[3]);
       } else if (parts[2] === 'defect' && parts[3]) {
         await renderDefectDetail(projectId, parts[3]);
+      } else if (parts[2] === 'report') {
+        await renderReportPage(projectId);
       } else {
         location.hash = `#/project/${encodeURIComponent(projectId)}`;
       }
@@ -73,24 +76,6 @@ async function saveToPhotosFlow(photos, shareTitle) {
     await Media.shareFiles(files, { title: shareTitle });
   } catch (err) {
     if (err.name !== 'AbortError') toast('Could not open the share sheet: ' + err.message);
-  }
-}
-
-function describeSpeechError(code) {
-  switch (code) {
-    case 'not-allowed':
-    case 'service-not-allowed':
-      return 'Microphone/speech permission was blocked for this page';
-    case 'network':
-      return 'No network — live transcription needs a connection';
-    case 'audio-capture':
-      return "Couldn't access the microphone for speech recognition";
-    case 'aborted':
-      return 'Speech recognition was interrupted';
-    case 'language-not-supported':
-      return "This device's speech service doesn't support the current language";
-    default:
-      return `Live transcription failed (${code})`;
   }
 }
 
@@ -168,6 +153,55 @@ function openTextModal({ title, value, placeholder }) {
   });
 }
 
+// Full-screen photo viewer. Clicking the thumbnail that opened it (or the
+// overlay itself) closes it again — "click it again to minimise".
+function openLightbox(url) {
+  const overlay = el(`
+    <div class="lightbox-overlay">
+      <img src="${url}" alt="Photo" />
+    </div>
+  `);
+  function close() {
+    overlay.remove();
+    document.removeEventListener('keydown', onKey);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') close();
+  }
+  overlay.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(overlay);
+  return close;
+}
+
+// Global thumbnail-size control (+/-), persisted per device. Used on the
+// room/area page where photo thumbnails are shown in a grid.
+const THUMB_SIZES = [72, 96, 128, 160, 200];
+function getThumbSizeIndex() {
+  const stored = parseInt(localStorage.getItem('snaggo-thumb-size-idx'), 10);
+  return Number.isInteger(stored) && stored >= 0 && stored < THUMB_SIZES.length ? stored : 1;
+}
+function setThumbSizeIndex(idx) {
+  localStorage.setItem('snaggo-thumb-size-idx', String(idx));
+}
+function wireThumbSizeControl(root) {
+  const minusBtn = root.querySelector('.thumb-size-minus');
+  const plusBtn = root.querySelector('.thumb-size-plus');
+  const apply = () => {
+    const px = THUMB_SIZES[getThumbSizeIndex()];
+    root.style.setProperty('--thumb-size', px + 'px');
+  };
+  apply();
+  minusBtn.addEventListener('click', () => {
+    setThumbSizeIndex(Math.max(0, getThumbSizeIndex() - 1));
+    apply();
+  });
+  plusBtn.addEventListener('click', () => {
+    setThumbSizeIndex(Math.min(THUMB_SIZES.length - 1, getThumbSizeIndex() + 1));
+    apply();
+  });
+}
+
 function topBar(title, { back } = {}) {
   return `
     <header class="topbar">
@@ -211,7 +245,7 @@ async function renderProjectList() {
     `);
     row.querySelector('.row-delete').addEventListener('click', async (e) => {
       e.preventDefault();
-      if (!confirm(`Delete "${project.name || '(untitled project)'}"? This removes all its rooms, defects, photos and dictations.`)) return;
+      if (!confirm(`Delete "${project.name || '(untitled project)'}"? This removes all its rooms, defects and photos.`)) return;
       await Snaggo.deleteProject(project.id);
       await renderProjectList();
     });
@@ -268,10 +302,10 @@ async function renderProjectHome(projectId) {
       </nav>
 
       <section class="io-card">
+        <a class="btn btn-secondary" href="#/project/${encodeURIComponent(projectId)}/report">View report</a>
         <button id="save-all-photos-btn" class="btn btn-secondary">Save all photos to gallery</button>
         <button id="export-btn" class="btn btn-secondary">Export project (.zip)</button>
         <button id="import-zip-btn" class="btn btn-secondary">Import project (.zip)</button>
-        <button id="import-csv-btn" class="btn btn-secondary">Import transcriptions (.csv)</button>
       </section>
 
       <p class="version-footer">Snaggo ${escapeHtml(typeof SNAGGO_VERSION !== 'undefined' ? SNAGGO_VERSION : '?')}</p>
@@ -328,16 +362,6 @@ async function renderProjectHome(projectId) {
     });
   });
 
-  document.getElementById('import-csv-btn').addEventListener('click', () => {
-    Media.pickFile('.csv', async (file) => {
-      try {
-        const n = await SnaggoExport.importTranscriptionsCsv(projectId, file);
-        toast(`Applied transcriptions to ${n} defect${n === 1 ? '' : 's'}`);
-      } catch (err) {
-        toast('Import failed: ' + err.message);
-      }
-    });
-  });
 }
 
 async function tabCounts(projectId, kind) {
@@ -387,6 +411,10 @@ async function renderAreaList(projectId, kind) {
   root.innerHTML = `
     ${topBar(label, { back: `#/project/${encodeURIComponent(projectId)}` })}
     <main class="area-list">
+      <div class="area-list-head">
+        <span class="area-code">Code</span>
+        <span class="row-name">Name</span>
+      </div>
       <ul class="row-list" id="area-rows"></ul>
       <button id="add-area" class="btn btn-primary btn-add">+ Add ${kind === 'external' ? 'area' : 'room'}</button>
     </main>
@@ -401,6 +429,7 @@ async function renderAreaList(projectId, kind) {
     const row = el(`
       <li class="row-item">
         <a class="row-link" href="#/project/${encodeURIComponent(projectId)}/area/${encodeURIComponent(area.id)}">
+          <span class="area-code">${escapeHtml(area.code || '')}</span>
           <span class="row-name">${escapeHtml(area.name)}</span>
           <span class="row-counts">
             <span class="count-badge count-outstanding">${counts.outstanding}</span>
@@ -426,9 +455,11 @@ async function renderAreaList(projectId, kind) {
   }
 
   document.getElementById('add-area').addEventListener('click', async () => {
+    const code = prompt(kind === 'external' ? 'Area code (optional, e.g. E-1)' : 'Room code (optional, e.g. B1-04)');
+    if (code === null) return;
     const name = prompt(kind === 'external' ? 'Area name (e.g. Front Facade)' : 'Room name (e.g. Bathroom 2)');
     if (!name || !name.trim()) return;
-    await Snaggo.addArea(projectId, kind, name.trim());
+    await Snaggo.addArea(projectId, kind, name.trim(), code.trim());
     await renderAreaList(projectId, kind);
   });
 }
@@ -442,14 +473,22 @@ async function renderAreaDetail(projectId, areaId) {
     return;
   }
   const defects = await Snaggo.listDefects(areaId);
+  const areaLabel = area.code ? `${area.code} · ${area.name}` : area.name;
 
   root.innerHTML = `
-    ${topBar(area.name, { back: `#/project/${encodeURIComponent(projectId)}/tab/${area.kind}` })}
+    ${topBar(areaLabel, { back: `#/project/${encodeURIComponent(projectId)}/tab/${area.kind}` })}
     <main class="defect-list">
+      <div class="thumb-size-control">
+        <span>Thumbnail size</span>
+        <button class="icon-btn thumb-size-minus" title="Smaller thumbnails" aria-label="Smaller thumbnails">&minus;</button>
+        <button class="icon-btn thumb-size-plus" title="Larger thumbnails" aria-label="Larger thumbnails">+</button>
+      </div>
       <ul class="row-list" id="defect-rows"></ul>
       <button id="add-defect" class="btn btn-primary btn-add">+ Add defect</button>
     </main>
   `;
+
+  wireThumbSizeControl(root.querySelector('main.defect-list'));
 
   const rowsEl = document.getElementById('defect-rows');
   if (!defects.length) {
@@ -457,10 +496,13 @@ async function renderAreaDetail(projectId, areaId) {
   }
   for (const defect of defects) {
     const { roomCode, number } = splitDefectCode(defect.code || '');
+    const photos = await Snaggo.listPhotos(defect.id);
+    const thumbUrl = photos.length ? URL.createObjectURL(photos[0].blob) : '';
     const row = el(`
       <li class="row-item defect-row">
         <div class="defect-row-main">
           <a class="row-link" href="#/project/${encodeURIComponent(projectId)}/defect/${encodeURIComponent(defect.id)}">
+            <span class="defect-row-thumb">${thumbUrl ? `<img src="${thumbUrl}" alt="" />` : ''}</span>
             <span class="row-name">
               <span class="defect-code">${escapeHtml(roomCode)}${number ? ' · ' + escapeHtml(number) : ''}</span>
               <span class="${defect.title ? '' : 'defect-title-empty'}">${escapeHtml(defect.title || '(unnamed defect)')}</span>
@@ -471,9 +513,6 @@ async function renderAreaDetail(projectId, areaId) {
         <div class="row-actions">
           <button class="action-btn camera-btn" title="Add photo" aria-label="Add photo">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="14" r="3.5"/></svg>
-          </button>
-          <button class="action-btn record-btn" title="Record dictation" aria-label="Record dictation">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
           </button>
           <button class="action-btn comment-btn" title="Add comment" aria-label="Add comment">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -489,14 +528,8 @@ async function renderAreaDetail(projectId, areaId) {
       Media.pickPhotos(async (files) => {
         for (const f of files) await Snaggo.addPhoto(defect.id, f);
         toast(`Photo added to ${defect.code}`);
+        await renderAreaDetail(projectId, areaId);
       });
-    });
-
-    wireInlineRecorder(row.querySelector('.record-btn'), defect.id, {
-      onSaved: () => toast(`Dictation saved to ${defect.code}`),
-      onError: (code) => {
-        if (code !== 'unsupported') toast(describeSpeechError(code) + ' — still recording audio');
-      },
     });
 
     row.querySelector('.comment-btn').addEventListener('click', async (e) => {
@@ -514,7 +547,7 @@ async function renderAreaDetail(projectId, areaId) {
 
     row.querySelector('.row-delete').addEventListener('click', async (e) => {
       e.preventDefault();
-      if (!confirm(`Delete ${defect.code}? This removes its photos and dictations too.`)) return;
+      if (!confirm(`Delete ${defect.code}? This removes its photos too.`)) return;
       await Snaggo.deleteDefect(defect.id);
       await renderAreaDetail(projectId, areaId);
       toast(`Deleted ${defect.code}`);
@@ -539,7 +572,6 @@ async function renderDefectDetail(projectId, defectId) {
   }
   const area = await Store.get('areas', defect.areaId);
   const photos = await Snaggo.listPhotos(defectId);
-  const audioClips = await Snaggo.listAudio(defectId);
 
   root.innerHTML = `
     ${topBar(defect.code || '(unnamed defect)', { back: `#/project/${encodeURIComponent(projectId)}/area/${encodeURIComponent(defect.areaId)}` })}
@@ -561,6 +593,17 @@ async function renderDefectDetail(projectId, defectId) {
         </label>
       </div>
 
+      <div class="field-row">
+        <div>
+          <label class="field-label">Date identified</label>
+          <input id="d-date" type="text" value="${escapeHtml(defect.dateIdentified || '')}" placeholder="e.g. 10/11/2026" />
+        </div>
+        <div>
+          <label class="field-label">Subcontractor</label>
+          <input id="d-subcontractor" type="text" value="${escapeHtml(defect.subcontractor || '')}" placeholder="Responsible trade" />
+        </div>
+      </div>
+
       <label class="field-label">Target resolution</label>
       <input id="d-target" type="text" value="${escapeHtml(defect.targetResolution || '')}" placeholder="e.g. a date, or before practical completion" />
 
@@ -580,15 +623,6 @@ async function renderDefectDetail(projectId, defectId) {
         <div class="photo-grid" id="photo-grid"></div>
       </section>
 
-      <section class="audio-section">
-        <div class="section-head">
-          <h2>Dictation</h2>
-          <button id="rec-btn" class="btn btn-record">● Record</button>
-        </div>
-        <p id="live-transcript-preview" class="live-transcript" hidden></p>
-        <ul class="audio-list" id="audio-list"></ul>
-      </section>
-
       <label class="field-label">Comments</label>
       <textarea id="d-comments" rows="4" placeholder="Additional comments…">${escapeHtml(defect.comments || '')}</textarea>
     </main>
@@ -605,6 +639,12 @@ async function renderDefectDetail(projectId, defectId) {
   );
   document.getElementById('d-target').addEventListener('change', (e) =>
     Snaggo.updateDefect(defectId, { targetResolution: e.target.value })
+  );
+  document.getElementById('d-date').addEventListener('change', (e) =>
+    Snaggo.updateDefect(defectId, { dateIdentified: e.target.value })
+  );
+  document.getElementById('d-subcontractor').addEventListener('change', (e) =>
+    Snaggo.updateDefect(defectId, { subcontractor: e.target.value })
   );
   document.getElementById('d-desc').addEventListener('change', (e) =>
     Snaggo.updateDefect(defectId, { description: e.target.value })
@@ -624,9 +664,6 @@ async function renderDefectDetail(projectId, defectId) {
     const current = await Snaggo.listPhotos(defectId);
     await saveToPhotosFlow(current, `${defect.code} photos`);
   });
-
-  await renderAudioList(projectId, defectId, audioClips);
-  wireRecordButton(projectId, defectId);
 }
 
 async function renderPhotoGrid(projectId, defectId, photos) {
@@ -644,7 +681,9 @@ async function renderPhotoGrid(projectId, defectId, photos) {
         <button class="thumb-delete" title="Delete">&times;</button>
       </div>
     `);
-    card.querySelector('.thumb-delete').addEventListener('click', async () => {
+    card.querySelector('img').addEventListener('click', () => openLightbox(url));
+    card.querySelector('.thumb-delete').addEventListener('click', async (e) => {
+      e.stopPropagation();
       if (!confirm('Delete this photo?')) return;
       await Snaggo.deletePhoto(p.id);
       await renderDefectDetail(projectId, defectId);
@@ -653,174 +692,74 @@ async function renderPhotoGrid(projectId, defectId, photos) {
   }
 }
 
-async function renderAudioList(projectId, defectId, clips) {
-  const list = document.getElementById('audio-list');
-  if (!clips.length) {
-    list.innerHTML = '<li class="empty-hint">No dictations yet.</li>';
+// ---- Report (flat table, PDF-style) ---------------------------------------
+
+async function renderReportPage(projectId) {
+  const project = await Snaggo.getProjectById(projectId);
+  if (!project) {
+    location.hash = '#/';
     return;
   }
-  list.innerHTML = '';
-  clips.forEach((clip, i) => {
-    const url = URL.createObjectURL(clip.blob);
-    const when = new Date(clip.createdAt).toLocaleString();
-    const hasTranscript = !!(clip.transcriptRaw || '').trim();
-    const placeholder = hasTranscript
-      ? ''
-      : clip.transcriptNote
-      ? clip.transcriptNote
-      : 'No live transcript captured — add one manually, or transcribe this clip on the PC later.';
-    const item = el(`
-      <li class="audio-item">
-        <audio controls src="${url}" class="audio-player"></audio>
-        <div class="audio-item-row">
-          <span class="audio-meta">Dictation ${i + 1} · ${escapeHtml(when)}</span>
-          <button class="row-delete" title="Delete">&times;</button>
-        </div>
-        <textarea class="audio-transcript" rows="2" placeholder="${escapeHtml(placeholder)}">${escapeHtml(clip.transcriptRaw || '')}</textarea>
-        <div class="audio-transcript-actions">
-          <button class="btn-link save-transcript">Save</button>
-          <button class="btn-link add-to-comments">Add to comments</button>
-        </div>
-      </li>
-    `);
+  const areas = [
+    ...(await Snaggo.listAreas(projectId, 'external')),
+    ...(await Snaggo.listAreas(projectId, 'internal')),
+  ];
 
-    item.querySelector('.row-delete').addEventListener('click', async () => {
-      if (!confirm('Delete this dictation?')) return;
-      await Snaggo.deleteAudio(clip.id);
-      await renderDefectDetail(projectId, defectId);
-    });
+  root.innerHTML = `
+    ${topBar('Report', { back: `#/project/${encodeURIComponent(projectId)}` })}
+    <main class="report">
+      <p class="report-project-name">${escapeHtml(project.name || '(untitled project)')}</p>
+      <div class="report-table-wrap">
+        <table class="report-table" id="report-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Room</th>
+              <th>Description</th>
+              <th>Photo</th>
+              <th>Date identified</th>
+              <th>Subcontractor</th>
+              <th>Status</th>
+              <th>Target resolution</th>
+              <th>Complete</th>
+            </tr>
+          </thead>
+          <tbody id="report-rows"></tbody>
+        </table>
+      </div>
+    </main>
+  `;
 
-    const textarea = item.querySelector('.audio-transcript');
-    item.querySelector('.save-transcript').addEventListener('click', async () => {
-      await Snaggo.updateAudio(clip.id, { transcriptRaw: textarea.value });
-      toast('Transcript saved');
-    });
-    item.querySelector('.add-to-comments').addEventListener('click', async () => {
-      const text = textarea.value.trim();
-      if (!text) {
-        toast('Nothing to add — the transcript is empty');
-        return;
+  const tbody = document.getElementById('report-rows');
+  let rowCount = 0;
+  for (const area of areas) {
+    const defects = await Snaggo.listDefects(area.id);
+    for (const defect of defects) {
+      rowCount++;
+      const photos = await Snaggo.listPhotos(defect.id);
+      const thumbUrl = photos.length ? URL.createObjectURL(photos[0].blob) : '';
+      const roomLabel = area.code ? `${area.code} · ${area.name}` : area.name;
+      const row = el(`
+        <tr>
+          <td>${escapeHtml(defect.code || '')}</td>
+          <td>${escapeHtml(roomLabel)}</td>
+          <td>${escapeHtml(defect.title || defect.description || '')}</td>
+          <td class="report-photo-cell">${thumbUrl ? `<img src="${thumbUrl}" alt="" />` : ''}</td>
+          <td>${escapeHtml(defect.dateIdentified || '')}</td>
+          <td>${escapeHtml(defect.subcontractor || '')}</td>
+          <td>${escapeHtml(defect.status || '')}</td>
+          <td>${escapeHtml(defect.targetResolution || '')}</td>
+          <td>${defect.complete ? '✓' : ''}</td>
+        </tr>
+      `);
+      if (thumbUrl) {
+        row.querySelector('.report-photo-cell img').addEventListener('click', () => openLightbox(thumbUrl));
       }
-      const defect = await Snaggo.getDefect(defectId);
-      const next = defect.comments ? `${defect.comments}\n\n${text}` : text;
-      await Snaggo.updateDefect(defectId, { comments: next });
-      await renderDefectDetail(projectId, defectId);
-      toast('Added to comments');
-    });
-
-    list.appendChild(item);
-  });
-}
-
-// Generic record-toggle wiring, used both by the big "Record" button on the
-// defect detail page and the compact record icon on each row of a room's
-// defect list. Runs audio capture and the phone's own live dictation side
-// by side where dictation is supported — one button instead of "record
-// audio" and "transcribe it" as separate steps.
-function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim, onError } = {}) {
-  let recorder = null;
-  let transcriber = null;
-
-  btn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!recorder) {
-      recorder = Media.createRecorder();
-      try {
-        await recorder.start();
-        btn.classList.add('recording');
-        if (Media.isSpeechRecognitionSupported()) {
-          transcriber = Media.createLiveTranscriber();
-          transcriber.start(
-            (finalText, interim) => {
-              if (onInterim) onInterim(finalText, interim);
-            },
-            (errorCode) => {
-              if (onError) onError(errorCode);
-            }
-          );
-        } else if (onError) {
-          onError('unsupported');
-        }
-        if (onStart) onStart(btn);
-      } catch (err) {
-        toast('Could not start recording: ' + err.message);
-        recorder = null;
-      }
-      return;
+      tbody.appendChild(row);
     }
-    btn.disabled = true;
-    if (onStop) onStop(btn);
-    let transcriptRaw = '';
-    let transcriptNote = '';
-    if (transcriber) {
-      const result = transcriber.stop();
-      transcriptRaw = result.text;
-      if (!transcriptRaw) {
-        transcriptNote = result.lastError
-          ? describeSpeechError(result.lastError)
-          : result.sawResult
-          ? '' // got results but they were empty/silence — leave note blank
-          : 'No speech was recognised during this recording';
-      }
-    } else {
-      transcriptNote = "This browser has no built-in speech recognition — tap this box and use your keyboard's own dictation mic";
-    }
-    transcriber = null;
-    const { blob, mimeType } = await recorder.stop();
-    await Snaggo.addAudio(defectId, blob, mimeType, transcriptRaw, transcriptNote);
-    recorder = null;
-    if (onSaved) await onSaved();
-  });
+  }
+  if (!rowCount) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-hint">No defects logged yet.</td></tr>';
+  }
 }
 
-function wireRecordButton(projectId, defectId) {
-  const btn = document.getElementById('rec-btn');
-  const preview = document.getElementById('live-transcript-preview');
-  wireInlineRecorder(btn, defectId, {
-    onStart: (b) => {
-      b.textContent = '■ Stop';
-      if (preview) {
-        preview.hidden = false;
-        preview.classList.remove('live-transcript-error');
-        preview.textContent = Media.isSpeechRecognitionSupported()
-          ? 'Listening…'
-          : 'Recording — this browser has no built-in speech recognition, so this clip will be audio only (tap the transcript box after stopping to dictate with your keyboard instead)';
-      }
-    },
-    onInterim: (finalText, interim) => {
-      if (preview && !preview.classList.contains('live-transcript-error')) {
-        preview.textContent = [finalText, interim].filter(Boolean).join(' ') || 'Listening…';
-      }
-    },
-    onError: (code) => {
-      if (preview) {
-        preview.classList.add('live-transcript-error');
-        preview.textContent =
-          code === 'unsupported'
-            ? "Recording (live transcript isn't supported on this device — audio only)"
-            : describeSpeechError(code) + ' — still recording audio';
-      }
-    },
-    onStop: () => {
-      if (preview) preview.hidden = true;
-    },
-    onSaved: async () => {
-      await renderDefectDetail(projectId, defectId);
-      // No live transcript on this browser (e.g. iOS Safari, which has no
-      // SpeechRecognition API at all — not something a web page can add).
-      // The closest we can get to "one button": jump straight to the new
-      // clip's transcript box so the keyboard — with its own dictation mic
-      // — is already up, ready for a single tap instead of having to find
-      // and tap into the field first.
-      if (!Media.isSpeechRecognitionSupported()) {
-        const boxes = document.querySelectorAll('.audio-transcript');
-        const last = boxes[boxes.length - 1];
-        if (last) {
-          last.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          last.focus();
-        }
-      }
-    },
-  });
-}
