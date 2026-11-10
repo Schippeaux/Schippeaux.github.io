@@ -5,6 +5,12 @@ const root = document.getElementById('app');
 const toastHost = document.getElementById('toast-host');
 
 // ---- tiny router -----------------------------------------------------
+// Hash shapes:
+//   #/                                     project list (home)
+//   #/project/<id>                         project home (drawings, tabs, io)
+//   #/project/<id>/tab/<kind>               area list
+//   #/project/<id>/area/<areaId>            defect list
+//   #/project/<id>/defect/<defectId>        defect detail
 window.addEventListener('hashchange', render);
 window.addEventListener('DOMContentLoaded', () => {
   if (!location.hash) location.hash = '#/';
@@ -13,8 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function parseHash() {
   const hash = location.hash.replace(/^#\/?/, '');
-  const parts = hash.split('/').filter(Boolean);
-  return parts;
+  return hash.split('/').filter(Boolean).map(decodeURIComponent);
 }
 
 async function render() {
@@ -22,13 +27,20 @@ async function render() {
   root.innerHTML = '<div class="loading">Loading…</div>';
   try {
     if (parts.length === 0) {
-      await renderHome();
-    } else if (parts[0] === 'tab' && parts[1]) {
-      await renderAreaList(parts[1]);
-    } else if (parts[0] === 'area' && parts[1]) {
-      await renderAreaDetail(parts[1]);
-    } else if (parts[0] === 'defect' && parts[1]) {
-      await renderDefectDetail(decodeURIComponent(parts[1]));
+      await renderProjectList();
+    } else if (parts[0] === 'project' && parts[1]) {
+      const projectId = parts[1];
+      if (parts.length === 2) {
+        await renderProjectHome(projectId);
+      } else if (parts[2] === 'tab' && parts[3]) {
+        await renderAreaList(projectId, parts[3]);
+      } else if (parts[2] === 'area' && parts[3]) {
+        await renderAreaDetail(projectId, parts[3]);
+      } else if (parts[2] === 'defect' && parts[3]) {
+        await renderDefectDetail(projectId, parts[3]);
+      } else {
+        location.hash = `#/project/${encodeURIComponent(projectId)}`;
+      }
     } else {
       location.hash = '#/';
     }
@@ -82,9 +94,10 @@ function describeSpeechError(code) {
   }
 }
 
-function splitDefectCode(id) {
-  const idx = id.lastIndexOf('-');
-  return { roomCode: id.slice(0, idx), number: id.slice(idx + 1) };
+function splitDefectCode(code) {
+  const idx = code.lastIndexOf('-');
+  if (idx === -1) return { roomCode: code, number: '' };
+  return { roomCode: code.slice(0, idx), number: code.slice(idx + 1) };
 }
 
 function escapeHtml(str) {
@@ -164,16 +177,69 @@ function topBar(title, { back } = {}) {
   `;
 }
 
-// ---- Project home --------------------------------------------------------
+// ---- Project list (app home) ---------------------------------------------
 
-async function renderHome() {
-  const project = await Snaggo.getProject();
-  const drawings = await Snaggo.listDrawings();
-  const extCounts = await tabCounts('external');
-  const intCounts = await tabCounts('internal');
+async function renderProjectList() {
+  const projects = await Snaggo.listProjects();
 
   root.innerHTML = `
     ${topBar('Snaggo')}
+    <main class="project-list">
+      <ul class="row-list" id="project-rows"></ul>
+      <button id="add-project" class="btn btn-primary btn-add">+ Add project</button>
+      <p class="version-footer">Snaggo ${escapeHtml(typeof SNAGGO_VERSION !== 'undefined' ? SNAGGO_VERSION : '?')}</p>
+    </main>
+  `;
+
+  const rowsEl = document.getElementById('project-rows');
+  if (!projects.length) {
+    rowsEl.innerHTML = '<li class="empty-hint">No projects yet — add one below.</li>';
+  }
+  for (const project of projects) {
+    const summary = await Snaggo.projectSummary(project.id);
+    const row = el(`
+      <li class="row-item">
+        <a class="row-link" href="#/project/${encodeURIComponent(project.id)}">
+          <span class="row-name">${escapeHtml(project.name || '(untitled project)')}</span>
+          <span class="row-counts">
+            <span class="count-badge count-outstanding">${summary.outstanding}</span>
+            <span class="count-badge count-resolved">${summary.resolved}</span>
+          </span>
+        </a>
+        <button class="row-delete" title="Delete">&times;</button>
+      </li>
+    `);
+    row.querySelector('.row-delete').addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!confirm(`Delete "${project.name || '(untitled project)'}"? This removes all its rooms, defects, photos and dictations.`)) return;
+      await Snaggo.deleteProject(project.id);
+      await renderProjectList();
+    });
+    rowsEl.appendChild(row);
+  }
+
+  document.getElementById('add-project').addEventListener('click', async () => {
+    const name = prompt('Project name (e.g. 46 Stanley Street)');
+    if (!name || !name.trim()) return;
+    const project = await Snaggo.addProject(name.trim());
+    location.hash = `#/project/${encodeURIComponent(project.id)}`;
+  });
+}
+
+// ---- Project home (drawings, tabs, import/export) -------------------------
+
+async function renderProjectHome(projectId) {
+  const project = await Snaggo.getProjectById(projectId);
+  if (!project) {
+    location.hash = '#/';
+    return;
+  }
+  const drawings = await Snaggo.listDrawings(projectId);
+  const extCounts = await tabCounts(projectId, 'external');
+  const intCounts = await tabCounts(projectId, 'internal');
+
+  root.innerHTML = `
+    ${topBar(project.name || 'Project', { back: '#/' })}
     <main class="home">
       <section class="project-card">
         <label class="field-label">Project name</label>
@@ -191,11 +257,11 @@ async function renderHome() {
       </section>
 
       <nav class="tab-grid">
-        <a class="tab-card" href="#/tab/external">
+        <a class="tab-card" href="#/project/${encodeURIComponent(projectId)}/tab/external">
           <span class="tab-title">External</span>
           <span class="tab-counts">${extCounts.outstanding} outstanding · ${extCounts.resolved} resolved</span>
         </a>
-        <a class="tab-card" href="#/tab/internal">
+        <a class="tab-card" href="#/project/${encodeURIComponent(projectId)}/tab/internal">
           <span class="tab-title">Internal</span>
           <span class="tab-counts">${intCounts.outstanding} outstanding · ${intCounts.resolved} resolved</span>
         </a>
@@ -213,25 +279,25 @@ async function renderHome() {
   `;
 
   document.getElementById('project-name').addEventListener('change', (e) =>
-    Snaggo.saveProject({ name: e.target.value })
+    Snaggo.saveProject(projectId, { name: e.target.value })
   );
   document.getElementById('project-desc').addEventListener('change', (e) =>
-    Snaggo.saveProject({ description: e.target.value })
+    Snaggo.saveProject(projectId, { description: e.target.value })
   );
 
-  await renderDrawingGrid(drawings);
+  await renderDrawingGrid(projectId, drawings);
 
   document.getElementById('add-drawing').addEventListener('click', () => {
     Media.pickPhotos(async (files) => {
-      for (const f of files) await Snaggo.addDrawing(f.name, f);
-      await renderHome();
+      for (const f of files) await Snaggo.addDrawing(projectId, f.name, f);
+      await renderProjectHome(projectId);
     });
   });
 
   document.getElementById('save-all-photos-btn').addEventListener('click', async (e) => {
     e.target.disabled = true;
     try {
-      const allPhotos = await Snaggo.listAllPhotos();
+      const allPhotos = await Snaggo.listAllPhotosForProject(projectId);
       await saveToPhotosFlow(allPhotos, `${project.name || 'Snaggo'} photos`);
     } finally {
       e.target.disabled = false;
@@ -241,7 +307,7 @@ async function renderHome() {
   document.getElementById('export-btn').addEventListener('click', async (e) => {
     e.target.disabled = true;
     try {
-      const filename = await SnaggoExport.exportZip();
+      const filename = await SnaggoExport.exportZip(projectId);
       toast(`Exported ${filename}`);
     } catch (err) {
       toast('Export failed: ' + err.message);
@@ -252,11 +318,10 @@ async function renderHome() {
 
   document.getElementById('import-zip-btn').addEventListener('click', () => {
     Media.pickFile('.zip', async (file) => {
-      if (!confirm('Importing a project zip replaces everything currently in Snaggo on this device. Continue?')) return;
       try {
-        await SnaggoExport.importZip(file);
-        toast('Project imported');
-        await renderHome();
+        const newId = await SnaggoExport.importZip(file);
+        toast('Imported as a new project');
+        location.hash = `#/project/${encodeURIComponent(newId)}`;
       } catch (err) {
         toast('Import failed: ' + err.message);
       }
@@ -266,7 +331,7 @@ async function renderHome() {
   document.getElementById('import-csv-btn').addEventListener('click', () => {
     Media.pickFile('.csv', async (file) => {
       try {
-        const n = await SnaggoExport.importTranscriptionsCsv(file);
+        const n = await SnaggoExport.importTranscriptionsCsv(projectId, file);
         toast(`Applied transcriptions to ${n} defect${n === 1 ? '' : 's'}`);
       } catch (err) {
         toast('Import failed: ' + err.message);
@@ -275,8 +340,8 @@ async function renderHome() {
   });
 }
 
-async function tabCounts(kind) {
-  const areas = await Snaggo.listAreas(kind);
+async function tabCounts(projectId, kind) {
+  const areas = await Snaggo.listAreas(projectId, kind);
   let outstanding = 0, resolved = 0;
   for (const area of areas) {
     const c = await Snaggo.defectCounts(area.id);
@@ -286,7 +351,7 @@ async function tabCounts(kind) {
   return { outstanding, resolved };
 }
 
-async function renderDrawingGrid(drawings) {
+async function renderDrawingGrid(projectId, drawings) {
   const grid = document.getElementById('drawing-grid');
   if (!drawings.length) {
     grid.innerHTML = '<p class="empty-hint">No drawings added yet.</p>';
@@ -303,7 +368,7 @@ async function renderDrawingGrid(drawings) {
     `);
     card.querySelector('.thumb-delete').addEventListener('click', async () => {
       await Snaggo.deleteDrawing(d.id);
-      await renderHome();
+      await renderProjectHome(projectId);
     });
     grid.appendChild(card);
   }
@@ -311,16 +376,16 @@ async function renderDrawingGrid(drawings) {
 
 // ---- Area list (External or Internal tab) --------------------------------
 
-async function renderAreaList(kind) {
+async function renderAreaList(projectId, kind) {
   if (kind !== 'external' && kind !== 'internal') {
-    location.hash = '#/';
+    location.hash = `#/project/${encodeURIComponent(projectId)}`;
     return;
   }
   const label = kind === 'external' ? 'External' : 'Internal';
-  const areas = await Snaggo.listAreas(kind);
+  const areas = await Snaggo.listAreas(projectId, kind);
 
   root.innerHTML = `
-    ${topBar(label, { back: '#/' })}
+    ${topBar(label, { back: `#/project/${encodeURIComponent(projectId)}` })}
     <main class="area-list">
       <ul class="row-list" id="area-rows"></ul>
       <button id="add-area" class="btn btn-primary btn-add">+ Add ${kind === 'external' ? 'area' : 'room'}</button>
@@ -335,7 +400,7 @@ async function renderAreaList(kind) {
     const counts = await Snaggo.defectCounts(area.id);
     const row = el(`
       <li class="row-item">
-        <a class="row-link" href="#/area/${area.id}">
+        <a class="row-link" href="#/project/${encodeURIComponent(projectId)}/area/${encodeURIComponent(area.id)}">
           <span class="row-name">${escapeHtml(area.name)}</span>
           <span class="row-counts">
             <span class="count-badge count-outstanding">${counts.outstanding}</span>
@@ -349,11 +414,11 @@ async function renderAreaList(kind) {
       e.preventDefault();
       const snapshot = area;
       await Snaggo.deleteArea(area.id);
-      await renderAreaList(kind);
+      await renderAreaList(projectId, kind);
       toast(`Deleted "${snapshot.name}"`, {
         undo: async () => {
           await Store.put('areas', snapshot);
-          await renderAreaList(kind);
+          await renderAreaList(projectId, kind);
         },
       });
     });
@@ -363,23 +428,23 @@ async function renderAreaList(kind) {
   document.getElementById('add-area').addEventListener('click', async () => {
     const name = prompt(kind === 'external' ? 'Area name (e.g. Front Facade)' : 'Room name (e.g. Bathroom 2)');
     if (!name || !name.trim()) return;
-    await Snaggo.addArea(kind, name.trim());
-    await renderAreaList(kind);
+    await Snaggo.addArea(projectId, kind, name.trim());
+    await renderAreaList(projectId, kind);
   });
 }
 
 // ---- Area detail (defect list) -------------------------------------------
 
-async function renderAreaDetail(areaId) {
+async function renderAreaDetail(projectId, areaId) {
   const area = await Store.get('areas', areaId);
   if (!area) {
-    location.hash = '#/';
+    location.hash = `#/project/${encodeURIComponent(projectId)}`;
     return;
   }
   const defects = await Snaggo.listDefects(areaId);
 
   root.innerHTML = `
-    ${topBar(area.name, { back: `#/tab/${area.kind}` })}
+    ${topBar(area.name, { back: `#/project/${encodeURIComponent(projectId)}/tab/${area.kind}` })}
     <main class="defect-list">
       <ul class="row-list" id="defect-rows"></ul>
       <button id="add-defect" class="btn btn-primary btn-add">+ Add defect</button>
@@ -391,13 +456,13 @@ async function renderAreaDetail(areaId) {
     rowsEl.innerHTML = '<li class="empty-hint">No defects logged yet — add one below.</li>';
   }
   for (const defect of defects) {
-    const { roomCode, number } = splitDefectCode(defect.id);
+    const { roomCode, number } = splitDefectCode(defect.code || '');
     const row = el(`
       <li class="row-item defect-row">
         <div class="defect-row-main">
-          <a class="row-link" href="#/defect/${encodeURIComponent(defect.id)}">
+          <a class="row-link" href="#/project/${encodeURIComponent(projectId)}/defect/${encodeURIComponent(defect.id)}">
             <span class="row-name">
-              <span class="defect-code">${escapeHtml(roomCode)} · ${escapeHtml(number)}</span>
+              <span class="defect-code">${escapeHtml(roomCode)}${number ? ' · ' + escapeHtml(number) : ''}</span>
               <span class="${defect.title ? '' : 'defect-title-empty'}">${escapeHtml(defect.title || '(unnamed defect)')}</span>
             </span>
           </a>
@@ -423,12 +488,12 @@ async function renderAreaDetail(areaId) {
       e.stopPropagation();
       Media.pickPhotos(async (files) => {
         for (const f of files) await Snaggo.addPhoto(defect.id, f);
-        toast(`Photo added to ${defect.id}`);
+        toast(`Photo added to ${defect.code}`);
       });
     });
 
     wireInlineRecorder(row.querySelector('.record-btn'), defect.id, {
-      onSaved: () => toast(`Dictation saved to ${defect.id}`),
+      onSaved: () => toast(`Dictation saved to ${defect.code}`),
       onError: (code) => {
         if (code !== 'unsupported') toast(describeSpeechError(code) + ' — still recording audio');
       },
@@ -438,7 +503,7 @@ async function renderAreaDetail(areaId) {
       e.preventDefault();
       e.stopPropagation();
       const result = await openTextModal({
-        title: `Comment — ${defect.id}`,
+        title: `Comment — ${defect.code}`,
         value: defect.comments,
         placeholder: 'Add a comment…',
       });
@@ -449,10 +514,10 @@ async function renderAreaDetail(areaId) {
 
     row.querySelector('.row-delete').addEventListener('click', async (e) => {
       e.preventDefault();
-      if (!confirm(`Delete ${defect.id}? This removes its photos and dictations too.`)) return;
+      if (!confirm(`Delete ${defect.code}? This removes its photos and dictations too.`)) return;
       await Snaggo.deleteDefect(defect.id);
-      await renderAreaDetail(areaId);
-      toast(`Deleted ${defect.id}`);
+      await renderAreaDetail(projectId, areaId);
+      toast(`Deleted ${defect.code}`);
     });
 
     rowsEl.appendChild(row);
@@ -460,16 +525,16 @@ async function renderAreaDetail(areaId) {
 
   document.getElementById('add-defect').addEventListener('click', async () => {
     await Snaggo.addDefect(areaId, area.kind);
-    await renderAreaDetail(areaId);
+    await renderAreaDetail(projectId, areaId);
   });
 }
 
 // ---- Defect detail ---------------------------------------------------------
 
-async function renderDefectDetail(defectId) {
+async function renderDefectDetail(projectId, defectId) {
   const defect = await Snaggo.getDefect(defectId);
   if (!defect) {
-    location.hash = '#/';
+    location.hash = `#/project/${encodeURIComponent(projectId)}`;
     return;
   }
   const area = await Store.get('areas', defect.areaId);
@@ -477,7 +542,7 @@ async function renderDefectDetail(defectId) {
   const audioClips = await Snaggo.listAudio(defectId);
 
   root.innerHTML = `
-    ${topBar(defect.id, { back: `#/area/${defect.areaId}` })}
+    ${topBar(defect.code || '(unnamed defect)', { back: `#/project/${encodeURIComponent(projectId)}/area/${encodeURIComponent(defect.areaId)}` })}
     <main class="defect-detail">
       <label class="field-label">Title</label>
       <input id="d-title" type="text" value="${escapeHtml(defect.title || '')}" placeholder="Short title" />
@@ -495,6 +560,9 @@ async function renderDefectDetail(defectId) {
           Complete
         </label>
       </div>
+
+      <label class="field-label">Target resolution</label>
+      <input id="d-target" type="text" value="${escapeHtml(defect.targetResolution || '')}" placeholder="e.g. a date, or before practical completion" />
 
       <label class="field-label">Description</label>
       <textarea id="d-desc" rows="4" placeholder="Describe the defect…">${escapeHtml(defect.description || '')}</textarea>
@@ -535,6 +603,9 @@ async function renderDefectDetail(defectId) {
   document.getElementById('d-complete').addEventListener('change', (e) =>
     Snaggo.updateDefect(defectId, { complete: e.target.checked })
   );
+  document.getElementById('d-target').addEventListener('change', (e) =>
+    Snaggo.updateDefect(defectId, { targetResolution: e.target.value })
+  );
   document.getElementById('d-desc').addEventListener('change', (e) =>
     Snaggo.updateDefect(defectId, { description: e.target.value })
   );
@@ -542,23 +613,23 @@ async function renderDefectDetail(defectId) {
     Snaggo.updateDefect(defectId, { comments: e.target.value })
   );
 
-  await renderPhotoGrid(defectId, photos);
+  await renderPhotoGrid(projectId, defectId, photos);
   document.getElementById('add-photo').addEventListener('click', () => {
     Media.pickPhotos(async (files) => {
       for (const f of files) await Snaggo.addPhoto(defectId, f);
-      await renderDefectDetail(defectId);
+      await renderDefectDetail(projectId, defectId);
     });
   });
   document.getElementById('save-photos').addEventListener('click', async () => {
     const current = await Snaggo.listPhotos(defectId);
-    await saveToPhotosFlow(current, `${defectId} photos`);
+    await saveToPhotosFlow(current, `${defect.code} photos`);
   });
 
-  await renderAudioList(defectId, audioClips);
-  wireRecordButton(defectId);
+  await renderAudioList(projectId, defectId, audioClips);
+  wireRecordButton(projectId, defectId);
 }
 
-async function renderPhotoGrid(defectId, photos) {
+async function renderPhotoGrid(projectId, defectId, photos) {
   const grid = document.getElementById('photo-grid');
   if (!photos.length) {
     grid.innerHTML = '<p class="empty-hint">No photos yet.</p>';
@@ -576,13 +647,13 @@ async function renderPhotoGrid(defectId, photos) {
     card.querySelector('.thumb-delete').addEventListener('click', async () => {
       if (!confirm('Delete this photo?')) return;
       await Snaggo.deletePhoto(p.id);
-      await renderDefectDetail(defectId);
+      await renderDefectDetail(projectId, defectId);
     });
     grid.appendChild(card);
   }
 }
 
-async function renderAudioList(defectId, clips) {
+async function renderAudioList(projectId, defectId, clips) {
   const list = document.getElementById('audio-list');
   if (!clips.length) {
     list.innerHTML = '<li class="empty-hint">No dictations yet.</li>';
@@ -616,7 +687,7 @@ async function renderAudioList(defectId, clips) {
     item.querySelector('.row-delete').addEventListener('click', async () => {
       if (!confirm('Delete this dictation?')) return;
       await Snaggo.deleteAudio(clip.id);
-      await renderDefectDetail(defectId);
+      await renderDefectDetail(projectId, defectId);
     });
 
     const textarea = item.querySelector('.audio-transcript');
@@ -633,7 +704,7 @@ async function renderAudioList(defectId, clips) {
       const defect = await Snaggo.getDefect(defectId);
       const next = defect.comments ? `${defect.comments}\n\n${text}` : text;
       await Snaggo.updateDefect(defectId, { comments: next });
-      await renderDefectDetail(defectId);
+      await renderDefectDetail(projectId, defectId);
       toast('Added to comments');
     });
 
@@ -703,7 +774,7 @@ function wireInlineRecorder(btn, defectId, { onStart, onStop, onSaved, onInterim
   });
 }
 
-function wireRecordButton(defectId) {
+function wireRecordButton(projectId, defectId) {
   const btn = document.getElementById('rec-btn');
   const preview = document.getElementById('live-transcript-preview');
   wireInlineRecorder(btn, defectId, {
@@ -735,7 +806,7 @@ function wireRecordButton(defectId) {
       if (preview) preview.hidden = true;
     },
     onSaved: async () => {
-      await renderDefectDetail(defectId);
+      await renderDefectDetail(projectId, defectId);
       // No live transcript on this browser (e.g. iOS Safari, which has no
       // SpeechRecognition API at all — not something a web page can add).
       // The closest we can get to "one button": jump straight to the new
