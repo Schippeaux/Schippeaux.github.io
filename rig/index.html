@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rig — solo performance system</title>
+<meta name="description" content="Design brief and research notes for a solo live-electronic performance system: Sensory Percussion drums, bass guitar and MiniFreak synth, with Ableton as the backbone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#ff4d00;
+  --fs:16px;
+  --measure:72ch;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-head:'Archivo',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --bg:#ffffff; --ink:#000000; --ink-2:#4a4a4a; --ink-3:#8a8a8a; --line:#000000; --line-2:#d9d9d9; --panel:#f3f3f3;
+  --radius:0px;
+}
+:root[data-theme="dark"]{ --bg:#000000; --ink:#ffffff; --ink-2:#bdbdbd; --ink-3:#7a7a7a; --line:#ffffff; --line-2:#2a2a2a; --panel:#121212; }
+*{box-sizing:border-box}
+html{font-size:var(--fs);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:2px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--font-head);font-stretch:125%;letter-spacing:-.01em;line-height:1.05;margin:0}
+h1{font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900}
+h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;margin:0 0 .5em}
+h3{font-size:1.1rem;font-weight:700;margin:1.8em 0 .5em}
+p{margin:0 0 1em;max-width:var(--measure)}
+ul,ol{max-width:var(--measure);padding-left:1.2em}
+li{margin:.25em 0}
+strong{font-weight:600}
+code,.mono{font-family:var(--font-mono);font-size:.92em}
+
+/* frame */
+.frame{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+nav.rack{position:sticky;top:0;height:100vh;overflow:auto;border-right:2px solid var(--line);padding:1.4rem 1.2rem;display:flex;flex-direction:column;gap:1rem}
+.brand{font-family:var(--font-head);font-stretch:125%;font-weight:900;font-size:1.5rem;line-height:1;display:flex;align-items:center;gap:.5rem}
+.brand .dot{width:.55em;height:.55em;background:var(--accent);display:inline-block}
+.brand small{display:block;font-family:var(--font-body);font-weight:500;font-size:.72rem;color:var(--ink-3);margin-top:.35rem;font-stretch:100%}
+nav.rack ol{list-style:none;margin:0;padding:0}
+nav.rack li a{display:block;padding:.38rem 0 .38rem .75rem;border-left:2px solid transparent;text-decoration:none;color:var(--ink-2);font-size:.92rem}
+nav.rack li a:hover{color:var(--ink)}
+nav.rack li a.on{border-left-color:var(--accent);color:var(--ink);font-weight:600}
+nav.rack .foot{margin-top:auto;font-size:.78rem;color:var(--ink-3);display:flex;flex-direction:column;gap:.4rem}
+nav.rack .foot a{color:var(--ink-2)}
+.menu-btn{display:none}
+
+main{min-width:0}
+header.hero{border-bottom:2px solid var(--line);padding:3.5rem 3rem 2.5rem}
+header.hero .kicker{font-weight:500;color:var(--ink-2);margin-bottom:1.2rem;max-width:var(--measure)}
+header.hero h1 span{display:block}
+header.hero h1 .ac{color:var(--accent)}
+.strip{margin-top:2.2rem;display:flex;flex-wrap:wrap;gap:0;border:2px solid var(--line)}
+.strip div{padding:.6rem .9rem;border-right:2px solid var(--line);font-weight:600;font-size:.9rem}
+.strip div:last-child{border-right:0}
+.strip div b{display:block;font-weight:400;color:var(--ink-3);font-size:.75rem}
+
+section.sec{padding:2.8rem 3rem;border-bottom:1px solid var(--line-2)}
+section.sec:last-of-type{border-bottom:0}
+.lead{font-size:1.08rem;font-weight:500}
+
+table{border-collapse:collapse;width:100%;max-width:60rem;margin:1em 0 1.5em;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:.5rem .7rem;border-bottom:1px solid var(--line-2)}
+th{border-bottom:2px solid var(--line);font-weight:600}
+tr:hover td{background:var(--panel)}
+
+.tiers{display:grid;gap:1.2rem;max-width:62rem}
+.tier{border:2px solid var(--line);padding:1.2rem 1.4rem}
+.tier h3{margin:0 0 .6rem}
+.tier h3 em{font-style:normal;color:var(--accent)}
+.tier ul{margin:0}
+.tier li b{font-weight:600}
+
+figure{margin:1.4em 0 2em;max-width:62rem}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:.85rem;color:var(--ink-3);margin-top:.5rem}
+.sv text{font-family:var(--font-body);fill:var(--ink)}
+.sv .q{fill:var(--ink-3)}
+.sv .bx{fill:none;stroke:var(--line);stroke-width:2}
+.sv .hi{fill:var(--accent);fill-opacity:.12;stroke:var(--accent)}
+.sv .ln{fill:none;stroke:var(--line);stroke-width:1.5}
+.sv .lnq{fill:none;stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
+
+/* network map */
+.net .node circle{fill:var(--bg);stroke:var(--line);stroke-width:2}
+.net .node.me circle{fill:var(--accent);stroke:var(--accent)}
+.net .node.me text{font-weight:700}
+.net .node text{font-size:11px;fill:var(--ink)}
+.net .zone{fill:var(--panel);stroke:none}
+.net .zlab{font-family:var(--font-head);font-stretch:125%;font-weight:700;font-size:12px;fill:var(--ink-3)}
+.net .edge{stroke:var(--ink-3);stroke-width:1;fill:none}
+.net .edge.strong{stroke:var(--accent);stroke-width:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.85rem;color:var(--ink-2)}
+.legend span::before{content:"";display:inline-block;width:.8em;height:.8em;margin-right:.4em;vertical-align:-.05em;border:2px solid var(--line)}
+.legend span.ac::before{background:var(--accent);border-color:var(--accent)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;max-width:62rem}
+.card{border-top:2px solid var(--line);padding:.8rem 0}
+.card h3{margin:0 0 .4rem;font-size:1rem}
+.card p{font-size:.92rem;color:var(--ink-2);margin:0}
+
+.tasks{list-style:none;padding:0;max-width:62rem}
+.tasks li{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-bottom:1px solid var(--line-2)}
+.tasks input{margin-top:.35rem;accent-color:var(--accent)}
+
+/* settings */
+.settings{display:none}
+body.show-settings .settings{display:block}
+body.show-settings .content{display:none}
+.set{display:grid;grid-template-columns:200px 1fr;gap:1.2rem 2rem;max-width:62rem;align-items:start;padding:1.1rem 0;border-bottom:1px solid var(--line-2)}
+.set label.t{font-weight:600}
+.set small{display:block;color:var(--ink-3);font-weight:400;margin-top:.2rem}
+.ctl{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+select,input[type=text],button{font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);padding:.45rem .7rem;border-radius:var(--radius)}
+button{cursor:pointer;font-weight:600}
+button:hover{background:var(--ink);color:var(--bg)}
+button.ac{background:var(--accent);border-color:var(--accent);color:#fff}
+button.ac:hover{filter:brightness(.9)}
+input[type=range]{width:220px;accent-color:var(--accent)}
+input[type=color]{width:52px;height:38px;border:2px solid var(--line);padding:2px;background:var(--bg);cursor:pointer}
+.sw{display:flex;gap:.4rem}
+.sw button{width:30px;height:30px;padding:0;border:2px solid var(--line)}
+.seg button{border-right-width:0}
+.seg button:last-child{border-right-width:2px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.status{font-size:.88rem;color:var(--ink-2);min-height:1.4em}
+.ver{font-family:var(--font-mono);font-size:1.4rem;font-weight:500}
+
+.srcs li{font-size:.9rem}
+
+/* creatures */
+.creature{border:2px solid var(--line);max-width:62rem;margin:1.4rem 0;display:grid;grid-template-columns:1fr 1fr}
+.creature h3{grid-column:1/-1;margin:0;padding:.8rem 1.2rem;border-bottom:2px solid var(--line);display:flex;gap:.8rem;align-items:baseline}
+.creature h3 span{font-family:var(--font-body);font-weight:400;font-size:.85rem;color:var(--ink-3)}
+.creature .exp,.creature .tech{padding:1rem 1.2rem}
+.creature .exp{border-right:1px solid var(--line-2);font-family:var(--font-body)}
+.creature .exp p:first-child::before,.creature .tech p:first-child::before{content:attr(data-k);display:block;font-size:.72rem;font-weight:600;color:var(--accent);margin-bottom:.4rem}
+.creature .tech{font-size:.92rem}
+.creature .tech ul{padding-left:1.1em;margin:0}
+.creature p{max-width:none}
+@media (max-width:760px){.creature{grid-template-columns:1fr}.creature .exp{border-right:0;border-bottom:1px solid var(--line-2)}}
+
+@media (max-width:900px){
+  .frame{grid-template-columns:1fr}
+  nav.rack{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .2s;z-index:20;background:var(--bg);width:min(80vw,300px)}
+  body.nav-open nav.rack{transform:none}
+  .menu-btn{display:inline-flex;position:fixed;top:.8rem;right:.8rem;z-index:30;padding:.4rem .7rem}
+  header.hero,section.sec{padding-left:1.1rem;padding-right:1.1rem}
+  header.hero{padding-top:3.5rem}
+  .set{grid-template-columns:1fr}
+}
+@media print{nav.rack,.menu-btn{display:none}.frame{display:block}}
+</style>
+</head>
+<body>
+<button class="menu-btn" id="menuBtn" aria-label="Menu">Menu</button>
+<div class="frame">
+<nav class="rack" aria-label="Sections">
+  <div class="brand"><span class="dot" aria-hidden="true"></span><div>RIG<small>solo performance system</small></div></div>
+  <ol id="toc">
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#layout">Physical layout</a></li>
+    <li><a href="#audio">Audio signal flow</a></li>
+    <li><a href="#control">Control flow</a></li>
+    <li><a href="#percussion">Percussion</a></li>
+    <li><a href="#bass">Bass chain</a></li>
+    <li><a href="#synth">Synth and patterns</a></li>
+    <li><a href="#expression">Expression mappings</a></li>
+    <li><a href="#creatures">Creatures</a></li>
+    <li><a href="#time">Time and tempo</a></li>
+    <li><a href="#gear">Gear list</a></li>
+    <li><a href="#decisions">Open decisions</a></li>
+    <li><a href="#research">Further research</a></li>
+    <li><a href="#influences">Influences</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ol>
+  <div class="foot">
+    <a href="#settings" id="settingsLink">Settings</a>
+    <span class="mono" id="footVer">v—</span>
+  </div>
+</nav>
+
+<main>
+<div class="content">
+<header class="hero">
+  <p class="kicker">Design brief and research notes, November 2026</p>
+  <h1><span>Drums steer</span><span class="ac">the synth.</span></h1>
+  <div class="strip" aria-label="System at a glance">
+    <div>Sensory Percussion kit<b>snare + 2–3 toms</b></div>
+    <div>Bass guitar<b>analogue pedals, Hi-Z in</b></div>
+    <div>Arturia MiniFreak<b>6-voice hybrid</b></div>
+    <div>Ableton Live<b>backbone, hands-off</b></div>
+    <div>Push 1<b>session control</b></div>
+  </div>
+</header>
+
+<section class="sec" id="concept">
+  <h2>Concept</h2>
+  <p class="lead">A musical environment to play in, respond to, and be responded to by — three live voices played solo, with a generative layer that listens to how the drums are played and steers the synth.</p>
+  <p>The three voices are electronic percussion (Sensory Percussion 2 on a compact mesh-head kit), bass guitar, and the MiniFreak. Ableton Live is the backbone for recording, looping, routing and the "intelligence" layer, but it is driven from hardware so the computer stays out of the way during performance. Nothing is a hardware looper; the versatility of Live's session view, Max for Live and MIDI effects is the point.</p>
+  <p>The reference is the Arthur Hnatek / Jojo Mayer (Nerve, Me/Machine) model: a system that reads dynamics, hit patterns and timing and responds. The method is genre-agnostic — the vocabulary here leans melodic techno rather than jazz, which is a smaller and faster language to become fluent in, and which the simplified kit suits well.</p>
+  <h3>Principles</h3>
+  <ul>
+    <li>Ableton is the brain, hardware is the hands. Anything touched mid-performance is a knob, pad or pedal.</li>
+    <li>Commit tone early in the analogue chain; keep Live's effects for what is looped, modulated or automated live.</li>
+    <li>Buy toward a problem that has been hit, not toward a spec. The MiniFreak's own sequencer and arpeggiator come first; a hardware step sequencer only if they run out.</li>
+    <li>Fewer voices, more expression per voice. A snare with four trained zones beats eight pads with one each.</li>
+  </ul>
+</section>
+
+<section class="sec" id="layout">
+  <h2>Physical layout</h2>
+  <p>Seated centrally. Each instrument sits on one side of the chair so that switching between them is a turn, not a move; the shared controls sit in front.</p>
+  <figure>
+    <svg class="sv" viewBox="0 0 760 300" role="img" aria-label="Plan view of the seat with percussion, bass and synth on three sides and controllers in front">
+      <rect class="bx" x="300" y="120" width="160" height="60"/>
+      <text x="380" y="155" text-anchor="middle" font-weight="600">Seat</text>
+      <rect class="bx" x="40" y="100" width="200" height="100"/>
+      <text x="140" y="140" text-anchor="middle" font-weight="600">Percussion</text>
+      <text class="q" x="140" y="160" text-anchor="middle" font-size="12">snare, 2–3 toms, hi-hat</text>
+      <rect class="bx" x="520" y="100" width="200" height="100"/>
+      <text x="620" y="140" text-anchor="middle" font-weight="600">Bass</text>
+      <text class="q" x="620" y="160" text-anchor="middle" font-size="12">pedals on the floor</text>
+      <rect class="bx" x="280" y="20" width="200" height="60"/>
+      <text x="380" y="45" text-anchor="middle" font-weight="600">Synth</text>
+      <text class="q" x="380" y="63" text-anchor="middle" font-size="12">MiniFreak, sequencer</text>
+      <rect class="bx hi" x="280" y="220" width="200" height="60"/>
+      <text x="380" y="245" text-anchor="middle" font-weight="600">Push 1 + FX controller</text>
+      <text class="q" x="380" y="263" text-anchor="middle" font-size="12">in front, within reach of all three</text>
+    </svg>
+    <figcaption>Plan view. Which side is which is still open; reach from the seat decides it.</figcaption>
+  </figure>
+</section>
+
+<section class="sec" id="audio">
+  <h2>Audio signal flow</h2>
+  <p>Three independent inputs into one multi-channel interface. Live records and loops each one on its own track before the mix goes to monitors.</p>
+  <figure>
+    <svg class="sv" viewBox="0 0 760 420" role="img" aria-label="Drums, synth and bass feed the audio interface, then Ableton, then monitors">
+      <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+      <g class="ln" style="color:var(--line)">
+        <path d="M130 90L340 160" marker-end="url(#a1)"/><path d="M380 90L380 160" marker-end="url(#a1)"/><path d="M630 90L420 160" marker-end="url(#a1)"/>
+        <path d="M380 220L380 270" marker-end="url(#a1)"/><path d="M380 330L380 380" marker-end="url(#a1)"/>
+      </g>
+      <rect class="bx" x="40" y="30" width="180" height="60"/><text x="130" y="55" text-anchor="middle" font-weight="600">Drums</text><text class="q" x="130" y="75" text-anchor="middle" font-size="12">mesh kit, SP2 audio or mics</text>
+      <rect class="bx" x="290" y="30" width="180" height="60"/><text x="380" y="55" text-anchor="middle" font-weight="600">MiniFreak</text><text class="q" x="380" y="75" text-anchor="middle" font-size="12">stereo line out</text>
+      <rect class="bx" x="540" y="30" width="180" height="60"/><text x="630" y="55" text-anchor="middle" font-weight="600">Bass</text><text class="q" x="630" y="75" text-anchor="middle" font-size="12">pedals → Hi-Z input</text>
+      <rect class="bx" x="270" y="160" width="220" height="60"/><text x="380" y="185" text-anchor="middle" font-weight="600">Audio interface</text><text class="q" x="380" y="205" text-anchor="middle" font-size="12">4–6 inputs minimum</text>
+      <rect class="bx hi" x="270" y="270" width="220" height="60"/><text x="380" y="295" text-anchor="middle" font-weight="600">Ableton Live</text><text class="q" x="380" y="315" text-anchor="middle" font-size="12">record, loop, route, effects</text>
+      <rect class="bx" x="270" y="380" width="220" height="30"/><text x="380" y="400" text-anchor="middle" font-weight="600" font-size="13">Monitors / headphones / PA</text>
+    </svg>
+  </figure>
+  <p>The MiniFreak's audio goes in as line level regardless of what is sequencing it. The drums can arrive two ways: as Sensory Percussion's own rendered sound (Portal outputs) or as mics on the mesh heads if a recorded acoustic layer is wanted — one of the open decisions.</p>
+</section>
+
+<section class="sec" id="control">
+  <h2>Control flow</h2>
+  <p>Separate from audio. Four control sources, one destination.</p>
+  <figure>
+    <svg class="sv" viewBox="0 0 760 270" role="img" aria-label="Percussion, sequencer, Push 1 and effects controller all feed Ableton as the control layer">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+      <g class="ln" style="color:var(--line)">
+        <path d="M110 90L300 160" marker-end="url(#a2)"/><path d="M460 90L410 160" marker-end="url(#a2)"/><path d="M640 90L450 160" marker-end="url(#a2)"/>
+      </g>
+      <path class="lnq" d="M285 60L300 60"/>
+      <rect class="bx" x="30" y="30" width="160" height="60"/><text x="110" y="55" text-anchor="middle" font-weight="600">Percussion</text><text class="q" x="110" y="75" text-anchor="middle" font-size="12">MIDI notes + CC per zone</text>
+      <rect class="bx" x="200" y="30" width="180" height="60"/><text x="290" y="55" text-anchor="middle" font-weight="600">Sequencer → synth</text><text class="q" x="290" y="75" text-anchor="middle" font-size="12">hardware only; clock optional</text>
+      <rect class="bx" x="390" y="30" width="140" height="60"/><text x="460" y="55" text-anchor="middle" font-weight="600">Push 1</text><text class="q" x="460" y="75" text-anchor="middle" font-size="12">clips, record, scenes</text>
+      <rect class="bx" x="560" y="30" width="170" height="60"/><text x="645" y="55" text-anchor="middle" font-weight="600">FX controller</text><text class="q" x="645" y="75" text-anchor="middle" font-size="12">follows selected track</text>
+      <rect class="bx hi" x="230" y="160" width="300" height="60"/><text x="380" y="185" text-anchor="middle" font-weight="600">Ableton Live — control layer</text><text class="q" x="380" y="205" text-anchor="middle" font-size="12">Max for Live, MIDI effects, mapping</text>
+      <text class="q" x="30" y="255" font-size="12">Dashed: the sequencer only touches Live if its clock is synced.</text>
+    </svg>
+  </figure>
+  <p>The effects controller does not need a hardware switch between instruments. Live's "map to selected track" behaviour retargets the same knobs to whichever track is selected, so one modular controller (magnetic snap-together units such as Intech Studio Grid or Monogram Creative Console are candidates) covers drums, synth and bass. Selecting the track can itself be a pad on Push or a footswitch.</p>
+</section>
+
+<section class="sec" id="percussion">
+  <h2>Percussion</h2>
+  <p class="lead">Sensory Percussion 2 on a compact mesh kit: snare plus two or three toms. Expression comes from zones and technique, not from pad count.</p>
+  <h3>What the sensor reads</h3>
+  <p>It does not read acoustic timbre. What the software calls "timbre" is derived from where and how the head is struck — position and strike classification — not from spectral analysis. The raw axes are position/zone, velocity, and speed (hit rate). Everything else in the expression list is computed from those three.</p>
+  <p>Each sensor can be trained with up to ten zones per drum: centre, edge, rimshot-centre, rimshot-edge, rim tip, rim shoulder, cross-stick, damped, shell, and a "void" zone for things to ignore. Most players train four to six that they can strike reliably and distinctly; zones can be blended so they flow into each other proportionally rather than switching hard. The built-in controller types are Timbre, Velocity, Speed and LFO, each mappable to any parameter or sent out as MIDI CC.</p>
+  <h3>Drum sizes</h3>
+  <table>
+    <thead><tr><th>Drum</th><th>Diameter</th><th>mm</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Snare</td><td>12"</td><td>305</td><td>Compact, still a real rim for rimshots and cross-stick</td></tr>
+      <tr><td>Snare</td><td>13"</td><td>330</td><td>Slightly more playing surface</td></tr>
+      <tr><td>Snare (standard, reference)</td><td>14"</td><td>356</td><td>Default on most kits</td></tr>
+      <tr><td>Tom</td><td>8"</td><td>203</td><td>Smallest common rack tom; mesh heads easy to find</td></tr>
+      <tr><td>Tom</td><td>10"</td><td>254</td><td></td></tr>
+      <tr><td>Tom</td><td>12"</td><td>305</td><td>Only if a third tom is wanted</td></tr>
+    </tbody>
+  </table>
+  <p>Since the sensor reads position and dynamics rather than resonance, diameter affects stick feel, not what can be triggered. Shallower shells (100–130 mm) save more space than dropping a diameter and change playability less.</p>
+</section>
+
+<section class="sec" id="bass">
+  <h2>Bass chain</h2>
+  <p>A clean DI into the interface has no character. Character goes in the analogue chain before the interface, where it is zero-latency and under a hand or foot.</p>
+  <ul>
+    <li><strong>No DI box needed</strong> if the interface has a Hi-Z (instrument) input — most do, on input 1. A DI only earns its place for a thru to an amp, or built-in tone shaping.</li>
+    <li><strong>Character:</strong> Tech21 SansAmp Bass Driver DI is the standard answer to sterile DI bass — amp-style saturation and a DI in one analogue box. A compressor before it (MXR Bass Compressor or similar) evens dynamics, which also keeps loop levels consistent.</li>
+    <li><strong>Digital alternatives</strong> are good now (Neural DSP Darkglass is the bass-specific benchmark). Plugin latency is a buffer-size issue, roughly 3–8 ms round trip at 64–128 samples, not inherent to being digital. The argument for pedals here is tactility, not sound quality.</li>
+  </ul>
+  <p>Chain: bass → compressor → SansAmp → interface Hi-Z input → Live. Reserve Live's effects on the bass track for things that are looped or modulated live.</p>
+</section>
+
+<section class="sec" id="synth">
+  <h2>Synth and patterns</h2>
+  <p class="lead">The MiniFreak is the right synth for this. It is a step sequencer question that is really a generative-system question.</p>
+  <p>Six-voice true polyphony (pads and chords work), two oscillator engines per voice across wavetable, FM, harmonic and other types, a modulation matrix, built-in effects, and Spice & Dice randomisation aimed squarely at exploratory sound design. Pads, plucks, bass, stabs, washes and chords all come from one unit. It is hybrid (digital oscillators, analogue-modelled filter), so vintage analogue grit would be a second-synth conversation later, not now.</p>
+  <h3>Patterns</h3>
+  <p>A fixed-grid step sequencer is deterministic; the brief is generative. The MiniFreak already has a polyphonic sequencer and arpeggiator with modulation lanes, both reachable by Spice & Dice. The "responds to what is played" layer lives in Live: probability MIDI effects, Max for Live generative devices, and parameters modulated from Sensory Percussion data. Start there; add a dedicated hardware sequencer only against a limitation actually hit.</p>
+  <h3>First experiment</h3>
+  <ol>
+    <li>Hi-hat speed (Sensory Percussion's Speed controller, sent as CC) → MiniFreak filter cutoff via Live's Expression Control. Continuous: busier playing opens the pad.</li>
+    <li>Snare velocity → a macro on the reverb send of the synth track. Per-hit: harder hits bloom into space.</li>
+  </ol>
+  <p>One continuous mapping, one per-hit mapping, both from stock devices. Once parameters move with playing, add probability and bounded randomisation so the system surprises as well as responds.</p>
+</section>
+
+<section class="sec" id="expression">
+  <h2>Expression mappings</h2>
+  <p class="lead">What the playing can do to the synth and effects, from simple and legible to poetic.</p>
+  <div class="tiers">
+    <div class="tier"><h3><em>1</em> Direct, one to one</h3><ul>
+      <li><b>Velocity → amplitude</b> of the synth voice</li>
+      <li><b>Velocity → filter cutoff</b>: harder is brighter</li>
+      <li><b>Zone → patch or layer</b>: edge is a pluck, centre a pad, rim a stab</li>
+      <li><b>Speed → cutoff or resonance</b>, continuously</li>
+      <li><b>Strike type → separate voice</b>: rimshot stabs, open hits swell</li>
+    </ul></div>
+    <div class="tier"><h3><em>2</em> Shaping rather than switching</h3><ul>
+      <li><b>Velocity → envelope attack/release</b>: hard is snappy, soft is slow</li>
+      <li><b>Position → pan</b>, mirroring where the stick lands</li>
+      <li><b>Speed → delay feedback</b>: busy playing builds wash</li>
+      <li><b>Speed → LFO rate</b> on a pad's tremolo</li>
+      <li><b>Velocity → reverb send</b>: loud blooms, soft stays dry</li>
+    </ul></div>
+    <div class="tier"><h3><em>3</em> Derived and relational</h3><ul>
+      <li><b>Micro-timing (ahead/behind the grid) → delay time or LFO phase</b>, so rushing or dragging destabilises the texture</li>
+      <li><b>Dynamic variance → randomisation amount</b> on the generative sequencer: erratic playing makes the system wilder, steady playing calms it</li>
+      <li><b>Rolling average velocity → intensity macro</b> that blends in unison or extra oscillator layers as energy builds</li>
+      <li><b>Position drift across a phrase → wavetable or oscillator blend</b>, giving a phrase an arc rather than a per-hit reaction</li>
+    </ul></div>
+    <div class="tier"><h3><em>4</em> Poetic — the system has a personality</h3><ul>
+      <li><b>Silence → growth</b>: an ambient layer swells during rests and recedes on re-entry; stopping becomes a compositional act</li>
+      <li><b>Call and response</b>: sample the last phrase and answer it a bar later, decayed or reharmonised</li>
+      <li><b>Fatigue</b>: cumulative density over the set slowly darkens or saturates the tone, giving the whole performance a long arc</li>
+      <li><b>Decaying influence</b>: each hit nudges a parameter and the nudge decays over seconds, leaving a trail like ripples</li>
+      <li><b>Surprise threshold</b>: unusually steady playing triggers a rare one-off event — a key change, a drop-out, a new voice</li>
+      <li><b>Cross-modulation between limbs</b>: the time gap between hat and snare hits drives something neither does alone</li>
+      <li><b>Harmonic memory</b>: recent choices bias what the sequencer may play next, so the piece remembers where it has been</li>
+    </ul></div>
+  </div>
+  <p>Suggested order after the first experiment: position → timbre blend (expression independent of volume), then dynamic variance → randomisation amount (the first mapping that feels alive rather than reactive).</p>
+</section>
+
+<section class="sec" id="creatures">
+  <h2>Creatures</h2>
+  <p class="lead">A way of thinking about the synth sounds: not patches but creatures, each with a character, living in the environment the drums create — listening to the playing and to each other.</p>
+  <p>Each idea below has two halves. The left is what it feels like to play with; the right is how to build it in Live. The creatures are named loosely so they can be referred to in patches and scenes. Their voices are all MiniFreak presets, so one synth can hold several at once (six voices shared between them, or one creature per scene).</p>
+
+  <div class="creature">
+    <h3>The turnaround <span>form-aware — knows where it is in the bar count</span></h3>
+    <div class="exp"><p data-k="What it feels like">The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the creatures brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new creature wakes up and begins its own process. You stop having to signal section changes; the music arrives at them with you.</p></div>
+    <div class="tech"><p data-k="How to map it">
+      <ul>
+        <li>Live's transport is the form clock: a Max for Live device reads <code>live.set</code> current bar and beat and counts within an 8-bar (configurable) phrase.</li>
+        <li>Bars 7–8 raise a "turnaround" signal (0→1 ramp) mapped to the creatures' tension parameters: pad filter cutoff easing down, delay feedback up, arp rate halving.</li>
+        <li>On bar 1 of the next phrase the device picks one event by weighted chance: <em>transpose</em> (send a MIDI transpose offset to the MiniFreak track via a Pitch MIDI effect, from a small list of related keys), <em>silence</em> (mute group for one bar, then unmute), or <em>wake</em> (launch the next clip in a creature's slot, starting a new modulation sequence).</li>
+        <li>The chance weights are themselves modulated by playing: high recent density favours <em>wake</em>, low density favours <em>silence</em>.</li>
+        <li>Pair with Tempo Follower so the bar count stays yours even without a click.</li>
+      </ul></p></div>
+  </div>
+
+  <div class="creature">
+    <h3>The surface <span>position-pitched — the head is a keyboard</span></h3>
+    <div class="exp"><p data-k="What it feels like">The drumhead is no longer one note. Striking between centre and edge plays a different pitch and a different brightness: centre is low and dark, moving outward the note climbs and the tone opens. A roll that drifts from the middle to the rim becomes a rising, brightening phrase. The pad under the sticks becomes a melodic instrument you play by where, not just when.</p></div>
+    <div class="tech"><p data-k="How to map it">
+      <ul>
+        <li>In Sensory Percussion, use blended zones (Centre ↔ Edge) so the Timbre controller outputs a continuous 0–1 position value per hit rather than a hard switch.</li>
+        <li>Send Timbre as MIDI CC alongside the hit's note. In Live, a Max for Live device quantises the CC into a scale (e.g. 5–8 steps across a chosen mode) and rewrites the note's pitch before it reaches the MiniFreak track.</li>
+        <li>The same CC, unquantised, maps to the MiniFreak's filter cutoff (CC via Live's Expression Control or a direct MIDI map) so brightness tracks position continuously.</li>
+        <li>Velocity still shapes amplitude and envelope so the surface keeps its drum feel.</li>
+        <li>Start with one tom as the surface and leave the snare as a trigger; expand once the scale feels right.</li>
+      </ul></p></div>
+  </div>
+
+  <div class="creature">
+    <h3>The mimic <span>listens, learns the groove, carries it on — and decays without attention</span></h3>
+    <div class="exp"><p data-k="What it feels like">You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape and the accents but choosing its own variations. You can stop and it keeps going, as if it had understood. But it lives on your attention: the longer you leave it, the thinner it gets. Hits start to go missing. The timing loosens, the pitch drifts a little, the tone goes slightly wrong. It is still playing your idea, but it is forgetting it. Come back in and it brightens and tightens again. It is a creature you have to keep feeding.</p></div>
+    <div class="tech"><p data-k="How to map it">
+      <ul>
+        <li><strong>Capture:</strong> a Max for Live device records incoming drum MIDI into a rolling buffer (last 2–4 bars, aligned to Live's grid), storing for each hit its beat position, velocity, zone and micro-timing offset.</li>
+        <li><strong>Model:</strong> build per-step hit probabilities and a velocity profile from the buffer (a first-order Markov chain over steps, weighted by recency). This is "the essence" — accents and density per beat, not a verbatim copy.</li>
+        <li><strong>Continue:</strong> each step, fire a note with that probability, velocity drawn from the profile ± a small spread, into the mimic's creature track. Keep the drummer's zone → sound mapping so the mimic plays the same voices.</li>
+        <li><strong>Life meter:</strong> a value from 0–1 that rises with each real hit (fast attack) and decays exponentially when none arrive (slow release, tens of seconds).</li>
+        <li><strong>Decay behaviours</strong>, all driven by (1 − life): probability floor drops (hits go missing); timing jitter increases (wonkier); pitch and filter cutoff get random walks (drift); sample-rate reduction or detune creeps in (tone goes wrong). At life ≈ 0 the mimic goes silent.</li>
+        <li>Feeding it: real hits refresh the buffer continuously, so the mimic tracks a changing groove, and life snaps back up.</li>
+      </ul></p></div>
+  </div>
+
+  <h3>Where this leads</h3>
+  <p>Creatures that react to the same signals will start to seem to react to each other — the mimic's hits can count as "playing" for the surface's filter, the turnaround can put the mimic to sleep. One Max for Live device per creature, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture; the creatures are defined by which signals they listen to and how they answer.</p>
+</section>
+
+<section class="sec" id="time">
+  <h2>Time and tempo</h2>
+  <p>Playing without a click and letting Live follow is possible. Live 11 introduced a built-in Tempo Follower; before that it was BeatSeeker, a paid Max for Live device from research at Queen Mary's Centre for Digital Music. Either listens to a rhythmic audio signal and moves Live's tempo to match, and switching between fixed and following modes can be mapped to a footswitch.</p>
+  <p>What it tolerates: subtle fluctuation and ordinary push-and-pull. What it struggles with, by user reports: sustained drift — speeding up or slowing down over several bars — where it can latch onto the initial tempo and let the grid slip away. Deliberately sloppy timing (random jitter) mostly gets smoothed over. This needs testing with the real kit before designing around it; a hybrid where the drums set tempo at the start of a section and the grid holds for the loop may be the practical answer.</p>
+  <p>Related decision: clock master. If the MiniFreak's sequencer is synced to Live, following tempo moves everything together. If it runs free, loops recorded into Live are unquantised and the feel is looser.</p>
+</section>
+
+<section class="sec" id="gear">
+  <h2>Gear list</h2>
+  <table>
+    <thead><tr><th>Role</th><th>Item</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Percussion</td><td>Sensory Percussion 2 + Portal</td><td>Owned</td><td>2 sensors + hi-hat; train 4–6 zones per drum</td></tr>
+      <tr><td>Percussion</td><td>12–13" snare, 8" + 10" toms, mesh heads</td><td>Needed</td><td>Shallow shells; third tom optional</td></tr>
+      <tr><td>Synth</td><td>Arturia MiniFreak</td><td>Owned</td><td>Onboard sequencer and arp first</td></tr>
+      <tr><td>Synth</td><td>Hardware step sequencer</td><td>Deferred</td><td>Only if the MiniFreak + Live generative layer runs out</td></tr>
+      <tr><td>Bass</td><td>Bass guitar</td><td>Owned</td><td></td></tr>
+      <tr><td>Bass</td><td>SansAmp Bass Driver DI</td><td>Needed</td><td>Character + DI in one</td></tr>
+      <tr><td>Bass</td><td>Bass compressor</td><td>Needed</td><td>Dynamics and loop level</td></tr>
+      <tr><td>Session control</td><td>Ableton Push 1</td><td>Owned</td><td>Clunky but works</td></tr>
+      <tr><td>Effects control</td><td>Modular MIDI controller</td><td>Needed</td><td>Intech Grid / Monogram; one unit, follows selected track</td></tr>
+      <tr><td>Footswitch</td><td>MIDI footswitch</td><td>Needed</td><td>Record/overdub, track select, tempo follow on/off while hands are busy</td></tr>
+      <tr><td>Hub</td><td>Audio interface, 4–6 in</td><td>Needed</td><td>Hi-Z input; low-latency drivers</td></tr>
+      <tr><td>Hub</td><td>Ableton Live Suite</td><td>Owned</td><td>Max for Live required</td></tr>
+      <tr><td>Output</td><td>Monitors / headphones</td><td>Needed</td><td>Closed-back headphones for low-volume practice</td></tr>
+      <tr><td>Dropped</td><td>Keyboard</td><td>—</td><td>Sequencer and Push pads cover melodic input</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sec" id="decisions">
+  <h2>Open decisions</h2>
+  <ul class="tasks">
+    <li><input type="checkbox" id="d1"><label for="d1">Pick the effects controller and confirm per-track mapping in Live</label></li>
+    <li><input type="checkbox" id="d2"><label for="d2">Clock master: MiniFreak sequencer synced to Live, or free-running</label></li>
+    <li><input type="checkbox" id="d3"><label for="d3">Drums as rendered SP2 audio only, or also mic'd mesh heads</label></li>
+    <li><input type="checkbox" id="d4"><label for="d4">Two toms or three; 12" or 13" snare</label></li>
+    <li><input type="checkbox" id="d5"><label for="d5">Interface channel count once the above are settled</label></li>
+    <li><input type="checkbox" id="d6"><label for="d6">Monitors vs headphones vs PA</label></li>
+    <li><input type="checkbox" id="d7"><label for="d7">Test Tempo Follower with real playing: how much drift it tracks</label></li>
+    <li><input type="checkbox" id="d8"><label for="d8">Which side each instrument sits on, by reach from the seat</label></li>
+  </ul>
+</section>
+
+<section class="sec" id="research">
+  <h2>Further research</h2>
+  <p>Areas not yet covered that will shape the build.</p>
+  <div class="cards">
+    <div class="card"><h3>Latency budget</h3><p>End-to-end: sensor → Portal → Live → synth → interface → ears. Set a target (under ~10 ms felt) and measure each link.</p></div>
+    <div class="card"><h3>MIDI routing and clock</h3><p>Who sends clock, who receives, and how Portal, MiniFreak, Push and the controller share one USB host without feedback loops.</p></div>
+    <div class="card"><h3>Max for Live devices to learn</h3><p>Expression Control, Envelope Follower, LFO, Shaper, MIDI probability tools; which existing devices cover tiers 3–4 before writing patches.</p></div>
+    <div class="card"><h3>Set structure</h3><p>How a performance is organised in session view: scenes as sections, how a loop is committed, cleared, or handed to the next section.</p></div>
+    <div class="card"><h3>Monitoring and room</h3><p>Low-volume practice: headphone mix, mesh-head noise, neighbours. Whether a small PA is needed at all.</p></div>
+    <div class="card"><h3>Capturing sessions</h3><p>Record every session multitrack by default so exploratory playing is kept; how to tag and revisit.</p></div>
+    <div class="card"><h3>Drumming vocabulary</h3><p>A melodic-techno drumming language for a snare and toms: patterns, fills, dynamics; a learning path independent of jazz.</p></div>
+    <div class="card"><h3>Bass role in techno</h3><p>Sub vs mid bass, octave and filter pedals, how the bass shares low end with the synth.</p></div>
+    <div class="card"><h3>Power and cabling</h3><p>One power strip, cable runs that don't cross the seat, USB hub reliability.</p></div>
+    <div class="card"><h3>Visual feedback</h3><p>What needs to be seen without a screen: a small display, Push's LEDs, or nothing.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="influences">
+  <h2>Influences</h2>
+  <p>Two named, the rest suggested. Mapped by what they share stylistically; the accented lines mark the closest fit to this project.</p>
+  <figure>
+    <svg class="sv net" viewBox="0 0 760 560" role="img" aria-label="Network map of influences clustered by style">
+      <rect class="zone" x="20" y="60" width="330" height="200" rx="6"/><text class="zlab" x="36" y="84">Drummer-led electronic</text>
+      <rect class="zone" x="410" y="60" width="330" height="200" rx="6"/><text class="zlab" x="426" y="84">Melodic / live techno</text>
+      <rect class="zone" x="20" y="320" width="330" height="200" rx="6"/><text class="zlab" x="36" y="344">Generative and ambient</text>
+      <rect class="zone" x="410" y="320" width="330" height="200" rx="6"/><text class="zlab" x="426" y="344">Band + machine hybrids</text>
+      <g class="edges">
+        <path class="edge strong" d="M380 290L110 150"/><path class="edge strong" d="M380 290L250 230"/>
+        <path class="edge strong" d="M380 290L520 150"/><path class="edge strong" d="M380 290L640 230"/>
+        <path class="edge strong" d="M380 290L160 440"/>
+        <path class="edge" d="M110 150L250 230"/><path class="edge" d="M250 230L310 130"/><path class="edge" d="M110 150L200 110"/>
+        <path class="edge" d="M310 130L200 110"/><path class="edge" d="M110 150L90 230"/><path class="edge" d="M250 230L310 200"/>
+        <path class="edge" d="M520 150L640 230"/><path class="edge" d="M520 150L640 120"/><path class="edge" d="M640 120L700 180"/>
+        <path class="edge" d="M640 230L560 240"/><path class="edge" d="M520 150L460 240"/>
+        <path class="edge" d="M160 440L80 400"/><path class="edge" d="M160 440L270 400"/><path class="edge" d="M160 440L220 490"/>
+        <path class="edge" d="M270 400L460 240"/>
+        <path class="edge" d="M480 410L600 390"/><path class="edge" d="M600 390L680 460"/><path class="edge" d="M480 410L520 490"/>
+        <path class="edge" d="M250 230L480 410"/><path class="edge" d="M640 230L600 390"/>
+      </g>
+      <g class="node me" transform="translate(380 290)"><circle r="18"/><text x="26" y="4" text-anchor="start">This rig</text></g>
+      <g class="node" transform="translate(110 150)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Arthur Hnatek</text></g>
+      <g class="node" transform="translate(250 230)"><circle r="8"/><text x="-14" y="4" text-anchor="end">Jojo Mayer / Nerve</text></g>
+      <g class="node" transform="translate(310 130)"><circle r="8"/><text x="14" y="4" text-anchor="start">Mark Guiliana</text></g>
+      <g class="node" transform="translate(200 110)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Deantoni Parks</text></g>
+      <g class="node" transform="translate(90 230)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Richard Spaven</text></g>
+      <g class="node" transform="translate(310 200)"><circle r="8"/><text x="14" y="4" text-anchor="start">Shawn Crowder</text></g>
+      <g class="node" transform="translate(520 150)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Max Cooper</text></g>
+      <g class="node" transform="translate(640 230)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Stephan Bodzin</text></g>
+      <g class="node" transform="translate(640 120)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Jon Hopkins</text></g>
+      <g class="node" transform="translate(700 180)"><circle r="8"/><text x="0" y="24" text-anchor="middle">KiNK</text></g>
+      <g class="node" transform="translate(560 240)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Kiasmos</text></g>
+      <g class="node" transform="translate(460 240)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Rival Consoles</text></g>
+      <g class="node" transform="translate(160 440)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Tipper</text></g>
+      <g class="node" transform="translate(80 400)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Brian Eno</text></g>
+      <g class="node" transform="translate(270 400)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Floating Points</text></g>
+      <g class="node" transform="translate(220 490)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Nils Frahm</text></g>
+      <g class="node" transform="translate(480 410)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">LCD Soundsystem</text></g>
+      <g class="node" transform="translate(600 390)"><circle r="8"/><text x="0" y="-14" text-anchor="middle">Caribou</text></g>
+      <g class="node" transform="translate(680 460)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Tame Impala</text></g>
+      <g class="node" transform="translate(520 490)"><circle r="8"/><text x="0" y="24" text-anchor="middle">Nicolas Jaar</text></g>
+    </svg>
+    <figcaption>Grey lines: stylistic kinship. Accent lines: closest to this project's aims.</figcaption>
+  </figure>
+  <div class="legend"><span class="ac">Closest fit</span><span>Related</span></div>
+  <h3>Why each is here</h3>
+  <table>
+    <thead><tr><th>Artist</th><th>What to take from them</th></tr></thead>
+    <tbody>
+      <tr><td>Arthur Hnatek</td><td>Drums as controller; generative patches steered by playing. The direct model.</td></tr>
+      <tr><td>Jojo Mayer / Nerve</td><td>Live reproduction of programmed music; Me/Machine as human–algorithm duet.</td></tr>
+      <tr><td>Mark Guiliana</td><td>Beat Music: acoustic kit driving electronic textures; restraint and space.</td></tr>
+      <tr><td>Deantoni Parks</td><td>One-man drums-and-sampler performance; everything triggered by hand.</td></tr>
+      <tr><td>Richard Spaven</td><td>Broken-beat and electronic drumming vocabulary that is not jazz.</td></tr>
+      <tr><td>Shawn Crowder</td><td>Sensory Percussion specialist; practical reference for zone-based playing.</td></tr>
+      <tr><td>Max Cooper</td><td>Melodic techno with generative structure and visual systems thinking.</td></tr>
+      <tr><td>Stephan Bodzin</td><td>Melodic techno played live on hardware; the register this rig leans toward.</td></tr>
+      <tr><td>Jon Hopkins</td><td>Evolving textures, dynamics as the main compositional device.</td></tr>
+      <tr><td>KiNK</td><td>Hardware improvisation on stage; fun and risk as part of the set.</td></tr>
+      <tr><td>Kiasmos</td><td>Minimal melodic techno with acoustic-feeling material.</td></tr>
+      <tr><td>Rival Consoles</td><td>Modular-led melodic electronic with physical performance.</td></tr>
+      <tr><td>Tipper</td><td>Sound design depth; already a listening reference.</td></tr>
+      <tr><td>Brian Eno</td><td>Generative music as a philosophy: set up a system, then listen.</td></tr>
+      <tr><td>Floating Points</td><td>Musician-producer bridging live playing and electronic structure.</td></tr>
+      <tr><td>Nils Frahm</td><td>Solo multi-instrument performance, moving between stations.</td></tr>
+      <tr><td>LCD Soundsystem</td><td>Live band playing programmed material; real bass and drums with sequenced synths.</td></tr>
+      <tr><td>Caribou</td><td>Producer whose live show is a band; drums at the centre.</td></tr>
+      <tr><td>Tame Impala</td><td>Psychedelic production sensibility; already a listening reference.</td></tr>
+      <tr><td>Nicolas Jaar</td><td>Loose, exploratory live sets built on loops and improvisation.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sec" id="sources">
+  <h2>Sources</h2>
+  <ul class="srcs">
+    <li><a href="https://help.sunhou.se/v2/software-overview/hardware-panel/hardware-inputs/drum-training/">Sunhouse — Drum training (zones, void, sensitivity)</a></li>
+    <li><a href="https://sunhou.se/blog/training-sensory-pads">Sunhouse — How to train your drums (which zones to train)</a></li>
+    <li><a href="https://help.sunhou.se/v2/software-overview/modules/controllers/drum-pads/">Sunhouse — Drum pads and blends</a></li>
+    <li><a href="https://www.musicradar.com/news/evanss-hybrid-sensory-percussion-system-will-take-hybrid-drums-to-a-whole-new-level">MusicRadar — Evans Hybrid Sensory Percussion system</a></li>
+    <li><a href="https://www.ableton.com/packs/beatseeker/">Ableton — BeatSeeker</a></li>
+    <li><a href="https://vier.live/act/ableton-live-live-tempo-following">Vier — Live tempo following in Ableton Live 11</a></li>
+    <li><a href="https://synthtopia.com/?p=65453">Synthtopia — BeatSeeker (user reports on tempo latching)</a></li>
+  </ul>
+</section>
+</div>
+
+<section class="sec settings" id="settings-page" aria-labelledby="settingsH">
+  <h2 id="settingsH">Settings</h2>
+  <p>Tune the site's appearance. Settings are saved in this browser.</p>
+
+  <div class="set"><label class="t">Theme<small>Black on white, or white on black.</small></label>
+    <div class="ctl seg" id="themeSeg"><button data-v="light" aria-pressed="true">Light</button><button data-v="dark" aria-pressed="false">Dark</button></div></div>
+
+  <div class="set"><label class="t" for="accent">Accent colour<small>Used for links, the active section, and highlights.</small></label>
+    <div class="ctl"><input type="color" id="accent" value="#ff4d00" aria-label="Accent colour">
+      <div class="sw" aria-label="Presets">
+        <button data-c="#ff4d00" style="background:#ff4d00" aria-label="Orange"></button>
+        <button data-c="#e6001a" style="background:#e6001a" aria-label="Red"></button>
+        <button data-c="#0055ff" style="background:#0055ff" aria-label="Blue"></button>
+        <button data-c="#00b37a" style="background:#00b37a" aria-label="Green"></button>
+        <button data-c="#ffd500" style="background:#ffd500" aria-label="Yellow"></button>
+        <button data-c="#b200ff" style="background:#b200ff" aria-label="Violet"></button>
+        <button data-c="#00c2d1" style="background:#00c2d1" aria-label="Cyan"></button>
+      </div><span class="mono" id="accentHex">#ff4d00</span></div></div>
+
+  <div class="set"><label class="t" for="fontHead">Heading font</label>
+    <div class="ctl"><select id="fontHead">
+      <option value="'Archivo',system-ui,sans-serif">Archivo (wide)</option>
+      <option value="'Space Grotesk',system-ui,sans-serif">Space Grotesk</option>
+      <option value="'Inter',system-ui,sans-serif">Inter</option>
+      <option value="'IBM Plex Mono',ui-monospace,monospace">IBM Plex Mono</option>
+      <option value="system-ui,sans-serif">System</option>
+    </select></div></div>
+
+  <div class="set"><label class="t" for="fontBody">Body font</label>
+    <div class="ctl"><select id="fontBody">
+      <option value="'IBM Plex Sans',system-ui,sans-serif">IBM Plex Sans</option>
+      <option value="'Inter',system-ui,sans-serif">Inter</option>
+      <option value="'Space Grotesk',system-ui,sans-serif">Space Grotesk</option>
+      <option value="'IBM Plex Mono',ui-monospace,monospace">IBM Plex Mono</option>
+      <option value="system-ui,sans-serif">System</option>
+    </select></div></div>
+
+  <div class="set"><label class="t" for="fs">Text size<small>Everything scales from this.</small></label>
+    <div class="ctl"><input type="range" id="fs" min="13" max="22" step="1" value="16"><span class="mono" id="fsVal">16px</span></div></div>
+
+  <div class="set"><label class="t" for="measure">Line length<small>Maximum width of paragraphs, in characters.</small></label>
+    <div class="ctl"><input type="range" id="measure" min="55" max="95" step="1" value="72"><span class="mono" id="measureVal">72ch</span></div></div>
+
+  <div class="set"><label class="t" for="radius">Corners<small>0 is square, like the Roland mark.</small></label>
+    <div class="ctl"><input type="range" id="radius" min="0" max="12" step="1" value="0"><span class="mono" id="radiusVal">0px</span></div></div>
+
+  <div class="set"><label class="t">Version</label>
+    <div class="ctl" style="flex-direction:column;align-items:flex-start;gap:.5rem">
+      <span class="ver" id="verNum">—</span>
+      <span class="status" id="verDate"></span>
+      <div class="ctl"><button id="checkBtn">Check for updates</button><button id="refreshBtn">Hard refresh</button></div>
+      <span class="status" id="verStatus" aria-live="polite"></span>
+    </div></div>
+
+  <div class="set"><label class="t">Reset</label>
+    <div class="ctl"><button id="resetBtn">Restore defaults</button></div></div>
+
+  <p style="margin-top:2rem"><a href="#concept" id="backLink">Back to the brief</a></p>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  const APP_VERSION='0.2.0';
+  const APP_DATE='2026-11-10';
+  const KEY='rig.settings.v1';
+  const root=document.documentElement, body=document.body;
+  const defaults={theme:'light',accent:'#ff4d00',fontHead:"'Archivo',system-ui,sans-serif",fontBody:"'IBM Plex Sans',system-ui,sans-serif",fs:16,measure:72,radius:0};
+  let s={...defaults};
+  try{ const raw=localStorage.getItem(KEY); if(raw) s={...defaults,...JSON.parse(raw)}; }catch(e){}
+
+  const $=id=>document.getElementById(id);
+  function apply(){
+    root.dataset.theme=s.theme;
+    root.style.setProperty('--accent',s.accent);
+    root.style.setProperty('--font-head',s.fontHead);
+    root.style.setProperty('--font-body',s.fontBody);
+    root.style.setProperty('--fs',s.fs+'px');
+    root.style.setProperty('--measure',s.measure+'ch');
+    root.style.setProperty('--radius',s.radius+'px');
+    document.querySelectorAll('#themeSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===s.theme)));
+    $('accent').value=s.accent; $('accentHex').textContent=s.accent;
+    $('fontHead').value=s.fontHead; $('fontBody').value=s.fontBody;
+    $('fs').value=s.fs; $('fsVal').textContent=s.fs+'px';
+    $('measure').value=s.measure; $('measureVal').textContent=s.measure+'ch';
+    $('radius').value=s.radius; $('radiusVal').textContent=s.radius+'px';
+  }
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){} apply(); }
+
+  document.querySelectorAll('#themeSeg button').forEach(b=>b.addEventListener('click',()=>{s.theme=b.dataset.v;save();}));
+  $('accent').addEventListener('input',e=>{s.accent=e.target.value;save();});
+  document.querySelectorAll('.sw button').forEach(b=>b.addEventListener('click',()=>{s.accent=b.dataset.c;save();}));
+  $('fontHead').addEventListener('change',e=>{s.fontHead=e.target.value;save();});
+  $('fontBody').addEventListener('change',e=>{s.fontBody=e.target.value;save();});
+  $('fs').addEventListener('input',e=>{s.fs=+e.target.value;save();});
+  $('measure').addEventListener('input',e=>{s.measure=+e.target.value;save();});
+  $('radius').addEventListener('input',e=>{s.radius=+e.target.value;save();});
+  $('resetBtn').addEventListener('click',()=>{s={...defaults};save();});
+
+  // version
+  $('verNum').textContent='v'+APP_VERSION; $('footVer').textContent='v'+APP_VERSION; $('verDate').textContent='Released '+APP_DATE;
+  $('checkBtn').addEventListener('click',async()=>{
+    const st=$('verStatus'); st.textContent='Checking…';
+    try{
+      const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) throw new Error(r.status);
+      const j=await r.json();
+      if(j.version===APP_VERSION){ st.textContent='You have the latest version ('+j.version+').'; }
+      else{ st.innerHTML='Version '+j.version+' is available (you have '+APP_VERSION+'). '+(j.notes?j.notes+' ':'')+'Use Hard refresh to load it.'; }
+    }catch(e){ st.textContent='Could not reach version.json. If this is a local file, that is expected.'; }
+  });
+  $('refreshBtn').addEventListener('click',async()=>{
+    try{ if('caches' in window){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } }catch(e){}
+    try{ if(navigator.serviceWorker){ const rs=await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r=>r.unregister())); } }catch(e){}
+    const u=new URL(location.href); u.searchParams.set('r',Date.now()); u.hash=''; location.replace(u.toString());
+  });
+
+  // routing: settings view
+  function route(){
+    const on=location.hash==='#settings';
+    body.classList.toggle('show-settings',on);
+    body.classList.remove('nav-open');
+    if(on) window.scrollTo({top:0});
+  }
+  window.addEventListener('hashchange',route);
+
+  // nav highlighting
+  const links=[...document.querySelectorAll('#toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{
+      es.forEach(e=>{ if(e.isIntersecting){ links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)); } });
+    },{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(x=>io.observe(x));
+  }
+  $('menuBtn').addEventListener('click',()=>body.classList.toggle('nav-open'));
+  document.querySelectorAll('nav.rack a').forEach(a=>a.addEventListener('click',()=>body.classList.remove('nav-open')));
+
+  apply(); route();
+})();
+</script>
+</body>
+</html>
