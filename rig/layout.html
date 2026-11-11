@@ -10,30 +10,106 @@
 <body data-page="layout">
 <main class="pg">
 <div class="hero"><h1>Layout</h1>
-<p class="thesis">Seated centrally. Each instrument sits on one side of the chair so that switching is a turn, not a move.</p>
+<p class="thesis">Percussion in the centre, synth and bass either side — a turn of the head, not a move of the chair. The MIDI foot controllers sit between the player and the laptop.</p>
 </div>
-<div class="row">
+<div class="row"><h2>Room plan</h2>
 <div class="b8">
 <figure>
-<svg class="sv" viewBox="0 0 760 300" role="img" aria-label="Plan view: percussion, synth, bass, controllers">
-<rect class="bx" x="300" y="120" width="160" height="60"/>
-<text x="380" y="155" text-anchor="middle" font-weight="600">Seat</text>
-<rect class="bx" x="40" y="100" width="200" height="100"/>
-<text x="140" y="140" text-anchor="middle" font-weight="600">Percussion</text>
-<text class="q" x="140" y="160" text-anchor="middle" font-size="12">kick, snare, hi-hat, 3 toms</text>
-<rect class="bx" x="520" y="100" width="200" height="100"/>
-<text x="620" y="140" text-anchor="middle" font-weight="600">Bass</text>
-<text class="q" x="620" y="160" text-anchor="middle" font-size="12">pedals on the floor</text>
-<rect class="bx" x="280" y="20" width="200" height="60"/>
-<text x="380" y="45" text-anchor="middle" font-weight="600">Synth</text>
-<text class="q" x="380" y="63" text-anchor="middle" font-size="12">MiniFreak, sequencer</text>
-<rect class="bx hi" x="240" y="220" width="280" height="60"/>
-<text x="380" y="245" text-anchor="middle" font-weight="600">Push 1 + loop controller + FX knobs</text>
-<text class="q" x="380" y="263" text-anchor="middle" font-size="12">in front, within reach of all three</text>
+<svg class="sv" viewBox="0 0 800 460" role="img" aria-label="Room plan: bass to the left, percussion centred on the seat, synth to the right, MIDI controllers between the player and the laptop">
+<!-- back row: bass / percussion / synth -->
+<rect class="bx" x="20" y="20" width="200" height="140"/>
+<text x="120" y="80" text-anchor="middle" font-weight="600">Bass</text>
+<text class="q" x="120" y="100" text-anchor="middle" font-size="12">guitar on a stand,</text>
+<text class="q" x="120" y="116" text-anchor="middle" font-size="12">pedals on the floor</text>
+
+<rect class="bx hi" x="260" y="20" width="280" height="200"/>
+<text x="400" y="50" text-anchor="middle" font-weight="700">Percussion</text>
+<text class="q" x="400" y="70" text-anchor="middle" font-size="12">centred on the seat — see kit layout below</text>
+
+<rect class="bx" x="580" y="20" width="200" height="140"/>
+<text x="680" y="80" text-anchor="middle" font-weight="600">Synth</text>
+<text class="q" x="680" y="100" text-anchor="middle" font-size="12">MiniFreak on a stand,</text>
+<text class="q" x="680" y="116" text-anchor="middle" font-size="12">within reach of the seat</text>
+
+<!-- seat, nested inside the percussion zone -->
+<circle class="bx" cx="400" cy="160" r="28"/>
+<text x="400" y="165" text-anchor="middle" font-weight="600" font-size="12">Seat</text>
+
+<!-- MIDI controllers band: between the player and the laptop -->
+<rect class="bx hi" x="160" y="280" width="480" height="70"/>
+<text x="400" y="308" text-anchor="middle" font-weight="700">MIDI foot controllers</text>
+<text class="q" x="400" y="328" text-anchor="middle" font-size="12">Morningstar loop/FX footswitches + expression + hi-hat pedal — underfoot, between the kit and the laptop</text>
+
+<!-- laptop + push, furthest out front -->
+<rect class="bx" x="220" y="390" width="360" height="55"/>
+<text x="400" y="413" text-anchor="middle" font-weight="600">Laptop + Push 1</text>
+<text class="q" x="400" y="431" text-anchor="middle" font-size="11">Ableton Live — out front, glanced at, not reached for</text>
+
+<!-- connecting lines -->
+<g class="thin" style="color:var(--line)">
+<line x1="120" y1="160" x2="260" y2="160"/>
+<line x1="540" y1="160" x2="680" y2="160"/>
+<line x1="400" y1="188" x2="400" y2="280"/>
+<line x1="400" y1="350" x2="400" y2="390"/>
+</g>
 </svg>
-<figcaption>Plan view. Which side is which is still open; reach from the seat decides it.</figcaption>
+<figcaption>Plan view, looking down. Bass and synth flank the seat so swapping instruments is a turn of the head. The foot controllers sit on the floor between the kit and the laptop — reachable without leaning forward.</figcaption>
 </figure>
-</div></div>
+</div>
+<div class="b4 p9">
+<p class="sm">Which side bass sits on versus synth is still open — reach and cable runs from the seat will decide it once the gear is in the room. What is fixed is percussion in the middle: it is the busiest voice and the one the seat is built around.</p>
+</div>
+</div>
+
+<div class="row"><h2>Kit layout</h2>
+<div class="b8">
+<figure>
+<svg class="sv" viewBox="0 0 600 440" role="img" aria-label="Drum kit plan: snare centre, tom as hi-hat on the left, tom as ride on the right, two further toms top-left and top-right, kick pedal and hi-hat pedal at the feet">
+<!-- outer toms -->
+<circle class="bx" cx="190" cy="140" r="52"/>
+<text x="190" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 1</text>
+<text class="q" x="190" y="152" text-anchor="middle" font-size="11">top-left</text>
+
+<circle class="bx" cx="410" cy="140" r="52"/>
+<text x="410" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 2</text>
+<text class="q" x="410" y="152" text-anchor="middle" font-size="11">top-right</text>
+
+<!-- inner toms standing in for hi-hat / ride -->
+<circle class="bx hi" cx="170" cy="250" r="48"/>
+<text x="170" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
+<text x="170" y="261" text-anchor="middle" font-weight="600" font-size="12">hi-hat</text>
+<text class="q" x="170" y="278" text-anchor="middle" font-size="10">left</text>
+
+<circle class="bx hi" cx="430" cy="250" r="48"/>
+<text x="430" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
+<text x="430" y="261" text-anchor="middle" font-weight="600" font-size="12">ride</text>
+<text class="q" x="430" y="278" text-anchor="middle" font-size="10">right</text>
+
+<!-- snare, centre -->
+<circle class="bx" cx="300" cy="260" r="54"/>
+<text x="300" y="255" text-anchor="middle" font-weight="700" font-size="14">Snare</text>
+<text class="q" x="300" y="273" text-anchor="middle" font-size="11">centre</text>
+
+<!-- pedals at the feet -->
+<rect class="bx" x="235" y="350" width="60" height="34" rx="4"/>
+<text x="265" y="369" text-anchor="middle" font-size="10" font-weight="600">Hi-hat</text>
+<text class="q" x="265" y="381" text-anchor="middle" font-size="9">pedal</text>
+
+<rect class="bx" x="305" y="350" width="60" height="34" rx="4"/>
+<text x="335" y="369" text-anchor="middle" font-size="10" font-weight="600">Kick</text>
+<text class="q" x="335" y="381" text-anchor="middle" font-size="9">pedal</text>
+
+<!-- seat -->
+<circle class="bxd" cx="300" cy="410" r="20"/>
+<text class="q" x="300" y="414" text-anchor="middle" font-size="9">seat</text>
+</svg>
+<figcaption>Five struck surfaces plus two foot pedals, all reading through SP2 sensors. No separate kick drum or hi-hat cymbal — a tom stands in for each, and the pedals are dedicated triggers/controllers rather than a full acoustic hi-hat stand.</figcaption>
+</figure>
+</div>
+<div class="b4 p9">
+<p class="sm">Reusing toms as hi-hat and ride keeps the footprint small: five mesh-head drums instead of a full kit, arranged in the arc a seated player can reach without standing. See <a href="percussion.html">Percussion</a> for the zone-training detail and <a href="gear.html?phase=5">Gear → Phase 5</a> for sensor counts and cost.</p>
+</div>
+</div>
 </main>
 <script src="version.js"></script>
 <script src="shared.js"></script>

@@ -4,7 +4,7 @@
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -99,7 +99,7 @@ def concept():
 
 
 def percussion():
-    return hero("Percussion", "Sensory Percussion 2 on a compact mesh kit: kick, snare, hi-hat, three toms and a hi-hat pedal. Expression comes from zones and technique, not from pad count.") + '''
+    return hero("Percussion", "Sensory Percussion 2 on five mesh-head drums arranged around the seat, plus a kick pedal and a hi-hat pedal at the feet. Expression comes from zones and technique, not from pad count.") + '''
 <div class="row"><h2>What the sensor reads</h2>
 <div class="b8">
 <p>It does not read acoustic timbre. What the software calls "timbre" is derived from where and how the head is struck — position and strike classification — not from spectral analysis. The raw axes are <strong>position/zone</strong>, <strong>velocity</strong>, and <strong>speed</strong> (hit rate). Everything else in the expression list is computed from those three.</p>
@@ -109,16 +109,17 @@ def percussion():
 
 <div class="row"><h2>The kit</h2>
 <div class="b8">
-<p>Kick, snare, hi-hat (with pedal), and three toms. All mesh heads with Sensory Percussion sensors. The hi-hat pedal connection to the Portal is an open question — it is not documented as a sensor input.</p>
+<p>No separate kick drum or hi-hat cymbal. Five mesh-head drums carry all the struck zones — two of them standing in for hi-hat and ride — plus a dedicated kick pedal and hi-hat pedal underfoot. See <a href="layout.html">Layout</a> for how they sit around the seat.</p>
 <table>
-<thead><tr><th>Drum</th><th>Diameter</th><th>mm</th><th>Note</th></tr></thead>
+<thead><tr><th>Drum / control</th><th>Position</th><th>Diameter</th><th>Note</th></tr></thead>
 <tbody>
-<tr><td>Kick</td><td>18–20"</td><td>457–508</td><td>Mesh-head kick with SP2 sensor; compact electronic kick or trigger pad</td></tr>
-<tr><td>Snare</td><td>12–13"</td><td>305–330</td><td>Compact, still a real rim for rimshots and cross-stick</td></tr>
-<tr><td>Hi-hat</td><td>13–14"</td><td>330–356</td><td>SP2 sensor on top; pedal control TBC</td></tr>
-<tr><td>Tom 1</td><td>8"</td><td>203</td><td>Smallest common rack tom; mesh heads easy to find</td></tr>
-<tr><td>Tom 2</td><td>10"</td><td>254</td><td></td></tr>
-<tr><td>Tom 3</td><td>12"</td><td>305</td><td>Lowest voice; doubles as a secondary surface instrument</td></tr>
+<tr><td>Snare</td><td>Centre</td><td>12–13"</td><td>Compact, still a real rim for rimshots and cross-stick</td></tr>
+<tr><td>Tom → hi-hat</td><td>Left</td><td>8–10"</td><td>Struck surface standing in for a hi-hat; open/close colour comes from the hi-hat pedal, not a physical cymbal</td></tr>
+<tr><td>Tom → ride</td><td>Right</td><td>10–12"</td><td>Struck surface standing in for a ride; zone training (edge/bell-equivalent) carries the voicing</td></tr>
+<tr><td>Tom 1</td><td>Top-left</td><td>8"</td><td>Smallest common rack tom; mesh heads easy to find</td></tr>
+<tr><td>Tom 2</td><td>Top-right</td><td>10"</td><td></td></tr>
+<tr><td>Kick pedal</td><td>Feet</td><td>—</td><td>Compact pad played with a standard bass-drum pedal beater, SP2 sensor — not a full-size kick drum</td></tr>
+<tr><td>Hi-hat pedal</td><td>Feet</td><td>—</td><td>Continuous foot controller; open/close position sent as CC. Portal's pedal input is unconfirmed — may route via the Morningstar's spare expression input instead</td></tr>
 </tbody>
 </table>
 <p class="sm">Since the sensor reads position and dynamics rather than resonance, diameter affects stick feel, not what can be triggered. Shallower shells (100–130 mm) save more space than dropping a diameter and change playability less.</p>
@@ -177,14 +178,14 @@ def hookup():
 <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
 </defs>
 <!-- Drums top row -->
-<rect class="bx" x="20" y="20" width="110" height="45"/><text x="75" y="38" text-anchor="middle" font-weight="600" font-size="12">Kick</text><text class="q" x="75" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="20" y="20" width="110" height="45"/><text x="75" y="38" text-anchor="middle" font-weight="600" font-size="12">Kick pedal</text><text class="q" x="75" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="140" y="20" width="110" height="45"/><text x="195" y="38" text-anchor="middle" font-weight="600" font-size="12">Snare</text><text class="q" x="195" y="55" text-anchor="middle" font-size="10">sensor</text>
-<rect class="bx" x="260" y="20" width="110" height="45"/><text x="315" y="38" text-anchor="middle" font-weight="600" font-size="12">Hi-hat</text><text class="q" x="315" y="55" text-anchor="middle" font-size="10">sensor</text>
-<rect class="bx" x="380" y="20" width="90" height="45"/><text x="425" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 1</text><text class="q" x="425" y="55" text-anchor="middle" font-size="10">sensor</text>
-<rect class="bx" x="480" y="20" width="90" height="45"/><text x="525" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 2</text><text class="q" x="525" y="55" text-anchor="middle" font-size="10">sensor</text>
-<rect class="bx" x="580" y="20" width="90" height="45"/><text x="625" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 3</text><text class="q" x="625" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="260" y="20" width="110" height="45"/><text x="315" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → hi-hat</text><text class="q" x="315" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="380" y="20" width="90" height="45"/><text x="425" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → ride</text><text class="q" x="425" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="480" y="20" width="90" height="45"/><text x="525" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 1</text><text class="q" x="525" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="580" y="20" width="90" height="45"/><text x="625" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 2</text><text class="q" x="625" y="55" text-anchor="middle" font-size="10">sensor</text>
 <!-- HH pedal -->
-<rect class="bxd" x="260" y="80" width="110" height="35"/><text class="q" x="315" y="103" text-anchor="middle" font-size="10">HH pedal — connection TBC</text>
+<rect class="bxd" x="260" y="80" width="110" height="35"/><text class="q" x="315" y="103" text-anchor="middle" font-size="10">Hi-hat pedal — routing TBC</text>
 <!-- sensor cables to Portal -->
 <g class="thin" style="color:var(--line)">
 <line x1="75" y1="65" x2="75" y2="170"/><line x1="195" y1="65" x2="195" y2="170"/>
@@ -266,29 +267,105 @@ def hookup():
 
 
 def layout():
-    return hero("Layout", "Seated centrally. Each instrument sits on one side of the chair so that switching is a turn, not a move.") + '''
-<div class="row">
+    return hero("Layout", "Percussion in the centre, synth and bass either side — a turn of the head, not a move of the chair. The MIDI foot controllers sit between the player and the laptop.") + '''
+<div class="row"><h2>Room plan</h2>
 <div class="b8">
 <figure>
-<svg class="sv" viewBox="0 0 760 300" role="img" aria-label="Plan view: percussion, synth, bass, controllers">
-<rect class="bx" x="300" y="120" width="160" height="60"/>
-<text x="380" y="155" text-anchor="middle" font-weight="600">Seat</text>
-<rect class="bx" x="40" y="100" width="200" height="100"/>
-<text x="140" y="140" text-anchor="middle" font-weight="600">Percussion</text>
-<text class="q" x="140" y="160" text-anchor="middle" font-size="12">kick, snare, hi-hat, 3 toms</text>
-<rect class="bx" x="520" y="100" width="200" height="100"/>
-<text x="620" y="140" text-anchor="middle" font-weight="600">Bass</text>
-<text class="q" x="620" y="160" text-anchor="middle" font-size="12">pedals on the floor</text>
-<rect class="bx" x="280" y="20" width="200" height="60"/>
-<text x="380" y="45" text-anchor="middle" font-weight="600">Synth</text>
-<text class="q" x="380" y="63" text-anchor="middle" font-size="12">MiniFreak, sequencer</text>
-<rect class="bx hi" x="240" y="220" width="280" height="60"/>
-<text x="380" y="245" text-anchor="middle" font-weight="600">Push 1 + loop controller + FX knobs</text>
-<text class="q" x="380" y="263" text-anchor="middle" font-size="12">in front, within reach of all three</text>
+<svg class="sv" viewBox="0 0 800 460" role="img" aria-label="Room plan: bass to the left, percussion centred on the seat, synth to the right, MIDI controllers between the player and the laptop">
+<!-- back row: bass / percussion / synth -->
+<rect class="bx" x="20" y="20" width="200" height="140"/>
+<text x="120" y="80" text-anchor="middle" font-weight="600">Bass</text>
+<text class="q" x="120" y="100" text-anchor="middle" font-size="12">guitar on a stand,</text>
+<text class="q" x="120" y="116" text-anchor="middle" font-size="12">pedals on the floor</text>
+
+<rect class="bx hi" x="260" y="20" width="280" height="200"/>
+<text x="400" y="50" text-anchor="middle" font-weight="700">Percussion</text>
+<text class="q" x="400" y="70" text-anchor="middle" font-size="12">centred on the seat — see kit layout below</text>
+
+<rect class="bx" x="580" y="20" width="200" height="140"/>
+<text x="680" y="80" text-anchor="middle" font-weight="600">Synth</text>
+<text class="q" x="680" y="100" text-anchor="middle" font-size="12">MiniFreak on a stand,</text>
+<text class="q" x="680" y="116" text-anchor="middle" font-size="12">within reach of the seat</text>
+
+<!-- seat, nested inside the percussion zone -->
+<circle class="bx" cx="400" cy="160" r="28"/>
+<text x="400" y="165" text-anchor="middle" font-weight="600" font-size="12">Seat</text>
+
+<!-- MIDI controllers band: between the player and the laptop -->
+<rect class="bx hi" x="160" y="280" width="480" height="70"/>
+<text x="400" y="308" text-anchor="middle" font-weight="700">MIDI foot controllers</text>
+<text class="q" x="400" y="328" text-anchor="middle" font-size="12">Morningstar loop/FX footswitches + expression + hi-hat pedal — underfoot, between the kit and the laptop</text>
+
+<!-- laptop + push, furthest out front -->
+<rect class="bx" x="220" y="390" width="360" height="55"/>
+<text x="400" y="413" text-anchor="middle" font-weight="600">Laptop + Push 1</text>
+<text class="q" x="400" y="431" text-anchor="middle" font-size="11">Ableton Live — out front, glanced at, not reached for</text>
+
+<!-- connecting lines -->
+<g class="thin" style="color:var(--line)">
+<line x1="120" y1="160" x2="260" y2="160"/>
+<line x1="540" y1="160" x2="680" y2="160"/>
+<line x1="400" y1="188" x2="400" y2="280"/>
+<line x1="400" y1="350" x2="400" y2="390"/>
+</g>
 </svg>
-<figcaption>Plan view. Which side is which is still open; reach from the seat decides it.</figcaption>
+<figcaption>Plan view, looking down. Bass and synth flank the seat so swapping instruments is a turn of the head. The foot controllers sit on the floor between the kit and the laptop — reachable without leaning forward.</figcaption>
 </figure>
-</div></div>'''
+</div>
+<div class="b4 p9">
+<p class="sm">Which side bass sits on versus synth is still open — reach and cable runs from the seat will decide it once the gear is in the room. What is fixed is percussion in the middle: it is the busiest voice and the one the seat is built around.</p>
+</div>
+</div>
+
+<div class="row"><h2>Kit layout</h2>
+<div class="b8">
+<figure>
+<svg class="sv" viewBox="0 0 600 440" role="img" aria-label="Drum kit plan: snare centre, tom as hi-hat on the left, tom as ride on the right, two further toms top-left and top-right, kick pedal and hi-hat pedal at the feet">
+<!-- outer toms -->
+<circle class="bx" cx="190" cy="140" r="52"/>
+<text x="190" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 1</text>
+<text class="q" x="190" y="152" text-anchor="middle" font-size="11">top-left</text>
+
+<circle class="bx" cx="410" cy="140" r="52"/>
+<text x="410" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 2</text>
+<text class="q" x="410" y="152" text-anchor="middle" font-size="11">top-right</text>
+
+<!-- inner toms standing in for hi-hat / ride -->
+<circle class="bx hi" cx="170" cy="250" r="48"/>
+<text x="170" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
+<text x="170" y="261" text-anchor="middle" font-weight="600" font-size="12">hi-hat</text>
+<text class="q" x="170" y="278" text-anchor="middle" font-size="10">left</text>
+
+<circle class="bx hi" cx="430" cy="250" r="48"/>
+<text x="430" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
+<text x="430" y="261" text-anchor="middle" font-weight="600" font-size="12">ride</text>
+<text class="q" x="430" y="278" text-anchor="middle" font-size="10">right</text>
+
+<!-- snare, centre -->
+<circle class="bx" cx="300" cy="260" r="54"/>
+<text x="300" y="255" text-anchor="middle" font-weight="700" font-size="14">Snare</text>
+<text class="q" x="300" y="273" text-anchor="middle" font-size="11">centre</text>
+
+<!-- pedals at the feet -->
+<rect class="bx" x="235" y="350" width="60" height="34" rx="4"/>
+<text x="265" y="369" text-anchor="middle" font-size="10" font-weight="600">Hi-hat</text>
+<text class="q" x="265" y="381" text-anchor="middle" font-size="9">pedal</text>
+
+<rect class="bx" x="305" y="350" width="60" height="34" rx="4"/>
+<text x="335" y="369" text-anchor="middle" font-size="10" font-weight="600">Kick</text>
+<text class="q" x="335" y="381" text-anchor="middle" font-size="9">pedal</text>
+
+<!-- seat -->
+<circle class="bxd" cx="300" cy="410" r="20"/>
+<text class="q" x="300" y="414" text-anchor="middle" font-size="9">seat</text>
+</svg>
+<figcaption>Five struck surfaces plus two foot pedals, all reading through SP2 sensors. No separate kick drum or hi-hat cymbal — a tom stands in for each, and the pedals are dedicated triggers/controllers rather than a full acoustic hi-hat stand.</figcaption>
+</figure>
+</div>
+<div class="b4 p9">
+<p class="sm">Reusing toms as hi-hat and ride keeps the footprint small: five mesh-head drums instead of a full kit, arranged in the arc a seated player can reach without standing. See <a href="percussion.html">Percussion</a> for the zone-training detail and <a href="gear.html?phase=5">Gear → Phase 5</a> for sensor counts and cost.</p>
+</div>
+</div>'''
 
 
 def signal():
@@ -598,48 +675,90 @@ def creatures():
 </div></div>'''
 
 
+# --- Shared gear data (used by both roadmap gear links and gear page) ---
+GEAR = [
+    # Phase 1 — already owned
+    {"item":"Arturia MiniFreak",           "role":"Synth",    "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Onboard sequencer and arp first"},
+    {"item":"Ableton Live Suite",          "role":"Hub",      "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Max for Live required"},
+    {"item":"Ableton Push 1",              "role":"Control",  "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Session view looping, Fixed Length first"},
+    # Phase 2 — audio path
+    {"item":"EVANS Portal (interface)",    "role":"Audio I/O","phase":2, "status":"Needed",  "cost":1240,"cables":"USB-C cable 3m ($25)", "notes":"16-ch I/O, dedicated headphone out, ADAT expansion"},
+    {"item":"Audio-Technica ATH-M50x",     "role":"Output",   "phase":2, "status":"Needed",  "cost":250, "cables":"6.35mm → 3.5mm adapter (included)", "notes":"Closed-back for low-volume cue monitoring"},
+    {"item":"6.35mm TRS cable 3m (×2)",    "role":"Cable",    "phase":2, "status":"Needed",  "cost":40,  "cables":"", "notes":"Portal main out → monitors/amp"},
+    {"item":"3.5mm TRS cable 1m",          "role":"Cable",    "phase":2, "status":"Needed",  "cost":15,  "cables":"", "notes":"MiniFreak audio out → Portal input"},
+    # Phase 3 — no new gear
+    # Phase 4 — foot control
+    {"item":"Morningstar MC6 Pro",         "role":"Control",  "phase":4, "status":"Needed",  "cost":560, "cables":"USB-C cable 3m ($25); TRS MIDI cable 1.5m ($15)", "notes":"6 footswitches, deeply programmable MIDI"},
+    {"item":"Moog EP-3 expression pedal",  "role":"Control",  "phase":4, "status":"Needed",  "cost":90,  "cables":"TRS cable 2m ($15) to MC6 expression input", "notes":"Continuous control — filter, volume, FX depth"},
+    {"item":"TRS cables for MC6",          "role":"Cable",    "phase":4, "status":"Needed",  "cost":40,  "cables":"", "notes":"USB-C ($25) + TRS MIDI ($15)"},
+    # Phase 5 — drums: snare (centre), tom-as-hi-hat (left), tom-as-ride (right),
+    # tom 1 (top-left), tom 2 (top-right), kick pedal, hi-hat pedal — 5 struck
+    # surfaces + 2 foot pedals, all reading through SP2 sensors.
+    {"item":"SP2 Starter Pack (Portal + 1 sensor)", "role":"Percussion", "phase":5, "status":"Owned", "cost":0, "cables":"", "notes":"Already owned — Portal + 1 drum sensor + software. Sensor goes on the snare (centre)."},
+    {"item":"SP2 Drum Sensor Expansion (×4)", "role":"Percussion","phase":5,"status":"Needed",  "cost":920, "cables":"Sensor cables ×4 (included)", "notes":"One sensor each for: tom acting as hi-hat (left), tom acting as ride (right), tom 1 (top-left), tom 2 (top-right)"},
+    {"item":"Kick pedal (trigger pad + SP2 sensor)", "role":"Percussion","phase":5,"status":"Needed", "cost":290, "cables":"Sensor cable (included)", "notes":"Compact pad played with a standard bass-drum pedal beater — not a full-size kick drum"},
+    {"item":"Hi-hat pedal (foot controller)", "role":"Percussion","phase":5,"status":"Needed", "cost":90, "cables":"TRS cable to Portal or Morningstar expression in ($15)", "notes":"Continuous pedal — open/close position sent as CC to blend the hi-hat tom's sample layers; Portal's pedal input is unconfirmed, may route via the Morningstar's spare expression input instead"},
+    {"item":"Low-volume shells + mesh heads (snare + 4 toms)","role":"Percussion","phase":5,"status":"Needed","cost":850,"cables":"", "notes":"5 drums total, arranged around the seat: snare centre, 2 toms repurposed as hi-hat/ride either side, 2 further toms top-left/top-right"},
+    # Phase 6 — bass
+    {"item":"Bass guitar",                 "role":"Bass",     "phase":6, "status":"Owned",   "cost":0,   "cables":"", "notes":"Already owned"},
+    {"item":"SansAmp Bass Driver DI V2",   "role":"Bass",     "phase":6, "status":"Needed",  "cost":520, "cables":"Instrument cable 3m ($25) bass → DI; XLR cable 3m ($25) DI → Portal", "notes":"Preamp + DI in one pedal"},
+    {"item":"MXR Bass Compressor",         "role":"Bass",     "phase":6, "status":"Needed",  "cost":390, "cables":"Patch cable ($15) DI → compressor", "notes":"Tames dynamics for consistent loop levels"},
+    {"item":"Jam Origin MIDI Bass (plugin)","role":"Bass → MIDI","phase":6,"status":"Needed","cost":0,   "cables":"", "notes":"Free — real-time bass-to-MIDI conversion"},
+    {"item":"Bass cables",                 "role":"Cable",    "phase":6, "status":"Needed",  "cost":65,  "cables":"", "notes":"Instrument cable 3m ($25) + XLR 3m ($25) + patch ($15)"},
+    # Deferred
+    {"item":"Hardware step sequencer",     "role":"Synth",    "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Only if MiniFreak + Live runs out"},
+    {"item":"Separate audio interface",    "role":"Audio I/O","phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Fallback if Portal can't handle all I/O"},
+    {"item":"Modular MIDI controller",     "role":"Control",  "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Intech Grid / Monogram; follows selected track"},
+]
+
+
+def phase_cost(n):
+    """Sum of needed-item costs for a given phase, derived from GEAR so the
+    roadmap and gear pages can never drift apart."""
+    return sum(g["cost"] for g in GEAR if g["phase"] == n and g["status"] == "Needed")
+
+
 def roadmap():
-    # --- Data shared between roadmap and gear ---
-    # Prices are AUD estimates (Nov 2026 research)
+    # Costs are derived from GEAR (phase_cost), not hand-entered, so editing
+    # the gear list is the single source of truth for both pages.
     phases = [
         {"n":1, "title":"Play what you have", "sub":"Learn Ableton looping",
-         "cost":0, "buy":False,
          "body":"""<p>Learn Ableton's looping workflow before spending money. Record MiniFreak into Ableton, loop clips with Push 1, chain effects, get comfortable with scenes and arrangement.</p>
 <p>Push 1's session view is already a decent looping surface — learn what it can and can't do from your lap before you decide what foot control you need.</p>
 <p>The MiniFreak's audio goes straight into your computer's built-in audio interface. Latency will be noticeable but workable for practice. You're not performing — you're getting your hands on the workflow.</p>""",
          "gate":"You can record a loop, layer a second part over it, and switch scenes without fumbling."},
         {"n":2, "title":"Get the audio path right", "sub":"Cue monitoring, low latency",
-         "cost":1550, "buy":True,
          "body":"""<p>The Portal is the backbone: 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
 <p>Set up Ableton's cue/solo system: Main Out → Portal Main L/R (speakers), Cue Out → Portal Headphone L/R. Click the headphone icon on any track to preview it in your ears while the audience hears only the master mix — the "silent jamming" workflow.</p>
 <p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise.</p>""",
          "gate":"Portal is patched in, cue monitoring works, and the MiniFreak's round-trip latency feels invisible."},
         {"n":3, "title":"Build sonic environments", "sub":"Worlds for the drums to land in",
-         "cost":0, "buy":False,
          "body":"""<p>With the Portal providing clean audio and cue monitoring, build the worlds the drums and bass will eventually live in. Create Ableton sessions with ambient pads and textures from the MiniFreak, effects chains (reverb, delay, granular processing), rhythmic patterns, and multiple scenes — each a different mood or energy level.</p>
 <p>Think of each session as an environment you'll walk into with drumsticks later. When the SP2 arrives, you want to hit a drum and immediately hear it inside a world that responds — not a blank project.</p>
 <p>This is also when to start exploring Max for Live. The expression mapping and creature behaviours all run through M4L later.</p>""",
          "gate":"You have a few sessions that feel like places — environments you enjoy playing inside, with layered textures and effects."},
         {"n":4, "title":"Get your hands off the computer", "sub":"Foot-controlled looping + FX",
-         "cost":690, "buy":True,
          "body":"""<p>The minimum gear to make the rig performable. Right now everything runs through Push 1 and the mouse — fine for building, but you can't loop and play at the same time if your hands are on the keys.</p>
 <p>The foot controller gives you record/stop, scene launch, undo, and effects toggle — all by foot. The expression pedal adds continuous control: filter sweeps, volume fades, effect depth.</p>
 <p>Morningstar controllers speak MIDI natively and are deeply programmable — each switch can send different messages per press, hold, double-tap, and release.</p>""",
          "gate":"You can play the MiniFreak, loop a part, layer a second part, and control at least one effect parameter — all without touching the laptop."},
         {"n":5, "title":"Add drums", "sub":"SP2 plugs into your environments",
-         "cost":1700, "buy":True,
          "body":"""<p>The drums are the rig's primary instrument and its richest control surface. SP2 turns each drum into dozens of zones — centre, edge, rim, cross-stick, press, dampen — and each zone can trigger samples, synths, effects, or MIDI.</p>
+<p>The kit itself is deliberately compact: snare centre, a tom either side standing in for hi-hat and ride, two more toms top-left and top-right, plus a kick pedal and a hi-hat pedal at your feet. Five struck surfaces, two pedals — everything reachable without standing up.</p>
 <p>Because you built environments in Phase 3, the drums plug into something alive on day one. The SP2 zones also become expression controllers: pressing a head can swell a reverb, a rimshot can trigger a scene change.</p>
-<p>The low-volume kit keeps things neighbour-friendly: mesh heads on the toms, small toms mounted as cymbals. This is when the creatures come alive — turnaround, surface, mimic.</p>""",
+<p>This is when the creatures come alive — turnaround, surface, mimic.</p>""",
          "gate":"You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one creature behaviour from the kit."},
         {"n":6, "title":"Add bass", "sub":"Understudy creature online",
-         "cost":950, "buy":True,
          "body":"""<p>Bass completes the trio — drums, synth, bass — and brings the understudy creature online.</p>
 <p>The understudy is powered by Jam Origin MIDI Bass (free), converting bass audio into MIDI in real time. One instrument, two outputs: the bass sound and the MIDI translation running in parallel.</p>
 <p>The SansAmp Bass Driver DI gives you character and a clean DI signal. A compressor tames dynamics for consistent loop levels.</p>
 <p>With bass in, the full rig is operational. From here it's about depth — refining the creatures, building more environments, developing a performance practice.</p>""",
          "gate":"You can play all three instruments, loop any of them, preview silently in headphones, control effects from your feet, and the creatures respond to how you play."},
     ]
+
+    for p in phases:
+        p["cost"] = phase_cost(p["n"])
+        p["buy"] = p["cost"] > 0
 
     total = sum(p["cost"] for p in phases)
 
@@ -749,41 +868,6 @@ def roadmap():
   if (u.has('phase')) show(u.get('phase'));
 }})();
 </script>'''
-
-
-# --- Shared gear data (used by both roadmap gear links and gear page) ---
-GEAR = [
-    # Phase 1 — already owned
-    {"item":"Arturia MiniFreak",           "role":"Synth",    "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Onboard sequencer and arp first"},
-    {"item":"Ableton Live Suite",          "role":"Hub",      "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Max for Live required"},
-    {"item":"Ableton Push 1",              "role":"Control",  "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Session view looping, Fixed Length first"},
-    # Phase 2 — audio path
-    {"item":"EVANS Portal (interface)",    "role":"Audio I/O","phase":2, "status":"Needed",  "cost":1240,"cables":"USB-C cable 3m ($25)", "notes":"16-ch I/O, dedicated headphone out, ADAT expansion"},
-    {"item":"Audio-Technica ATH-M50x",     "role":"Output",   "phase":2, "status":"Needed",  "cost":250, "cables":"6.35mm → 3.5mm adapter (included)", "notes":"Closed-back for low-volume cue monitoring"},
-    {"item":"6.35mm TRS cable 3m (×2)",    "role":"Cable",    "phase":2, "status":"Needed",  "cost":40,  "cables":"", "notes":"Portal main out → monitors/amp"},
-    {"item":"3.5mm TRS cable 1m",          "role":"Cable",    "phase":2, "status":"Needed",  "cost":15,  "cables":"", "notes":"MiniFreak audio out → Portal input"},
-    # Phase 3 — no new gear
-    # Phase 4 — foot control
-    {"item":"Morningstar MC6 Pro",         "role":"Control",  "phase":4, "status":"Needed",  "cost":560, "cables":"USB-C cable 3m ($25); TRS MIDI cable 1.5m ($15)", "notes":"6 footswitches, deeply programmable MIDI"},
-    {"item":"Moog EP-3 expression pedal",  "role":"Control",  "phase":4, "status":"Needed",  "cost":90,  "cables":"TRS cable 2m ($15) to MC6 expression input", "notes":"Continuous control — filter, volume, FX depth"},
-    {"item":"TRS cables for MC6",          "role":"Cable",    "phase":4, "status":"Needed",  "cost":40,  "cables":"", "notes":"USB-C ($25) + TRS MIDI ($15)"},
-    # Phase 5 — drums
-    {"item":"SP2 Starter Pack (Portal + 1 sensor)", "role":"Percussion", "phase":5, "status":"Owned", "cost":0, "cables":"", "notes":"Already owned — Portal + 1 drum sensor + software"},
-    {"item":"SP2 Drum Sensor Expansion",   "role":"Percussion","phase":5,"status":"Needed",  "cost":230, "cables":"Sensor cable (included)", "notes":"Second drum sensor — snare or second tom"},
-    {"item":"SP2 Hi-Hat Sensor Expansion",  "role":"Percussion","phase":5,"status":"Needed",  "cost":540, "cables":"Sensor cable (included)", "notes":"Hi-hat triggering and open/close zones"},
-    {"item":"Low-volume kit shells + mesh heads","role":"Percussion","phase":5,"status":"Needed","cost":800,"cables":"", "notes":"Snare 13\", toms 8\"+10\"+12\", mesh heads, shallow shells"},
-    {"item":"Evans dB One cymbal pack",    "role":"Percussion","phase":5,"status":"Needed",  "cost":130, "cables":"", "notes":"Low-volume cymbals — or small toms as cymbals for SP2"},
-    # Phase 6 — bass
-    {"item":"Bass guitar",                 "role":"Bass",     "phase":6, "status":"Owned",   "cost":0,   "cables":"", "notes":"Already owned"},
-    {"item":"SansAmp Bass Driver DI V2",   "role":"Bass",     "phase":6, "status":"Needed",  "cost":520, "cables":"Instrument cable 3m ($25) bass → DI; XLR cable 3m ($25) DI → Portal", "notes":"Preamp + DI in one pedal"},
-    {"item":"MXR Bass Compressor",         "role":"Bass",     "phase":6, "status":"Needed",  "cost":390, "cables":"Patch cable ($15) DI → compressor", "notes":"Tames dynamics for consistent loop levels"},
-    {"item":"Jam Origin MIDI Bass (plugin)","role":"Bass → MIDI","phase":6,"status":"Needed","cost":0,   "cables":"", "notes":"Free — real-time bass-to-MIDI conversion"},
-    {"item":"Bass cables",                 "role":"Cable",    "phase":6, "status":"Needed",  "cost":65,  "cables":"", "notes":"Instrument cable 3m ($25) + XLR 3m ($25) + patch ($15)"},
-    # Deferred
-    {"item":"Hardware step sequencer",     "role":"Synth",    "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Only if MiniFreak + Live runs out"},
-    {"item":"Separate audio interface",    "role":"Audio I/O","phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Fallback if Portal can't handle all I/O"},
-    {"item":"Modular MIDI controller",     "role":"Control",  "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Intech Grid / Monogram; follows selected track"},
-]
 
 
 def gear():
@@ -1213,7 +1297,8 @@ def build():
         {"version": "0.3.0", "date": "2026-11-10", "notes": "Map navigation + subpages", "path": "builds/0.3.0/index.html"},
         {"version": "0.3.1", "date": "2026-11-11", "notes": "Collapsible sections, diagrams, map hierarchy, layout fix", "path": "builds/0.3.1/index.html"},
         {"version": "0.3.2", "date": "2026-11-11", "notes": "Build roadmap page", "path": "builds/0.3.2/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Interactive roadmap + gear with costs", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.4.0", "date": "2026-11-11", "notes": "Interactive roadmap + gear with costs", "path": "builds/0.4.0/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)

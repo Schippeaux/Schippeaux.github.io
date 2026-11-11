@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roadmap — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="roadmap">
+<main class="pg">
+<div class="hero"><h1>Build roadmap</h1>
+<p class="thesis">Six phases from what you have to the full rig. Build environments first, add instruments into something alive.</p>
+</div>
+<div class="row">
+<div class="b5 rm-left">
+<svg class="sv rm-map" viewBox="0 0 340 520" role="img" aria-label="Six phases from MiniFreak to full rig">
+<style>
+.rm-box{rx:8;fill:none;stroke:var(--fg,.35);stroke-width:1.25;cursor:pointer;transition:stroke .2s}
+.rm-buy{rx:8;fill:var(--accent,.08);stroke:var(--accent);stroke-width:2;cursor:pointer;transition:fill .2s}
+.rm-box:hover,.rm-buy:hover{stroke-width:2.5}
+.rm-box.active{stroke:var(--accent);stroke-width:2.5;fill:var(--accent,.06)}
+.rm-buy.active{fill:var(--accent,.2);stroke-width:3}
+.rm-conn{fill:none;stroke:var(--fg,.3);stroke-width:1.25}
+.rm-name{font-size:13px;font-weight:600;text-anchor:middle;pointer-events:none}
+.rm-sub{font-size:10.5px;text-anchor:middle;opacity:.6;pointer-events:none}
+.rm-cost{font-size:11px;font-weight:600;text-anchor:end;pointer-events:none;fill:var(--accent)}
+.rm-nocost{font-size:10.5px;text-anchor:end;opacity:.45;pointer-events:none}
+.rm-end{rx:8;fill:var(--accent,.08);stroke:var(--accent,.4);stroke-width:1.25}
+</style>
+<g class="rm-phase" data-phase="1">
+<rect class="rm-box" x="10" y="10" width="220" height="52"/>
+<text class="rm-name" x="120" y="32">1. Play what you have</text>
+<text class="rm-sub" x="120" y="48">Learn Ableton looping</text>
+<text class="rm-nocost" x="326" y="40">$0</text>
+</g>
+<line class="rm-conn" x1="120" y1="62" x2="120" y2="76"/>
+<g class="rm-phase" data-phase="2">
+<rect class="rm-buy" x="10" y="76" width="220" height="52"/>
+<text class="rm-name" x="120" y="98">2. Get the audio path right</text>
+<text class="rm-sub" x="120" y="114">Cue monitoring, low latency</text>
+<text class="rm-cost" x="326" y="106">~$1,545</text>
+</g>
+<line class="rm-conn" x1="120" y1="128" x2="120" y2="142"/>
+<g class="rm-phase" data-phase="3">
+<rect class="rm-box" x="10" y="142" width="220" height="52"/>
+<text class="rm-name" x="120" y="164">3. Build sonic environments</text>
+<text class="rm-sub" x="120" y="180">Worlds for the drums to land in</text>
+<text class="rm-nocost" x="326" y="172">$0</text>
+</g>
+<line class="rm-conn" x1="120" y1="194" x2="120" y2="208"/>
+<g class="rm-phase" data-phase="4">
+<rect class="rm-buy" x="10" y="208" width="220" height="52"/>
+<text class="rm-name" x="120" y="230">4. Get your hands off the computer</text>
+<text class="rm-sub" x="120" y="246">Foot-controlled looping + FX</text>
+<text class="rm-cost" x="326" y="238">~$690</text>
+</g>
+<line class="rm-conn" x1="120" y1="260" x2="120" y2="274"/>
+<g class="rm-phase" data-phase="5">
+<rect class="rm-buy" x="10" y="274" width="220" height="52"/>
+<text class="rm-name" x="120" y="296">5. Add drums</text>
+<text class="rm-sub" x="120" y="312">SP2 plugs into your environments</text>
+<text class="rm-cost" x="326" y="304">~$2,150</text>
+</g>
+<line class="rm-conn" x1="120" y1="326" x2="120" y2="340"/>
+<g class="rm-phase" data-phase="6">
+<rect class="rm-buy" x="10" y="340" width="220" height="52"/>
+<text class="rm-name" x="120" y="362">6. Add bass</text>
+<text class="rm-sub" x="120" y="378">Understudy creature online</text>
+<text class="rm-cost" x="326" y="370">~$975</text>
+</g>
+<rect class="rm-end" x="10" y="410" width="320" height="30"/>
+<text x="170" y="430" style="font-size:12px;font-weight:600;text-anchor:middle">Total new gear: ~$5,360 AUD</text>
+</svg>
+<p class="rm-hint">Click a phase to see details</p>
+</div>
+<div class="b7 rm-right" id="rmRight">
+<div class="rm-panel rm-welcome" id="rmpWelcome">
+<p class="rm-welcome-text">Four purchases across six phases. The first three phases get you performing with the MiniFreak alone; drums and bass join a rig that's already alive.</p>
+<p>Click a phase on the left to see what's involved.</p>
+</div>
+<div class="rm-panel" id="rmp1" hidden>
+<h2><span class="pnum">1</span> Play what you have</h2>
+<div class="phase-costs"><span class="phase-cost zero">$0 — time, not money</span></div>
+<p>Learn Ableton's looping workflow before spending money. Record MiniFreak into Ableton, loop clips with Push 1, chain effects, get comfortable with scenes and arrangement.</p>
+<p>Push 1's session view is already a decent looping surface — learn what it can and can't do from your lap before you decide what foot control you need.</p>
+<p>The MiniFreak's audio goes straight into your computer's built-in audio interface. Latency will be noticeable but workable for practice. You're not performing — you're getting your hands on the workflow.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> You can record a loop, layer a second part over it, and switch scenes without fumbling.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=1">View Phase 1 gear →</a></p>
+</div>
+<div class="rm-panel" id="rmp2" hidden>
+<h2><span class="pnum">2</span> Get the audio path right</h2>
+<div class="phase-costs"><span class="phase-cost">~$1,545 AUD</span><span class="phase-running">Running total: ~$1,545</span></div>
+<p>The Portal is the backbone: 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
+<p>Set up Ableton's cue/solo system: Main Out → Portal Main L/R (speakers), Cue Out → Portal Headphone L/R. Click the headphone icon on any track to preview it in your ears while the audience hears only the master mix — the "silent jamming" workflow.</p>
+<p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> Portal is patched in, cue monitoring works, and the MiniFreak's round-trip latency feels invisible.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=2">View Phase 2 gear →</a></p>
+</div>
+<div class="rm-panel" id="rmp3" hidden>
+<h2><span class="pnum">3</span> Build sonic environments</h2>
+<div class="phase-costs"><span class="phase-cost zero">$0 — time, not money</span><span class="phase-running">Running total: ~$1,545</span></div>
+<p>With the Portal providing clean audio and cue monitoring, build the worlds the drums and bass will eventually live in. Create Ableton sessions with ambient pads and textures from the MiniFreak, effects chains (reverb, delay, granular processing), rhythmic patterns, and multiple scenes — each a different mood or energy level.</p>
+<p>Think of each session as an environment you'll walk into with drumsticks later. When the SP2 arrives, you want to hit a drum and immediately hear it inside a world that responds — not a blank project.</p>
+<p>This is also when to start exploring Max for Live. The expression mapping and creature behaviours all run through M4L later.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> You have a few sessions that feel like places — environments you enjoy playing inside, with layered textures and effects.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=3">View Phase 3 gear →</a></p>
+</div>
+<div class="rm-panel" id="rmp4" hidden>
+<h2><span class="pnum">4</span> Get your hands off the computer</h2>
+<div class="phase-costs"><span class="phase-cost">~$690 AUD</span><span class="phase-running">Running total: ~$2,235</span></div>
+<p>The minimum gear to make the rig performable. Right now everything runs through Push 1 and the mouse — fine for building, but you can't loop and play at the same time if your hands are on the keys.</p>
+<p>The foot controller gives you record/stop, scene launch, undo, and effects toggle — all by foot. The expression pedal adds continuous control: filter sweeps, volume fades, effect depth.</p>
+<p>Morningstar controllers speak MIDI natively and are deeply programmable — each switch can send different messages per press, hold, double-tap, and release.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> You can play the MiniFreak, loop a part, layer a second part, and control at least one effect parameter — all without touching the laptop.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=4">View Phase 4 gear →</a></p>
+</div>
+<div class="rm-panel" id="rmp5" hidden>
+<h2><span class="pnum">5</span> Add drums</h2>
+<div class="phase-costs"><span class="phase-cost">~$2,150 AUD</span><span class="phase-running">Running total: ~$4,385</span></div>
+<p>The drums are the rig's primary instrument and its richest control surface. SP2 turns each drum into dozens of zones — centre, edge, rim, cross-stick, press, dampen — and each zone can trigger samples, synths, effects, or MIDI.</p>
+<p>The kit itself is deliberately compact: snare centre, a tom either side standing in for hi-hat and ride, two more toms top-left and top-right, plus a kick pedal and a hi-hat pedal at your feet. Five struck surfaces, two pedals — everything reachable without standing up.</p>
+<p>Because you built environments in Phase 3, the drums plug into something alive on day one. The SP2 zones also become expression controllers: pressing a head can swell a reverb, a rimshot can trigger a scene change.</p>
+<p>This is when the creatures come alive — turnaround, surface, mimic.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one creature behaviour from the kit.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=5">View Phase 5 gear →</a></p>
+</div>
+<div class="rm-panel" id="rmp6" hidden>
+<h2><span class="pnum">6</span> Add bass</h2>
+<div class="phase-costs"><span class="phase-cost">~$975 AUD</span><span class="phase-running">Running total: ~$5,360</span></div>
+<p>Bass completes the trio — drums, synth, bass — and brings the understudy creature online.</p>
+<p>The understudy is powered by Jam Origin MIDI Bass (free), converting bass audio into MIDI in real time. One instrument, two outputs: the bass sound and the MIDI translation running in parallel.</p>
+<p>The SansAmp Bass Driver DI gives you character and a clean DI signal. A compressor tames dynamics for consistent loop levels.</p>
+<p>With bass in, the full rig is operational. From here it's about depth — refining the creatures, building more environments, developing a performance practice.</p>
+<p class="meta gate"><strong>Ready for next phase when:</strong> You can play all three instruments, loop any of them, preview silently in headphones, control effects from your feet, and the creatures respond to how you play.</p>
+<p class="rm-gear-link"><a href="gear.html?phase=6">View Phase 6 gear →</a></p>
+</div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  const panels = document.querySelectorAll('.rm-panel');
+  const phases = document.querySelectorAll('.rm-phase');
+  const welcome = document.getElementById('rmpWelcome');
+  let active = null;
+
+  function show(n) {
+    panels.forEach(p => p.hidden = true);
+    phases.forEach(g => {
+      const r = g.querySelector('rect');
+      if (r) r.classList.remove('active');
+    });
+    if (n === active) { welcome.hidden = false; active = null; return; }
+    const panel = document.getElementById('rmp' + n);
+    if (panel) panel.hidden = false;
+    phases.forEach(g => {
+      if (g.dataset.phase == n) {
+        const r = g.querySelector('rect');
+        if (r) r.classList.add('active');
+      }
+    });
+    active = n;
+  }
+
+  phases.forEach(g => {
+    g.addEventListener('click', () => show(g.dataset.phase));
+  });
+
+  // Deep-link: ?phase=N
+  const u = new URLSearchParams(location.search);
+  if (u.has('phase')) show(u.get('phase'));
+})();
+</script>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

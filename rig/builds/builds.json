@@ -28,5 +28,11 @@
     "date": "2026-11-11",
     "notes": "Interactive roadmap + gear with costs",
     "path": "builds/0.4.0/index.html"
+  },
+  {
+    "version": "0.4.1",
+    "date": "2026-11-11",
+    "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan",
+    "path": "builds/0.4.1/index.html"
   }
 ]
