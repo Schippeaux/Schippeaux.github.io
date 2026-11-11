@@ -16,5 +16,11 @@
     "date": "2026-11-11",
     "notes": "Collapsible sections, diagrams, map hierarchy, layout fix",
     "path": "builds/0.3.1/index.html"
+  },
+  {
+    "version": "0.3.2",
+    "date": "2026-11-11",
+    "notes": "Build roadmap page",
+    "path": "builds/0.3.2/index.html"
   }
 ]

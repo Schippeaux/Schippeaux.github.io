@@ -25,6 +25,7 @@
     {id:'expression',t:'Expression',z:3},
     {id:'creatures',t:'Creatures',z:3},
     {id:'gear',t:'Gear',z:0},
+    {id:'roadmap',t:'Roadmap',z:2},
     {id:'decisions',t:'Open decisions',z:2},
     {id:'research',t:'Research',z:2},
     {id:'influences',t:'Influences',z:2},

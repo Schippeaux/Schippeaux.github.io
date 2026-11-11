@@ -4,7 +4,7 @@
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -598,6 +598,149 @@ def creatures():
 </div></div>'''
 
 
+def roadmap():
+    phase_svg = '''<svg class="sv" viewBox="0 0 700 600" role="img" aria-label="Six phases from MiniFreak to full rig, four purchases">
+<defs><marker id="rm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="edge-fill"/></marker></defs>
+<style>
+.edge-fill{fill:var(--fg,.4)}
+.rm-box{rx:8;fill:none;stroke:var(--fg,.35);stroke-width:1.25}
+.rm-buy{rx:8;fill:var(--accent,.12);stroke:var(--accent);stroke-width:2}
+.rm-conn{fill:none;stroke:var(--fg,.35);stroke-width:1.25}
+.rm-name{font-size:14px;font-weight:600;text-anchor:middle}
+.rm-sub{font-size:11.5px;text-anchor:middle;opacity:.65}
+.rm-buy-tag{font-size:13px;font-weight:700;fill:var(--accent)}
+.rm-gear{font-size:12.5px;opacity:.8}
+.rm-result{rx:8;fill:var(--accent,.1);stroke:var(--accent,.5);stroke-width:1.25}
+</style>
+<text x="24" y="24" style="font-size:15px;font-weight:600">Six phases from MiniFreak to full rig</text>
+<text x="24" y="44" style="font-size:11.5px;opacity:.6">Coloured boxes = buy new gear</text>
+
+<g transform="translate(0,10)">
+<line class="rm-conn" x1="130" y1="96" x2="130" y2="120" marker-end="url(#rm-arrow)"/>
+<line class="rm-conn" x1="130" y1="178" x2="130" y2="202" marker-end="url(#rm-arrow)"/>
+<line class="rm-conn" x1="130" y1="260" x2="130" y2="284" marker-end="url(#rm-arrow)"/>
+<line class="rm-conn" x1="130" y1="342" x2="130" y2="366" marker-end="url(#rm-arrow)"/>
+<line class="rm-conn" x1="130" y1="424" x2="130" y2="448" marker-end="url(#rm-arrow)"/>
+
+<rect class="rm-box" x="30" y="56" width="200" height="40"/>
+<text class="rm-name" x="130" y="73">1. Play what you have</text>
+<text class="rm-sub" x="130" y="90">Learn Ableton looping</text>
+<text class="rm-gear" x="246" y="80" opacity=".55">MiniFreak + Ableton + Push 1</text>
+
+<rect class="rm-buy" x="30" y="120" width="200" height="58"/>
+<text class="rm-name" x="130" y="143">2. Audio path</text>
+<text class="rm-sub" x="130" y="161">Cue monitoring, low latency</text>
+<text class="rm-buy-tag" x="246" y="142">BUY</text>
+<text class="rm-gear" x="246" y="160">EVANS Portal</text>
+
+<rect class="rm-box" x="30" y="202" width="200" height="58"/>
+<text class="rm-name" x="130" y="225">3. Build environments</text>
+<text class="rm-sub" x="130" y="243">Worlds for the drums to land in</text>
+<text class="rm-gear" x="246" y="234" opacity=".55">Creative phase, no purchase</text>
+
+<rect class="rm-buy" x="30" y="284" width="200" height="58"/>
+<text class="rm-name" x="130" y="307">4. Hands off the computer</text>
+<text class="rm-sub" x="130" y="325">Foot-controlled looping + FX</text>
+<text class="rm-buy-tag" x="246" y="300">BUY</text>
+<text class="rm-gear" x="246" y="318">Morningstar MC6 + expression pedal</text>
+
+<rect class="rm-buy" x="30" y="366" width="200" height="58"/>
+<text class="rm-name" x="130" y="389">5. Add drums</text>
+<text class="rm-sub" x="130" y="407">SP2 plugs into your environments</text>
+<text class="rm-buy-tag" x="246" y="382">BUY</text>
+<text class="rm-gear" x="246" y="400">SP2 sensors + low-volume kit</text>
+
+<rect class="rm-buy" x="30" y="448" width="200" height="58"/>
+<text class="rm-name" x="130" y="471">6. Add bass</text>
+<text class="rm-sub" x="130" y="489">Understudy creature online</text>
+<text class="rm-buy-tag" x="246" y="466">BUY</text>
+<text class="rm-gear" x="246" y="484">Bass guitar + DI</text>
+
+<rect class="rm-result" x="24" y="530" width="652" height="36" rx="8"/>
+<text x="350" y="553" style="font-size:13px;font-weight:600;text-anchor:middle">Full rig · three instruments · looping · expression · creatures</text>
+</g>
+</svg>'''
+
+    def phase(num, title, buy, body, gate):
+        buy_html = f'<p class="meta"><strong>Buy:</strong> {buy}</p>' if buy != "Nothing" else '<p class="meta"><strong>Buy:</strong> Nothing — this phase costs time, not money.</p>'
+        gate_html = f'<p class="meta gate"><strong>Ready for next phase when:</strong> {gate}</p>'
+        return f'''<div class="phase" id="phase{num}">
+<h2><span class="pnum">{num}</span> {title}</h2>
+{buy_html}
+{detail("Details", body)}
+{gate_html}
+</div>'''
+
+    return hero("Build roadmap",
+                "Six phases from what you have to the full rig. Build environments first, add instruments into something alive.",
+                ) + f'''
+<div class="row"><div class="b8">
+{phase_svg}
+<p style="margin-top:1.5rem">Four purchases across six phases. The first three phases get you performing with the MiniFreak alone; drums and bass join a rig that's already alive.</p>
+</div></div>
+
+<div class="row"><div class="b8">
+
+{phase(1, "Play what you have",
+       "Nothing",
+       """<p>The goal here is to learn Ableton's looping workflow before any money goes out the door. Record MiniFreak into Ableton, loop clips with Push 1, chain effects, get comfortable with scenes and arrangement.</p>
+<p>Push 1's session view is already a decent looping surface — learn what it can and can't do from your lap before you decide what foot control you need.</p>
+<p>The MiniFreak's audio goes straight into your computer's built-in audio interface (or whatever you have now). Latency will be noticeable but workable for practice. You're not performing — you're getting your hands on the workflow.</p>""",
+       "You can record a loop, layer a second part over it, and switch scenes without fumbling.")}
+
+{phase(2, "Get the audio path right",
+       "EVANS Portal audio interface",
+       """<p>The Portal is the backbone. It gives you 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later. Everything else in the rig routes through it.</p>
+<p>Once it arrives, set up Ableton's cue/solo system: Main Out → Portal Main L/R (speakers), Cue Out → Portal Headphone L/R. Now you can click the headphone icon on any track to preview it in your ears while the audience hears only the master mix. This is the "silent jamming" workflow — find something that works in headphones, then un-cue the track and start looping.</p>
+<p>The Portal's low latency also means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise.</p>""",
+       "Portal is patched in, cue monitoring works, and the MiniFreak's round-trip latency feels invisible.")}
+
+{phase(3, "Build sonic environments",
+       "Nothing",
+       """<p>With the Portal providing clean audio and cue monitoring, spend time building the worlds the drums and bass will eventually live in. Create Ableton sessions with:</p>
+<ul>
+<li>Ambient pads and textures from the MiniFreak (its analog oscillators and digital engines give you a lot of range)</li>
+<li>Effects chains — reverb, delay, granular processing — that transform the synth into something bigger</li>
+<li>Rhythmic patterns and sequences that could underpin a drum part</li>
+<li>Multiple scenes in session view, each a different mood or energy level</li>
+</ul>
+<p>Think of each session as an environment you'll walk into with drumsticks later. When the SP2 arrives, you want to hit a drum and immediately hear it inside a world that responds — not a blank Ableton project.</p>
+<p>This is also when to start exploring Max for Live. The expression mapping and creature behaviours all run through M4L later.</p>""",
+       "You have a few sessions that feel like places — environments you enjoy playing inside, with layered textures and effects that respond to Push 1's knobs.")}
+
+{phase(4, "Get your hands off the computer",
+       "Morningstar MC6 (or MC8) foot controller + expression pedal",
+       """<p>This is the minimum gear to make the rig performable. Right now everything runs through Push 1 and the mouse — fine for building, but you can't loop and play at the same time if your hands are on the keys.</p>
+<p>The foot controller gives you:</p>
+<ul>
+<li><strong>Record / Stop</strong> — start and end a loop with your foot while both hands play</li>
+<li><strong>Scene launch</strong> — move between sections of a performance</li>
+<li><strong>Undo</strong> — kill the last loop layer if it didn't work</li>
+<li><strong>Effects toggle</strong> — stomp a reverb or delay in and out</li>
+</ul>
+<p>The expression pedal adds continuous control — filter sweeps, volume fades, effect depth — without lifting a hand off the instrument.</p>
+<p>Morningstar controllers speak MIDI natively and are deeply programmable — each switch can send different messages per press, hold, double-tap, and release.</p>""",
+       "You can play the MiniFreak, loop a part, layer a second part, and control at least one effect parameter — all without touching the laptop.")}
+
+{phase(5, "Add drums",
+       "Sensory Percussion 2 sensors (2 drum + 1 hi-hat) + low-volume kit parts",
+       """<p>This is the big one. The drums are the rig's primary instrument and its richest control surface. SP2 turns each drum into dozens of zones — centre, edge, rim, cross-stick, press, dampen — and each zone can trigger samples, synths, effects, or MIDI.</p>
+<p>Because you built environments in Phase 3, the drums plug into something alive on day one. Hit a drum, hear it inside the world you already made. The SP2 zones also become expression controllers: pressing a head can swell a reverb, a rimshot can trigger a scene change, a cross-stick can punch in a filter.</p>
+<p>The low-volume kit keeps things neighbour-friendly: mesh heads on the toms for quiet acoustic volume, and small toms mounted as cymbals (the SP2 sensor reads the vibration regardless of what the drum sounds like acoustically).</p>
+<p>This is when the creatures come alive — turnaround, surface, mimic. Each is a behaviour mapped across the SP2 zones and the environments you built.</p>""",
+       "You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one creature behaviour from the kit.")}
+
+{phase(6, "Add bass",
+       "Bass guitar (+ DI box if needed)",
+       """<p>Bass is the last voice. It completes the trio — drums, synth, bass — and brings the understudy creature online.</p>
+<p>The understudy is powered by Jam Origin MIDI Bass, a plugin that converts bass audio into MIDI in real time. You play bass, and Ableton sees MIDI notes. Those notes can drive synth patches, trigger samples, or be looped as MIDI clips that you re-voice later. One instrument, two outputs: the bass sound and the MIDI translation running in parallel.</p>
+<p>The Portal has instrument-level inputs, so a DI box may not be strictly necessary — but a good DI (Radial J48 or similar) gives you a cleaner signal for both the audio path and the MIDI tracking.</p>
+<p>With bass in, the full rig is operational: three instruments, looping, expression control, cue monitoring, creatures. From here it's about depth — refining the creatures, building more environments, developing a performance practice.</p>""",
+       "You can play all three instruments through the system, loop any of them, preview silently in headphones, control effects and looping from your feet, and the creatures respond to how you play.")}
+
+</div></div>'''
+
+
 def gear():
     return hero("Gear", "What is owned, what is needed, and what has been deliberately left out.") + '''
 <div class="row">
@@ -862,6 +1005,7 @@ PAGES = {
     'expression': ('Expression', expression),
     'creatures': ('Creatures', creatures),
     'gear': ('Gear', gear),
+    'roadmap': ('Roadmap', roadmap),
     'decisions': ('Open decisions', decisions),
     'research': ('Research', research),
     'influences': ('Influences', influences),
@@ -916,7 +1060,8 @@ def build():
     manifest = [
         {"version": "0.2.0", "date": "2026-11-10", "notes": "Single-page version", "path": "builds/0.2.0/index.html"},
         {"version": "0.3.0", "date": "2026-11-10", "notes": "Map navigation + subpages", "path": "builds/0.3.0/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Collapsible sections, diagrams, map hierarchy, layout fix", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.3.1", "date": "2026-11-11", "notes": "Collapsible sections, diagrams, map hierarchy, layout fix", "path": "builds/0.3.1/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Build roadmap page", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
