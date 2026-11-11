@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Generate rig site v0.3.0: map index + 18 subpages + version files + build snapshot."""
+"""Generate rig site v0.3.1: collapsible sections, map hierarchy, diagrams, layout fix."""
 
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -43,22 +43,44 @@ def hero(title, thesis="", accent_word=None, meta=""):
     parts.append('</div>')
     return '\n'.join(parts)
 
+def detail(title, body, tag=""):
+    """Collapsible <details> block with +/- toggle."""
+    tag_html = f'<span class="dtag">{tag}</span>' if tag else ''
+    return f'''<details>
+<summary>{title}{tag_html}</summary>
+<div class="dbody">{body}</div>
+</details>'''
+
+def creature(name, subtitle, feel, build_items):
+    """Creature card: feel is open, build is collapsible."""
+    items = ''.join(f'<li>{b}</li>' for b in build_items)
+    return f'''<div class="creature">
+<h3>{name}<span>{subtitle}</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+{feel}
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul>{items}</ul></div>
+</details>
+</div>'''
+
 # ── Page content generators ─────────────────────────────
 
 def concept():
     return hero("Concept", "A musical environment to play in, respond to, and be responded to by — three live voices played solo, with a generative layer that listens.") + '''
-<div class="row"><div class="b7">
+<div class="row"><div class="b8">
 <p class="lg">The three voices are electronic percussion (Sensory Percussion 2 on a compact mesh-head kit), bass guitar, and the Arturia MiniFreak. Ableton Live is the backbone for recording, looping, routing and the "intelligence" layer, but it is driven from hardware so the computer stays out of the way during performance.</p>
 </div><div class="b4 p9">
 <p class="sm">The reference is the Arthur Hnatek&nbsp;/ Jojo Mayer (Nerve, Me/Machine) model: a system that reads dynamics, hit patterns and timing and responds. The vocabulary here leans melodic techno — a smaller and faster language to become fluent in, and which the simplified kit suits well.</p>
 </div></div>
 
 <div class="row"><h2>Principles</h2>
-<div class="b5">
+<div class="b6">
 <p class="xl">Ableton is the brain. Hardware is the hands.</p>
 <p class="sm">Anything touched mid-performance is a knob, pad or pedal.</p>
 </div>
-<div class="b5 p8">
+<div class="b6">
 <p class="xl">Fewer voices, more expression per voice.</p>
 <p class="sm">A snare with four trained zones beats eight pads with one each.</p>
 </div>
@@ -69,7 +91,7 @@ def concept():
 <p class="xl">Commit tone early in the analogue chain.</p>
 <p class="sm">Keep Live's effects for what is looped, modulated or automated live.</p>
 </div>
-<div class="b5 p8">
+<div class="b6">
 <p class="xl">Buy toward a problem that has been hit.</p>
 <p class="sm">The MiniFreak's own sequencer and arpeggiator come first; a hardware step sequencer only if they run out.</p>
 </div>
@@ -79,12 +101,10 @@ def concept():
 def percussion():
     return hero("Percussion", "Sensory Percussion 2 on a compact mesh kit: kick, snare, hi-hat, three toms and a hi-hat pedal. Expression comes from zones and technique, not from pad count.") + '''
 <div class="row"><h2>What the sensor reads</h2>
-<div class="b7">
+<div class="b8">
 <p>It does not read acoustic timbre. What the software calls "timbre" is derived from where and how the head is struck — position and strike classification — not from spectral analysis. The raw axes are <strong>position/zone</strong>, <strong>velocity</strong>, and <strong>speed</strong> (hit rate). Everything else in the expression list is computed from those three.</p>
-<p>Each sensor can be trained with up to <strong>ten zones per drum</strong>: centre, edge, rimshot-centre, rimshot-edge, rim tip, rim shoulder, cross-stick, damped, shell, and a "void" zone for things to ignore. Most players train four to six that they can strike reliably and distinctly; zones can be blended so they flow into each other proportionally rather than switching hard.</p>
-</div>
-<div class="b4 p9">
-<p class="sm">Built-in controller types: Timbre, Velocity, Speed and LFO — each mappable to any parameter or sent out as MIDI CC.</p>
+''' + detail("Zone training", '''<p>Each sensor can be trained with up to <strong>ten zones per drum</strong>: centre, edge, rimshot-centre, rimshot-edge, rim tip, rim shoulder, cross-stick, damped, shell, and a "void" zone for things to ignore. Most players train four to six that they can strike reliably and distinctly; zones can be blended so they flow into each other proportionally rather than switching hard.</p>
+<p>Built-in controller types: Timbre, Velocity, Speed and LFO — each mappable to any parameter or sent out as MIDI CC.</p>''', "SP2") + '''
 </div></div>
 
 <div class="row"><h2>The kit</h2>
@@ -109,48 +129,38 @@ def bass():
     return hero("Bass", "The true third voice — not accompaniment but a musical starting point. Get a groove on, loop it, hand it to the synth, and let it evolve.") + '''
 <div class="row"><h2>Where the bass fits in</h2>
 <div class="b12">
-<div class="duo"><h3>The understudy<span>gets a groove going, then the synth takes it and runs</span></h3>
-<div class="feel"><span class="k">What it feels like</span>
-You pick up the bass and noodle until something locks in — a line, a riff, a groove. You loop it. Then you tell Ableton to convert it into MIDI, and on the next turnaround, the synth picks up the line. But it does not play it the same way. It adds notes, in key, generatively — a little fill, a passing tone, a syncopated ghost. It shifts notes or leaves them out. It has learned the general groove and is playing with it musically. You can go back to the bass and play alongside this new version, or you can leave it and pick up the sticks.
-</div>
-<div class="build"><span class="k">How to build it</span>
-<ul>
-<li><strong>Bass-to-MIDI in real time</strong> using <a href="https://www.jamorigin.com">Jam Origin MIDI Bass</a> — a VST/AU plugin that converts monophonic bass audio to MIDI with low latency. Record the MIDI alongside the audio loop so the transcription is already there.</li>
-<li><strong>Handoff:</strong> on a turnaround (or a trigger), route the MIDI loop to the MiniFreak track. Crossfade the audio bass loop out and the synth voice in.</li>
-<li><strong>Generative variation:</strong> Live's Scale MIDI effect keeps added notes in key. A Max for Live note-chance device drops, shifts or adds notes at probability thresholds. Syncopated bits come from micro-timing offsets (±16th) with per-step random chance.</li>
-<li><strong>Groove learning</strong> — the same principle as the Mimic creature: a model of the rhythmic shape biases what gets added and where. The longer it plays, the further it can drift from the original.</li>
-</ul>
-</div></div>
+''' + creature("The understudy", "gets a groove going, then the synth takes it and runs",
+    "You pick up the bass and noodle until something locks in — a line, a riff, a groove. You loop it. Then you tell Ableton to convert it into MIDI, and on the next turnaround, the synth picks up the line. But it does not play it the same way. It adds notes, in key, generatively — a little fill, a passing tone, a syncopated ghost. It shifts notes or leaves them out. It has learned the general groove and is playing with it musically. You can go back to the bass and play alongside this new version, or you can leave it and pick up the sticks.",
+    [
+        '<strong>Bass-to-MIDI in real time</strong> using <a href="https://www.jamorigin.com">Jam Origin MIDI Bass</a> — a VST/AU plugin that converts monophonic bass audio to MIDI with low latency.',
+        '<strong>Handoff:</strong> on a turnaround (or a trigger), route the MIDI loop to the MiniFreak track. Crossfade the audio bass loop out and the synth voice in.',
+        '<strong>Generative variation:</strong> Live\'s Scale MIDI effect keeps added notes in key. A Max for Live note-chance device drops, shifts or adds notes at probability thresholds.',
+        '<strong>Groove learning</strong> — the same principle as the Mimic creature: a model of the rhythmic shape biases what gets added and where.',
+    ]) + '''
 </div></div>
 
 <div class="row"><h2>Signal chain</h2>
-<div class="b7">
+<div class="b8">
 <p class="lg">Bass → compressor → SansAmp Bass Driver DI → Portal input A (inst/Hi-Z) → Live.</p>
 <p>Character goes in the analogue chain before the interface, where it is zero-latency and under a hand or foot. The <strong>SansAmp</strong> provides amp-style saturation and a DI in one analogue box. A <strong>compressor</strong> (MXR Bass Compressor or similar) before it evens dynamics and keeps loop levels consistent.</p>
-</div>
-<div class="b4 p9">
-<p class="sm"><strong>No DI box needed</strong> if the interface has a Hi-Z input — the Portal's input A has an inst/line switch. Reserve Live's effects on the bass track for things that are looped or modulated live.</p>
-<p class="sm"><strong>Digital alternatives</strong> are good now (Neural DSP Darkglass is the bass benchmark). Plugin latency ~3–8 ms at 64–128 samples. The argument for pedals is tactility, not sound quality.</p>
+''' + detail("DI and digital alternatives", '''<p><strong>No DI box needed</strong> if the interface has a Hi-Z input — the Portal's input A has an inst/line switch. Reserve Live's effects on the bass track for things that are looped or modulated live.</p>
+<p><strong>Digital alternatives</strong> are good now (Neural DSP Darkglass is the bass benchmark). Plugin latency ~3–8 ms at 64–128 samples. The argument for pedals is tactility, not sound quality.</p>''') + '''
 </div></div>'''
 
 
 def synth():
     return hero("Synth", "The MiniFreak is the right synth for this. It is a step sequencer question that is really a generative-system question.") + '''
 <div class="row">
-<div class="b7">
+<div class="b8">
 <p class="lg">Six-voice true polyphony (pads and chords work), two oscillator engines per voice across wavetable, FM, harmonic and other types, a modulation matrix, built-in effects, and Spice &amp; Dice randomisation aimed at exploratory sound design.</p>
 <p>Pads, plucks, bass, stabs, washes and chords all come from one unit. It is hybrid (digital oscillators, analogue-modelled filter), so vintage analogue grit would be a second-synth conversation later, not now.</p>
-</div>
-<div class="b4 p9">
-<p class="sm">MiniFreak audio → Portal inputs C/D (line level). USB-MIDI to laptop for parameter control from Live. The audio goes in regardless of what is sequencing it.</p>
+<p class="sm">MiniFreak audio → Portal inputs C/D (line level). USB-MIDI to laptop for parameter control from Live.</p>
 </div></div>
 
 <div class="row"><h2>Patterns</h2>
-<div class="b7">
+<div class="b8">
 <p>A fixed-grid step sequencer is deterministic; the brief is generative. The MiniFreak already has a polyphonic sequencer and arpeggiator with modulation lanes, both reachable by Spice &amp; Dice.</p>
 <p>The "responds to what is played" layer lives in Live: probability MIDI effects, Max for Live generative devices, and parameters modulated from Sensory Percussion data. Start there; add a dedicated hardware sequencer only against a limitation actually hit.</p>
-</div>
-<div class="b4 p9">
 <div class="rule"><h3>First experiment</h3>
 <p class="sm">Hi-hat speed → MiniFreak filter cutoff via Expression Control. Snare velocity → reverb send on the synth. One continuous, one per-hit, both from stock devices.</p>
 </div>
@@ -325,28 +335,52 @@ def signal():
 def looping():
     return hero("Looping", "How to loop drums, bass, and synth layers so you can play other instruments and build up a piece.") + '''
 <div class="row"><h2>Method: Session View clip recording</h2>
-<div class="b7">
+<div class="b8">
 <p class="lg">Ableton's Session View is the looper. Fixed-length recording captures a clip of exactly N bars and starts looping it without stopping playback.</p>
 <p>Every voice can be looped independently. Audio loops of the drums and bass free your hands for the synth. Audio loops of the MiniFreak free it for new layers — the synth can be re-patched while its last phrase keeps playing. Drums can also be looped as MIDI (the raw zone/velocity data) and re-routed to a different creature or voice.</p>
-</div>
-<div class="b4 p9">
-<p class="sm"><strong>Fixed-length recording</strong> in Live: set a length (1, 2, 4, 8 bars) and press record — the clip ends and loops automatically. No foot-tap to close. This is the core looping mechanism.</p>
 </div></div>
 
 <div class="row"><h2>How to control loops</h2>
-<div class="b7">
+<div class="b8">
 <p>Hands are on the instrument. Loop control has to come from somewhere else.</p>
-<ul>
+<figure>
+<svg class="sv" viewBox="0 0 580 260" role="img" aria-label="Loop control button map: foot controller with four main switches and alternative trigger methods">
+<defs><marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<!-- Foot controller box -->
+<rect style="fill:var(--panel);stroke:var(--line);stroke-width:2" x="30" y="20" width="340" height="140" rx="6"/>
+<text x="200" y="48" text-anchor="middle" font-size="11" font-weight="600" style="fill:var(--ink-3)">MIDI foot controller (e.g. Morningstar MC6)</text>
+<!-- 4 switches -->
+<g style="fill:var(--accent);stroke:var(--accent);stroke-width:1.5">
+<rect x="55" y="70" width="60" height="40" rx="4" fill-opacity=".15"/><text x="85" y="95" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--accent)">REC</text>
+<rect x="130" y="70" width="60" height="40" rx="4" fill-opacity=".15"/><text x="160" y="95" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--accent)">STOP</text>
+<rect x="205" y="70" width="60" height="40" rx="4" fill-opacity=".15"/><text x="235" y="95" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--accent)">SCENE</text>
+<rect x="280" y="70" width="60" height="40" rx="4" fill-opacity=".15"/><text x="310" y="95" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--accent)">UNDO</text>
+</g>
+<text x="85" y="128" text-anchor="middle" font-size="8" style="fill:var(--ink-3)">long-press: clear</text>
+<!-- Alternative: drum trigger -->
+<rect style="fill:var(--panel);stroke:var(--line);stroke-width:1.5;stroke-dasharray:4 3" x="420" y="40" width="140" height="80" rx="4"/>
+<text x="490" y="65" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--ink)">SP2 zone</text>
+<text x="490" y="82" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">rim tap → MIDI</text>
+<text x="490" y="96" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">→ Live record</text>
+<!-- Arrows to Live -->
+<rect style="fill:var(--panel);stroke:var(--accent);stroke-width:2" x="190" y="200" width="200" height="40" rx="4"/>
+<text x="290" y="225" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent)">Ableton Live</text>
+<line x1="200" y1="160" x2="250" y2="200" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#la)"/>
+<line x1="490" y1="120" x2="350" y2="200" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#la)"/>
+</svg>
+<figcaption>Two paths: a dedicated foot controller for reliability, or trained drum zones for zero footprint.</figcaption>
+</figure>
+</div></div>
+
+<div class="row">
+<div class="b8">
+''' + detail("Controller options", '''<ul>
 <li><strong>Push 1, first:</strong> already owned, already has Fixed Length mode. Clunky for looping because it is a reach from the drums, but free and familiar.</li>
-<li><strong>Compact MIDI foot controller:</strong> a small floor pedal that sends MIDI CC or notes. Candidates: Morningstar MC6 (6 switches, programmable), Keith McMillen SoftStep 2 (10 pads, pressure-sensitive), or a simpler 2–4 button unit. Minimal control vocabulary: record/overdub, stop clip, next scene, undo.</li>
-<li><strong>Trained SP2 zone as a loop trigger:</strong> zero footprint — train a Sensory Percussion zone (e.g. a rim tap or shell hit on a specific drum) to send a MIDI note mapped to Live's record action. No extra hardware; the drum <em>is</em> the controller.</li>
+<li><strong>Compact MIDI foot controller:</strong> Morningstar MC6 (6 switches, programmable), Keith McMillen SoftStep 2 (10 pads, pressure-sensitive), or a simpler 2–4 button unit.</li>
+<li><strong>Trained SP2 zone as a loop trigger:</strong> zero footprint — train a Sensory Percussion zone (e.g. a rim tap or shell hit on a specific drum) to send a MIDI note mapped to Live's record action. The drum <em>is</em> the controller.</li>
 <li><strong>Small grid controller:</strong> Launchpad Mini, APC mini. More visual (LED clip status) but one more thing on the desk.</li>
 </ul>
-</div>
-<div class="b4 p9">
-<div class="rule"><h3>Note</h3>
-<p class="sm">The Roland Octapad (SPD-30) is a percussion pad instrument, not a loop controller. It plays sounds, not clips. Mentioned here to avoid the confusion.</p>
-</div>
+<p class="sm"><strong>Note:</strong> The Roland Octapad (SPD-30) is a percussion pad instrument, not a loop controller. It plays sounds, not clips.</p>''') + '''
 </div></div>
 
 <div class="row"><h2>Minimal vocabulary</h2>
@@ -379,13 +413,11 @@ def looping():
 def time_tempo():
     return hero("Time and tempo", "Playing without a click and letting Live follow.") + '''
 <div class="row">
-<div class="b7">
+<div class="b8">
 <p class="lg">Live 11 introduced a built-in Tempo Follower. Before that it was BeatSeeker, a paid Max for Live device from Queen Mary's Centre for Digital Music.</p>
 <p>Either listens to a rhythmic audio signal and moves Live's tempo to match. Switching between fixed and following modes can be mapped to a footswitch.</p>
 <p><strong>What it tolerates:</strong> subtle fluctuation, ordinary push-and-pull. <strong>What it struggles with:</strong> sustained drift — speeding up or slowing down over several bars — where it can latch onto the initial tempo and let the grid slip away.</p>
 <p>This needs testing with the real kit. A hybrid where the drums set tempo at the start of a section and the grid holds for the loop may be the practical answer.</p>
-</div>
-<div class="b4 p9">
 <div class="rule"><h3>Clock master</h3>
 <p class="sm">If the MiniFreak's sequencer is synced to Live, following tempo moves everything together. If it runs free, loops recorded into Live are unquantised and the feel is looser.</p>
 </div>
@@ -394,41 +426,62 @@ def time_tempo():
 
 def expression():
     return hero("Expression", "What the playing can do to the synth and effects — from simple and legible to poetic.") + '''
+<div class="row">
+<div class="b12">
+<figure>
+<svg class="sv" viewBox="0 0 660 320" role="img" aria-label="Expression tiers diagram: four layers from direct one-to-one mappings up to system personality">
+<defs><marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<g style="fill:var(--panel);stroke:var(--line);stroke-width:1.5">
+<rect x="10" y="10" width="640" height="60" rx="4"/>
+<rect x="10" y="85" width="640" height="60" rx="4"/>
+<rect x="10" y="160" width="640" height="60" rx="4"/>
+<rect x="10" y="235" width="640" height="60" rx="4"/>
+</g>
+<g font-size="13" font-weight="700" style="fill:var(--ink)">
+<text x="30" y="37">Tier 1</text><text x="100" y="37" font-weight="400" font-size="11">Direct, one to one</text>
+<text x="30" y="112">Tier 2</text><text x="100" y="112" font-weight="400" font-size="11">Shaping rather than switching</text>
+<text x="30" y="187">Tier 3</text><text x="100" y="187" font-weight="400" font-size="11">Derived and relational</text>
+<text x="30" y="262">Tier 4</text><text x="100" y="262" font-weight="400" font-size="11">The system has a personality</text>
+</g>
+<g font-size="10" style="fill:var(--ink-2)">
+<text x="30" y="55">velocity → volume · zone → patch · strike type → voice</text>
+<text x="30" y="130">velocity → envelope · position → pan · speed → delay feedback</text>
+<text x="30" y="205">micro-timing → destabilise · dynamic variance → randomisation · position drift → wavetable</text>
+<text x="30" y="280">silence → growth · fatigue arc · harmonic memory · surprise threshold</text>
+</g>
+<g style="color:var(--accent)">
+<text x="600" y="37" text-anchor="end" font-size="10" font-weight="600" style="fill:var(--accent)">legible</text>
+<text x="600" y="262" text-anchor="end" font-size="10" font-weight="600" style="fill:var(--accent)">poetic</text>
+<line x1="630" y1="50" x2="630" y2="255" stroke="currentColor" stroke-width="1.5" marker-end="url(#ea)"/>
+</g>
+</svg>
+<figcaption>Four layers of expression mapping, from simple input→output to emergent system behaviour.</figcaption>
+</figure>
+</div></div>
+
 <div class="row"><h2>Tier 1 — Direct, one to one</h2>
-<div class="b6">
-<p class="lg"><strong>Velocity → amplitude</strong> of the synth voice<br>
-<strong>Velocity → filter cutoff</strong>: harder is brighter<br>
-<strong>Zone → patch or layer</strong>: edge is a pluck, centre a pad, rim a stab</p>
-</div>
-<div class="b5 p8">
-<p class="lg"><strong>Speed → cutoff or resonance</strong>, continuously<br>
-<strong>Strike type → separate voice</strong>: rimshot stabs, open hits swell</p>
+<div class="b8">
+<p class="lg"><strong>Velocity → amplitude</strong> of the synth voice · <strong>Velocity → filter cutoff</strong>: harder is brighter · <strong>Zone → patch or layer</strong>: edge is a pluck, centre a pad, rim a stab · <strong>Speed → cutoff or resonance</strong>, continuously · <strong>Strike type → separate voice</strong>: rimshot stabs, open hits swell</p>
 </div></div>
 
 <div class="row"><h2>Tier 2 — Shaping rather than switching</h2>
-<div class="b6">
-<p><strong>Velocity → envelope attack/release:</strong> hard is snappy, soft is slow<br>
-<strong>Position → pan,</strong> mirroring where the stick lands<br>
-<strong>Speed → delay feedback:</strong> busy playing builds wash</p>
-</div>
-<div class="b5 p8">
-<p><strong>Speed → LFO rate</strong> on a pad's tremolo<br>
-<strong>Velocity → reverb send:</strong> loud blooms, soft stays dry</p>
+<div class="b8">
+<p><strong>Velocity → envelope attack/release:</strong> hard is snappy, soft is slow · <strong>Position → pan,</strong> mirroring where the stick lands · <strong>Speed → delay feedback:</strong> busy playing builds wash · <strong>Speed → LFO rate</strong> on a pad's tremolo · <strong>Velocity → reverb send:</strong> loud blooms, soft stays dry</p>
 </div></div>
 
 <div class="row"><h2>Tier 3 — Derived and relational</h2>
 <div class="b8">
-<ul>
+''' + detail("Mapping details", '''<ul>
 <li><strong>Micro-timing</strong> (ahead/behind the grid) → delay time or LFO phase, so rushing or dragging destabilises the texture</li>
 <li><strong>Dynamic variance → randomisation amount</strong> on the generative sequencer: erratic playing makes the system wilder, steady playing calms it</li>
 <li><strong>Rolling average velocity → intensity macro</strong> that blends in unison or extra oscillator layers as energy builds</li>
 <li><strong>Position drift across a phrase → wavetable blend</strong>, giving a phrase an arc rather than a per-hit reaction</li>
-</ul>
+</ul>''', "Max for Live") + '''
 </div></div>
 
 <div class="row"><h2>Tier 4 — The system has a personality</h2>
 <div class="b8">
-<ul>
+''' + detail("Mapping details", '''<ul>
 <li><strong>Silence → growth:</strong> an ambient layer swells during rests and recedes on re-entry; stopping becomes a compositional act</li>
 <li><strong>Call and response:</strong> sample the last phrase and answer it a bar later, decayed or reharmonised</li>
 <li><strong>Fatigue:</strong> cumulative density over the set slowly darkens or saturates the tone, giving the whole performance a long arc</li>
@@ -436,11 +489,11 @@ def expression():
 <li><strong>Surprise threshold:</strong> unusually steady playing triggers a rare one-off event — a key change, a drop-out, a new voice</li>
 <li><strong>Cross-modulation between limbs:</strong> the time gap between hat and snare hits drives something neither does alone</li>
 <li><strong>Harmonic memory:</strong> recent choices bias what the sequencer may play next, so the piece remembers where it has been</li>
-</ul>
+</ul>''', "Max for Live") + '''
 </div></div>
 
 <div class="row">
-<div class="b6 p4">
+<div class="b8">
 <p class="sm"><strong>Suggested order</strong> after the first experiment: position → timbre blend (expression independent of volume), then dynamic variance → randomisation amount (the first mapping that feels alive rather than reactive).</p>
 </div></div>'''
 
@@ -449,91 +502,99 @@ def creatures():
     return hero("Creatures", "The synth sounds are not patches — they are creatures, each with a character, living in the environment the drums create.") + '''
 <div class="row">
 <div class="b8">
-<p class="lg">Each idea below has two halves: what it feels like to play with, and how to build it in Live. The creatures are named loosely so they can be referred to in patches and scenes. Their voices are all MiniFreak presets — one synth holds several at once, or one creature per scene.</p>
+<p class="lg">Each creature has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one creature per scene.</p>
 </div></div>
 
 <div class="row">
 <div class="b12">
-<div class="duo"><h3>The turnaround<span>form-aware — knows where it is in the bar count</span></h3>
-<div class="feel"><span class="k">What it feels like</span>
-The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the creatures brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new creature wakes up.
-</div>
-<div class="build"><span class="k">How to build it</span>
-<ul>
-<li>Live's transport is the form clock: a Max for Live device reads <code>live.set</code> current bar and counts within an 8-bar phrase.</li>
-<li>Bars 7–8 raise a "turnaround" signal mapped to tension parameters: pad filter down, delay feedback up, arp rate halving.</li>
-<li>On bar 1: weighted chance picks an event — <em>transpose</em>, <em>silence</em> (mute one bar), or <em>wake</em> (launch the next clip).</li>
-<li>Chance weights modulated by playing: high density favours <em>wake</em>, low favours <em>silence</em>.</li>
-</ul>
-</div></div>
+''' + creature("The turnaround", "form-aware — knows where it is in the bar count",
+    "The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the creatures brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new creature wakes up.",
+    [
+        'Live\'s transport is the form clock: a Max for Live device reads <code>live.set</code> current bar and counts within an 8-bar phrase.',
+        'Bars 7–8 raise a "turnaround" signal mapped to tension parameters: pad filter down, delay feedback up, arp rate halving.',
+        'On bar 1: weighted chance picks an event — <em>transpose</em>, <em>silence</em> (mute one bar), or <em>wake</em> (launch the next clip).',
+        'Chance weights modulated by playing: high density favours <em>wake</em>, low favours <em>silence</em>.',
+    ]) + '''
 </div></div>
 
 <div class="row">
 <div class="b12">
-<div class="duo"><h3>The surface<span>position-pitched — the head is a keyboard</span></h3>
-<div class="feel"><span class="k">What it feels like</span>
-The drumhead is no longer one note. Centre is low and dark, moving outward the note climbs and the tone opens. A roll that drifts from the middle to the rim becomes a rising, brightening phrase. The pad under the sticks becomes a melodic instrument you play by where, not just when.
-</div>
-<div class="build"><span class="k">How to build it</span>
-<ul>
-<li>Blended zones (Centre ↔ Edge): Timbre outputs a continuous 0–1 position per hit.</li>
-<li>Max for Live quantises the CC into a scale (5–8 steps) and rewrites the note pitch.</li>
-<li>Unquantised CC maps to filter cutoff so brightness tracks position.</li>
-<li>Start with one tom as the surface; expand once the scale feels right.</li>
-</ul>
-</div></div>
+''' + creature("The surface", "position-pitched — the head is a keyboard",
+    "The drumhead is no longer one note. Centre is low and dark, moving outward the note climbs and the tone opens. A roll that drifts from the middle to the rim becomes a rising, brightening phrase. The pad under the sticks becomes a melodic instrument you play by where, not just when.",
+    [
+        'Blended zones (Centre ↔ Edge): Timbre outputs a continuous 0–1 position per hit.',
+        'Max for Live quantises the CC into a scale (5–8 steps) and rewrites the note pitch.',
+        'Unquantised CC maps to filter cutoff so brightness tracks position.',
+        'Start with one tom as the surface; expand once the scale feels right.',
+    ]) + '''
 </div></div>
 
 <div class="row">
 <div class="b12">
-<div class="duo"><h3>The mimic<span>listens, learns the groove, carries it on — and decays without attention</span></h3>
-<div class="feel"><span class="k">What it feels like</span>
-You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a creature you have to keep feeding.
-</div>
-<div class="build"><span class="k">How to build it</span>
-<ul>
-<li><strong>Capture:</strong> Max for Live records incoming drum MIDI into a rolling buffer (last 2–4 bars), storing beat position, velocity, zone and micro-timing.</li>
-<li><strong>Model:</strong> per-step hit probabilities and a velocity profile (first-order Markov chain, weighted by recency).</li>
-<li><strong>Life meter:</strong> 0–1, rises with each real hit (fast attack), decays exponentially when none arrive.</li>
-<li><strong>Decay behaviours</strong> driven by (1 − life): probability drops, timing jitters, pitch drifts, tone degrades. At life ≈ 0, silence.</li>
-</ul>
-</div></div>
+''' + creature("The mimic", "listens, learns the groove, carries it on — and decays without attention",
+    "You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a creature you have to keep feeding.",
+    [
+        '<strong>Capture:</strong> Max for Live records incoming drum MIDI into a rolling buffer (last 2–4 bars), storing beat position, velocity, zone and micro-timing.',
+        '<strong>Model:</strong> per-step hit probabilities and a velocity profile (first-order Markov chain, weighted by recency).',
+        '<strong>Life meter:</strong> 0–1, rises with each real hit (fast attack), decays exponentially when none arrive.',
+        '<strong>Decay behaviours</strong> driven by (1 − life): probability drops, timing jitters, pitch drifts, tone degrades. At life ≈ 0, silence.',
+    ]) + '''
 </div></div>
 
 <div class="row">
 <div class="b12">
-<div class="duo"><h3>The understudy<span>bass-to-synth handoff — the groove transfers and mutates</span></h3>
-<div class="feel"><span class="k">What it feels like</span>
-The bass groove you looped hands off to the synth and it starts to make it its own. It adds notes, leaves some out, finds syncopated bits you did not play. The groove you laid down is still there underneath, but the synth is riffing on it, learning the general feel and playing with it musically.
-</div>
-<div class="build"><span class="k">How to build it</span>
-<ul>
-<li>Bass audio → Jam Origin MIDI Bass (real-time) → MIDI recorded alongside the audio loop.</li>
-<li>On turnaround, MIDI routes to MiniFreak; audio crossfades out.</li>
-<li>Scale MIDI effect keeps additions in key. Note-chance device drops/shifts/adds at probability thresholds.</li>
-<li>Same groove-learning principle as the mimic: the longer it plays, the further it drifts.</li>
-</ul>
-</div></div>
+''' + creature("The understudy", "bass-to-synth handoff — the groove transfers and mutates",
+    "The bass groove you looped hands off to the synth and it starts to make it its own. It adds notes, leaves some out, finds syncopated bits you did not play. The groove you laid down is still there underneath, but the synth is riffing on it, learning the general feel and playing with it musically.",
+    [
+        'Bass audio → Jam Origin MIDI Bass (real-time) → MIDI recorded alongside the audio loop.',
+        'On turnaround, MIDI routes to MiniFreak; audio crossfades out.',
+        'Scale MIDI effect keeps additions in key. Note-chance device drops/shifts/adds at probability thresholds.',
+        'Same groove-learning principle as the mimic: the longer it plays, the further it drifts.',
+    ]) + '''
 </div></div>
 
 <div class="row"><h2>Voice routing</h2>
 <div class="b8">
 <p class="lg">Each creature can be set to listen to any other creature's output — its notes, its dynamics, its life signal. When two creatures listen to each other, they start forming feedback loops.</p>
+<figure>
+<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four creatures connected by directional arrows">
+<defs><marker id="ra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<g class="node" transform="translate(100 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Turnaround</text></g>
+<g class="node" transform="translate(340 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Surface</text></g>
+<g class="node" transform="translate(100 220)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Mimic</text></g>
+<g class="node" transform="translate(340 220)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Understudy</text></g>
+<g style="color:var(--accent)">
+<path class="edge strong" d="M135 60L305 60" marker-end="url(#ra)"/>
+<path class="edge strong" d="M305 65L135 65" marker-end="url(#ra)"/>
+<path class="edge strong" d="M100 95L100 185" marker-end="url(#ra)"/>
+<path class="edge strong" d="M340 185L340 95" marker-end="url(#ra)"/>
+<path class="edge" d="M130 85L310 195" marker-end="url(#ra)" style="stroke:var(--ink-3)"/>
+<path class="edge" d="M310 200L130 90" marker-end="url(#ra)" style="stroke:var(--ink-3)"/>
+</g>
+<text x="220" y="50" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">notes, velocity</text>
+<text x="220" y="78" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">rhythm echo</text>
+<text x="60" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">life signal</text>
+<text x="385" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">groove data</text>
+</svg>
+<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any creature can listen to any other.</figcaption>
+</figure>
+</div></div>
+
+<div class="row">
+<div class="b12">
+''' + detail("Routing architecture", '''
 <ul>
 <li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each creature's output signals (notes fired, velocity profile, life meter, density) are published, and each creature subscribes to whichever others it wants to hear.</li>
 <li><strong>Response rules:</strong> when creature A hears creature B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
 <li><strong>Locking in:</strong> two creatures listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
 <li><strong>Spiralling out:</strong> or they do not converge. The feedback amplifies differences instead of smoothing them — density escalates, timing scatters, the texture grows chaotic. A life-meter decay or a turnaround event can reset the spiral, or you can let it ride and play into the chaos.</li>
 <li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which creatures are in conversation.</li>
-</ul>
-</div>
-<div class="b3 p10">
-<p class="sm">This is where the system stops being reactive and starts being relational. The creatures are not just listening to the drummer — they are listening to each other. The music makes itself.</p>
+</ul>''', "Max for Live") + '''
 </div></div>
 
 <div class="row"><h2>Where this leads</h2>
-<div class="b7">
-<p>Creatures that react to the same signals will start to seem to react to each other — the mimic's hits count as "playing" for the surface's filter, the turnaround can put the mimic to sleep. One Max for Live device per creature, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture; the creatures are defined by which signals they listen to and how they answer.</p>
+<div class="b8">
+<p>The creatures are not just listening to the drummer — they are listening to each other. One Max for Live device per creature, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
 </div></div>'''
 
 
@@ -814,7 +875,7 @@ def map_page():
 <body class="map">
 <svg id="map"></svg>
 <div class="map-ui tl">Rig<small>Solo performance system</small></div>
-<div class="map-ui tr"><a href="settings.html">Settings</a> <span data-ver></span></div>
+<div class="map-ui tr"><a href="settings.html" aria-label="Settings">⚙</a> <span data-ver></span></div>
 <div class="map-ui bl">Drag the nodes. Click one to enter.</div>
 <script src="version.js"></script>
 <script src="shared.js"></script>
@@ -854,7 +915,8 @@ def build():
     os.makedirs(builds_dir, exist_ok=True)
     manifest = [
         {"version": "0.2.0", "date": "2026-11-10", "notes": "Single-page version", "path": "builds/0.2.0/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Map navigation + subpages", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.3.0", "date": "2026-11-10", "notes": "Map navigation + subpages", "path": "builds/0.3.0/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Collapsible sections, diagrams, map hierarchy, layout fix", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)

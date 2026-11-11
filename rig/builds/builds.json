@@ -7,8 +7,14 @@
   },
   {
     "version": "0.3.0",
-    "date": "2026-11-11",
+    "date": "2026-11-10",
     "notes": "Map navigation + subpages",
     "path": "builds/0.3.0/index.html"
+  },
+  {
+    "version": "0.3.1",
+    "date": "2026-11-11",
+    "notes": "Collapsible sections, diagrams, map hierarchy, layout fix",
+    "path": "builds/0.3.1/index.html"
   }
 ]

@@ -52,8 +52,10 @@ code,.mono{font-family:var(--font-mono);font-size:.92em}
 @media (min-width:900px){
   .hero .thesis{grid-column:1/span 8}
   .hero .meta{grid-column:10/span 3}
-  .b3{grid-column:span 3}.b4{grid-column:span 4}.b5{grid-column:span 5}.b6{grid-column:span 6}
-  .b7{grid-column:span 7}.b8{grid-column:span 8}.b9{grid-column:span 9}
+  .b6{grid-column:span 6}.b7{grid-column:span 7}.b8{grid-column:span 8}.b9{grid-column:span 9}
+}
+@media (min-width:1100px){
+  .b3{grid-column:span 3}.b4{grid-column:span 4}.b5{grid-column:span 5}
   .p2{grid-column-start:2}.p3{grid-column-start:3}.p4{grid-column-start:4}.p5{grid-column-start:5}.p6{grid-column-start:6}.p7{grid-column-start:7}.p8{grid-column-start:8}.p9{grid-column-start:9}.p10{grid-column-start:10}
 }
 .xl{font-family:var(--font-head);font-stretch:125%;font-weight:700;font-size:clamp(1.5rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.015em}
@@ -104,6 +106,32 @@ figcaption{font-size:.78rem;color:var(--ink-3);margin-top:.6rem}
 .duo .build ul{margin:0}
 .duo .k{display:block;font-size:.72rem;font-weight:600;color:var(--accent);margin-bottom:.5rem;font-family:var(--font-body)}
 @media (min-width:900px){.duo{grid-template-columns:7fr 5fr}.duo>h3{grid-column:1/-1}.duo .build{border-top:0;border-left:1px solid var(--line-2)}}
+
+/* collapsible sections */
+details{border:2px solid var(--line);margin:0 0 1.2rem}
+details[open]{border-color:var(--accent)}
+details summary{display:flex;align-items:center;gap:.7rem;padding:.8rem 1.2rem;cursor:pointer;font-family:var(--font-head);font-stretch:125%;font-weight:700;font-size:1rem;list-style:none;user-select:none;-webkit-user-select:none;transition:color .15s}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:'+';display:flex;align-items:center;justify-content:center;width:1.6rem;height:1.6rem;flex:none;border:2px solid var(--line);font-family:var(--font-mono);font-size:1rem;font-weight:600;line-height:1;transition:background .15s,border-color .15s,color .15s}
+details[open] summary::before{content:'−';background:var(--accent);border-color:var(--accent);color:#fff}
+details summary:hover{color:var(--accent)}
+details summary:hover::before{border-color:var(--accent)}
+details summary .dtag{font-family:var(--font-body);font-stretch:100%;font-weight:400;font-size:.78rem;color:var(--ink-3);margin-left:auto}
+details .dbody{padding:1rem 1.2rem;font-size:.88rem;border-top:1px solid var(--line-2)}
+details .dbody ul{margin:0}
+details .dbody p:last-child{margin:0}
+
+/* creature cards (progressive disclosure) */
+.creature{border:2px solid var(--line);margin:0 0 1.6rem}
+.creature h3{padding:1rem 1.3rem;border-bottom:2px solid var(--line);font-size:clamp(1.3rem,2.4vw,2.1rem);font-weight:900;margin:0}
+.creature h3 span{display:block;font-family:var(--font-body);font-stretch:100%;font-weight:400;font-size:.85rem;color:var(--ink-3);letter-spacing:0;margin-top:.4rem;line-height:1.4}
+.creature .feel{padding:1.3rem;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.4;font-weight:500}
+.creature .feel .k{display:block;font-size:.72rem;font-weight:600;color:var(--accent);margin-bottom:.5rem;font-family:var(--font-body)}
+.creature details{border:0;border-top:1px solid var(--line-2);margin:0}
+.creature details[open]{border-color:var(--line-2)}
+.creature details summary{font-size:.85rem;padding:.7rem 1.3rem}
+.creature details summary::before{width:1.3rem;height:1.3rem;font-size:.85rem}
+.creature details .dbody{font-size:.84rem;color:var(--ink-2);padding:0 1.3rem 1.3rem}
 
 .tasks{list-style:none;padding:0;margin:0}
 .tasks li{display:flex;gap:.8rem;align-items:flex-start;padding:.8rem 0;border-bottom:1px solid var(--line-2);font-size:1.1rem;font-weight:500}
@@ -159,6 +187,7 @@ body.map{overflow:hidden;height:100vh;height:100dvh;touch-action:none}
 #map{position:fixed;inset:0;width:100%;height:100%;display:block;transition:transform .6s cubic-bezier(.6,0,.3,1);user-select:none;-webkit-user-select:none}
 #map .e{stroke:var(--line-2);stroke-width:1}
 #map .e.z{stroke:var(--ink-3)}
+#map .e.parent{stroke:var(--accent);stroke-width:1.5;stroke-opacity:.5}
 #map .zl{font-family:var(--font-head);font-stretch:125%;font-weight:700;font-size:13px;fill:var(--ink-3)}
 #map a{cursor:grab;text-decoration:none;outline:none}
 #map a:active{cursor:grabbing}

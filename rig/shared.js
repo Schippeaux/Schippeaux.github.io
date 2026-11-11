@@ -14,9 +14,9 @@
   const ZONES = ['Instruments','System','Project','Living system'];
   const PAGES = [
     {id:'concept',t:'Concept',z:3},
-    {id:'percussion',t:'Percussion',z:0},
-    {id:'bass',t:'Bass',z:0},
-    {id:'synth',t:'Synth',z:0},
+    {id:'percussion',t:'Percussion',z:0,parent:'hookup'},
+    {id:'bass',t:'Bass',z:0,parent:'hookup'},
+    {id:'synth',t:'Synth',z:0,parent:'hookup'},
     {id:'hookup',t:'Hook-up',z:0},
     {id:'layout',t:'Layout',z:0},
     {id:'signal',t:'Signal flow',z:1},
@@ -29,8 +29,7 @@
     {id:'research',t:'Research',z:2},
     {id:'influences',t:'Influences',z:2},
     {id:'name',t:'Name?',z:2},
-    {id:'sources',t:'Sources',z:2},
-    {id:'settings',t:'Settings',z:2}
+    {id:'sources',t:'Sources',z:2}
   ];
 
   /* ---- appearance settings ---- */
@@ -88,12 +87,13 @@
 
   /* ---- chrome on content pages ---- */
   function chrome(id){
-    const i=PAGES.findIndex(p=>p.id===id), p=PAGES[i];
+    const i=PAGES.findIndex(p=>p.id===id), p=i>=0?PAGES[i]:null;
     const bar=document.createElement('header'); bar.className='bar';
+    const crumb=p?ZONES[p.z]+' / '+String(i+1).padStart(2,'0')+' of '+PAGES.length:'Settings';
     bar.innerHTML='<a class="home" href="index.html" aria-label="Back to the map"><span class="dot"></span><span>Rig</span></a>'+
-      '<span class="crumb">'+ZONES[p.z]+' / '+String(i+1).padStart(2,'0')+' of '+PAGES.length+'</span>'+
+      '<span class="crumb">'+crumb+'</span>'+
       '<div class="tools"><button id="zm" aria-label="Zoom out">−</button><output id="zoomOut"></output><button id="zp" aria-label="Zoom in">+</button>'+
-      (id==='settings'?'':'<a href="settings.html">Settings</a>')+'</div>';
+      (id==='settings'?'':'<a href="settings.html">⚙</a>')+'</div>';
     document.body.prepend(bar);
     $('zm').onclick=()=>setZoom(zoom-.1); $('zp').onclick=()=>setZoom(zoom+.1);
     $('zoomOut').onclick=()=>setZoom(1); $('zoomOut').title='Reset zoom'; $('zoomOut').style.cursor='pointer';
@@ -108,11 +108,13 @@
       else if(e.key==='Escape') bar.querySelector('.home').click();
     });
     addEventListener('wheel',e=>{ if(e.ctrlKey){ e.preventDefault(); setZoom(zoom+(e.deltaY<0?.1:-.1)); } },{passive:false});
-    const main=document.querySelector('main');
-    const a=PAGES[(i-1+PAGES.length)%PAGES.length], b=PAGES[(i+1)%PAGES.length];
-    const pn=document.createElement('nav'); pn.className='pn'; pn.setAttribute('aria-label','Previous and next page');
-    pn.innerHTML='<a href="'+a.id+'.html"><small>Previous</small>'+a.t+'</a><a href="'+b.id+'.html"><small>Next</small>'+b.t+'</a>';
-    main.appendChild(pn);
+    if(p){
+      const main=document.querySelector('main');
+      const a=PAGES[(i-1+PAGES.length)%PAGES.length], b=PAGES[(i+1)%PAGES.length];
+      const pn=document.createElement('nav'); pn.className='pn'; pn.setAttribute('aria-label','Previous and next page');
+      pn.innerHTML='<a href="'+a.id+'.html"><small>Previous</small>'+a.t+'</a><a href="'+b.id+'.html"><small>Next</small>'+b.t+'</a>';
+      main.appendChild(pn);
+    }
     apply();
   }
 
