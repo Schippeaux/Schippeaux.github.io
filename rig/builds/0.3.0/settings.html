@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="settings">
+<main class="pg">
+<div class="hero"><h1>Settings</h1>
+<p class="thesis">Tune the site's appearance. Settings are saved in this browser.</p>
+</div>
+<div class="row">
+<div class="b9">
+
+<div class="set"><div class="t">Theme<small>Black on white, or white on black.</small></div>
+<div class="ctl seg" id="themeSeg"><button data-v="light" aria-pressed="true">Light</button><button data-v="dark" aria-pressed="false">Dark</button></div></div>
+
+<div class="set"><div class="t">Accent colour<small>Used for links, highlights, and the orange dot.</small></div>
+<div class="ctl"><input type="color" id="accent" value="#ff4d00" aria-label="Accent colour">
+<div class="sw" aria-label="Presets">
+<button data-c="#ff4d00" style="background:#ff4d00" aria-label="Orange"></button>
+<button data-c="#e6001a" style="background:#e6001a" aria-label="Red"></button>
+<button data-c="#0055ff" style="background:#0055ff" aria-label="Blue"></button>
+<button data-c="#00b37a" style="background:#00b37a" aria-label="Green"></button>
+<button data-c="#ffd500" style="background:#ffd500" aria-label="Yellow"></button>
+<button data-c="#b200ff" style="background:#b200ff" aria-label="Violet"></button>
+<button data-c="#00c2d1" style="background:#00c2d1" aria-label="Cyan"></button>
+</div><span class="mono" id="accentHex">#ff4d00</span></div></div>
+
+<div class="set"><div class="t">Heading font</div>
+<div class="ctl"><select id="fontHead">
+<option value="'Archivo',system-ui,sans-serif">Archivo (wide)</option>
+<option value="'Space Grotesk',system-ui,sans-serif">Space Grotesk</option>
+<option value="'Inter',system-ui,sans-serif">Inter</option>
+<option value="'IBM Plex Mono',ui-monospace,monospace">IBM Plex Mono</option>
+<option value="system-ui,sans-serif">System</option>
+</select></div></div>
+
+<div class="set"><div class="t">Body font</div>
+<div class="ctl"><select id="fontBody">
+<option value="'IBM Plex Sans',system-ui,sans-serif">IBM Plex Sans</option>
+<option value="'Inter',system-ui,sans-serif">Inter</option>
+<option value="'Space Grotesk',system-ui,sans-serif">Space Grotesk</option>
+<option value="'IBM Plex Mono',ui-monospace,monospace">IBM Plex Mono</option>
+<option value="system-ui,sans-serif">System</option>
+</select></div></div>
+
+<div class="set"><div class="t">Text size<small>Everything scales from this.</small></div>
+<div class="ctl"><input type="range" id="fs" min="13" max="22" step="1" value="16"><span class="mono" id="fsVal">16px</span></div></div>
+
+<div class="set"><div class="t">Corners<small>0 is square, like the Roland mark.</small></div>
+<div class="ctl"><input type="range" id="radius" min="0" max="12" step="1" value="0"><span class="mono" id="radiusVal">0px</span></div></div>
+
+<div class="set"><div class="t">Version</div>
+<div class="ctl" style="flex-direction:column;align-items:flex-start;gap:.5rem">
+<span class="ver" id="verNum">—</span>
+<span class="status" id="verDate"></span>
+<div class="ctl"><button id="checkBtn">Check for updates</button><button id="refreshBtn">Hard refresh</button></div>
+<span class="status" id="verStatus" aria-live="polite"></span>
+</div></div>
+
+<div class="set"><div class="t">Reset</div>
+<div class="ctl"><button id="resetBtn">Restore defaults</button></div></div>
+
+<div class="set"><div class="t">Builds<small>Every version is archived here.</small></div>
+<ul class="builds" id="builds"><li>Loading…</li></ul></div>
+
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>
