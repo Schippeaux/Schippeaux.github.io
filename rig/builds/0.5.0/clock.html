@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clock — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="clock">
+<main class="pg">
+<div class="hero"><h1>Clock</h1>
+<p class="thesis">Tempo follows your playing until the first loop closes — then it freezes as the grid.</p>
+</div>
+<div class="row">
+<div class="b8">
+<p class="lg">The rule: tempo follows your playing until the first loop closes, then it freezes as the grid. Before that first close, there is no grid to drift against — Live's Tempo Follower (or BeatSeeker, the earlier Max for Live device, on older Live versions) tracks a rhythmic audio signal and moves Live's tempo to match it. The moment a loop locks, that tempo becomes the fixed grid for everything recorded afterward — see <a href="looping.html">Looping</a> for why layered loops need that grid to stay together.</p>
+<p>Switching between following and fixed modes can be mapped to a footswitch, for the rare case you want to re-anchor tempo mid-set rather than wait for the next loop to close.</p>
+<p><strong>What tempo-following tolerates:</strong> subtle fluctuation, ordinary push-and-pull. <strong>What it struggles with:</strong> sustained drift — speeding up or slowing down over several bars — where it can latch onto an early tempo and let the grid slip away. This is exactly why the freeze-at-first-loop rule exists: it gives the follower a narrow, forgiving window rather than asking it to track a whole performance.</p>
+<div class="rule"><h3>Clock master</h3>
+<p class="sm">If the MiniFreak's sequencer is synced to Live, the freeze moves everything together. If it runs free, loops recorded into Live are quantised to the frozen grid but the MiniFreak's own sequencer is not, and the feel is looser.</p>
+</div>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

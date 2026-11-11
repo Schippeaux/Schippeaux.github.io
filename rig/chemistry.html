@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Creatures — Rig</title>
+<title>Chemistry — Rig</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 </head>
-<body data-page="creatures">
+<body data-page="chemistry">
 <main class="pg">
-<div class="hero"><h1>Creatures</h1>
-<p class="thesis">The synth sounds are not patches — they are creatures, each with a character, living in the environment the drums create.</p>
+<div class="hero"><h1>Chemistry</h1>
+<p class="thesis">The synth sounds are not patches — they are characters, each with its own feel, living in the environment the drums create.</p>
 </div>
 <div class="row">
 <div class="b8">
-<p class="lg">Each creature has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one creature per scene.</p>
+<p class="lg">Each character has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one character per scene.</p>
 </div></div>
 
 <div class="row">
@@ -22,7 +22,7 @@
 <div class="creature">
 <h3>The turnaround<span>form-aware — knows where it is in the bar count</span></h3>
 <div class="feel"><span class="k">What it feels like</span>
-The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the creatures brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new creature wakes up.
+The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the characters brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new character wakes up.
 </div>
 <details>
 <summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
@@ -50,7 +50,7 @@ The drumhead is no longer one note. Centre is low and dark, moving outward the n
 <div class="creature">
 <h3>The mimic<span>listens, learns the groove, carries it on — and decays without attention</span></h3>
 <div class="feel"><span class="k">What it feels like</span>
-You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a creature you have to keep feeding.
+You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a character you have to keep feeding.
 </div>
 <details>
 <summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
@@ -75,9 +75,9 @@ The bass groove you looped hands off to the synth and it starts to make it its o
 
 <div class="row"><h2>Voice routing</h2>
 <div class="b8">
-<p class="lg">Each creature can be set to listen to any other creature's output — its notes, its dynamics, its life signal. When two creatures listen to each other, they start forming feedback loops.</p>
+<p class="lg">Each character can be set to listen to any other character's output — its notes, its dynamics, its life signal. When two characters listen to each other, they start forming feedback loops.</p>
 <figure>
-<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four creatures connected by directional arrows">
+<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four characters connected by directional arrows">
 <defs><marker id="ra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
 <g class="node" transform="translate(100 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Turnaround</text></g>
 <g class="node" transform="translate(340 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Surface</text></g>
@@ -96,7 +96,7 @@ The bass groove you looped hands off to the synth and it starts to make it its o
 <text x="60" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">life signal</text>
 <text x="385" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">groove data</text>
 </svg>
-<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any creature can listen to any other.</figcaption>
+<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any character can listen to any other.</figcaption>
 </figure>
 </div></div>
 
@@ -106,18 +106,18 @@ The bass groove you looped hands off to the synth and it starts to make it its o
 <summary>Routing architecture<span class="dtag">Max for Live</span></summary>
 <div class="dbody">
 <ul>
-<li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each creature's output signals (notes fired, velocity profile, life meter, density) are published, and each creature subscribes to whichever others it wants to hear.</li>
-<li><strong>Response rules:</strong> when creature A hears creature B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
-<li><strong>Locking in:</strong> two creatures listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
+<li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each character's output signals (notes fired, velocity profile, life meter, density) are published, and each character subscribes to whichever others it wants to hear.</li>
+<li><strong>Response rules:</strong> when character A hears character B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
+<li><strong>Locking in:</strong> two characters listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
 <li><strong>Spiralling out:</strong> or they do not converge. The feedback amplifies differences instead of smoothing them — density escalates, timing scatters, the texture grows chaotic. A life-meter decay or a turnaround event can reset the spiral, or you can let it ride and play into the chaos.</li>
-<li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which creatures are in conversation.</li>
+<li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which characters are in conversation.</li>
 </ul></div>
 </details>
 </div></div>
 
 <div class="row"><h2>Where this leads</h2>
 <div class="b8">
-<p>The creatures are not just listening to the drummer — they are listening to each other. One Max for Live device per creature, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
+<p>The characters are not just listening to the drummer — they are listening to each other. One Max for Live device per character, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
 </div></div>
 </main>
 <script src="version.js"></script>

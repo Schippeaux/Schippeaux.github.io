@@ -13,24 +13,25 @@
   // zones: 0 top-left, 1 top-right, 2 bottom-right, 3 bottom-left
   const ZONES = ['Instruments','System','Project','Living system'];
   const PAGES = [
-    {id:'concept',t:'Concept',z:3},
-    {id:'percussion',t:'Percussion',z:0,parent:'hookup'},
-    {id:'bass',t:'Bass',z:0,parent:'hookup'},
+    {id:'arrangement',t:'Arrangement',z:0},
+    {id:'gear',t:'Gear List',z:0,parent:'arrangement'},
+    {id:'hookup',t:'Hook-up',z:0,parent:'arrangement'},
     {id:'synth',t:'Synth',z:0,parent:'hookup'},
-    {id:'hookup',t:'Hook-up',z:0},
-    {id:'layout',t:'Layout',z:0},
-    {id:'signal',t:'Signal flow',z:1},
-    {id:'looping',t:'Looping',z:1},
-    {id:'time',t:'Time and tempo',z:1},
-    {id:'expression',t:'Expression',z:3},
-    {id:'creatures',t:'Creatures',z:3},
-    {id:'gear',t:'Gear',z:0},
-    {id:'roadmap',t:'Roadmap',z:2},
-    {id:'decisions',t:'Open decisions',z:2},
-    {id:'research',t:'Research',z:2},
-    {id:'influences',t:'Influences',z:2},
-    {id:'name',t:'Name?',z:2},
-    {id:'sources',t:'Sources',z:2}
+    {id:'bass',t:'Bass',z:0,parent:'hookup'},
+    {id:'percussion',t:'Percussion',z:0,parent:'hookup'},
+    {id:'midi',t:'MIDI Controllers',z:0,parent:'hookup'},
+    {id:'routing',t:'Routing',z:1},
+    {id:'looping',t:'Looping',z:1,parent:'routing'},
+    {id:'clock',t:'Clock',z:1,parent:'routing'},
+    {id:'expression',t:'Expression',z:1,parent:'routing'},
+    {id:'chemistry',t:'Chemistry',z:1,parent:'routing'},
+    {id:'concept',t:'Concept',z:3},
+    {id:'influences',t:'Influences',z:3,parent:'concept'},
+    {id:'name',t:'Name?',z:3,parent:'concept'},
+    {id:'research',t:'Research',z:3,parent:'concept'},
+    {id:'sources',t:'Sources',z:3,parent:'research'},
+    {id:'decisions',t:'Open Decisions',z:3,parent:'concept'},
+    {id:'roadmap',t:'Roadmap',z:2}
   ];
 
   /* ---- appearance settings ---- */

@@ -4,7 +4,7 @@
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.4.3"
+VERSION = "0.5.0"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -109,7 +109,7 @@ def percussion():
 
 <div class="row"><h2>The kit</h2>
 <div class="b8">
-<p>No separate kick drum or hi-hat cymbal. Five mesh-head drums carry all the struck zones — two of them standing in for hi-hat and ride — plus a dedicated kick pedal and hi-hat pedal underfoot. See <a href="layout.html">Layout</a> for how they sit around the seat.</p>
+<p>No separate kick drum or hi-hat cymbal. Five mesh-head drums carry all the struck zones — two of them standing in for hi-hat and ride — plus a dedicated kick pedal and hi-hat pedal underfoot. See <a href="arrangement.html">Arrangement</a> for how they sit around the seat.</p>
 <table>
 <thead><tr><th>Drum / control</th><th>Position</th><th>Diameter</th><th>Note</th></tr></thead>
 <tbody>
@@ -136,7 +136,7 @@ def bass():
         '<strong>Bass-to-MIDI in real time</strong> using <a href="https://www.jamorigin.com">Jam Origin MIDI Bass</a> — a VST/AU plugin that converts monophonic bass audio to MIDI with low latency.',
         '<strong>Handoff:</strong> on a turnaround (or a trigger), route the MIDI loop to the MiniFreak track. Crossfade the audio bass loop out and the synth voice in.',
         '<strong>Generative variation:</strong> Live\'s Scale MIDI effect keeps added notes in key. A Max for Live note-chance device drops, shifts or adds notes at probability thresholds.',
-        '<strong>Groove learning</strong> — the same principle as the Mimic creature: a model of the rhythmic shape biases what gets added and where.',
+        '<strong>Groove learning</strong> — the same principle as the Mimic character: a model of the rhythmic shape biases what gets added and where.',
     ]) + '''
 </div></div>
 
@@ -168,84 +168,124 @@ def synth():
 </div></div>'''
 
 
+def midi():
+    return hero("MIDI Controllers", "The hands-free layer: footswitches, an expression pedal, and the pads already on the desk. Everything that fires a loop, nudges an effect, or steps a scene without touching the laptop.") + '''
+<div class="row"><h2>What's in hand</h2>
+<div class="b8">
+<p>Five controllers, two of them already owned, cover looping transport, continuous expression, and scene control. See <a href="hookup.html">Hook-up</a> for how they wire into the powered USB hub, and <a href="gear.html?phase=4">Gear → Phase 4</a> for the foot-control purchases.</p>
+<table>
+<thead><tr><th>Controller</th><th>Role</th><th>Status</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>Ableton Push 1</td><td>Clips, scenes</td><td>Owned</td><td>Session View looping with Fixed Length mode; the closest-to-hand pad surface, a reach from the kit</td></tr>
+<tr><td>Morningstar MC6 Pro</td><td>Loop transport, FX</td><td>Needed — $560</td><td>6 footswitches, deeply programmable per press/hold/double-tap/release; speaks MIDI natively</td></tr>
+<tr><td>Moog EP-3 expression pedal</td><td>Continuous control</td><td>Needed — $90</td><td>Filter sweeps, volume fades, effect depth — plugs into the MC6's expression input</td></tr>
+<tr><td>Hi-hat pedal</td><td>Continuous control</td><td>Needed — $90</td><td>Open/close position as CC, blending the hi-hat tom's sample layers; also covered on <a href="percussion.html">Percussion</a> as part of the kit</td></tr>
+<tr><td>Modular MIDI controller</td><td>FX knobs</td><td>Deferred</td><td>Intech Grid or Monogram-style grid; knobs that follow whichever track is selected, rather than fixed per-effect mappings</td></tr>
+</tbody>
+</table>
+</div></div>
+
+<div class="row"><h2>Why footswitches, not just Push</h2>
+<div class="b8">
+<p class="lg">Push 1 already does clips and scenes, but it is a reach from the kit and needs a hand. The Morningstar and the expression pedal move loop transport and continuous control to the feet, freeing both hands for the instrument in front of you.</p>
+<p>The hi-hat pedal is a controller as much as it is percussion: its continuous position is read as a CC, the same signalling a footswitch uses, just analogue instead of binary.</p>
+</div></div>
+
+<div class="row"><h2>Open: where loop-length control lives</h2>
+<div class="b8">
+<p>Loop lengths of 4, 8 and 16 bars are still an open design question — see <a href="looping.html">Looping</a>. The two shapes under consideration both want pads, not a footswitch: either three dedicated length buttons, or one record button plus a length selector. Push's pads are the natural home, with the modular FX-knob controller (once it arrives) as the other hand-reach option.</p>
+''' + detail("The deferred modular controller", '''<p>An Intech Grid or Monogram-style device: a grid of knobs/pads whose assignment follows the selected track in Live, rather than being hard-wired to one effect. Deferred until the core rig (drums, bass, synth, foot transport) is in and the effects worth dedicating knobs to are known.</p>
+<p>Natural jobs once it arrives: the loop-length selector above, and direct hands-on access to whichever Expression mapping (<a href="expression.html">Expression</a>) is live in a given scene — filter cutoff, reverb send, randomisation amount — without diving into Live's screen.</p>''') + '''
+</div></div>'''
+
+
 def hookup():
-    return hero("Hook-up", "How everything plugs in. The EVANS Portal is at the centre — every audio source and sensor cable runs through it.") + '''
+    return hero("Hook-up", "How everything plugs in. The EVANS Portal is at the centre for audio and sensors; a powered USB hub now gathers every MIDI controller before the laptop.") + '''
 <div class="row">
 <div class="b12">
 <figure>
-<svg class="sv" viewBox="0 0 840 680" role="img" aria-label="Wiring diagram: drums, bass, synth, interface, laptop, speakers, headphones">
+<svg class="sv" viewBox="0 0 900 720" role="img" aria-label="Wiring diagram: drums, bass, synth and MIDI controllers feed the EVANS Portal and a powered USB hub, both into the laptop, out to speakers and headphones. Drum, bass, synth and controller boxes link to their pages">
 <defs>
 <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
 </defs>
 <!-- Drums top row -->
+<a href="percussion.html" aria-label="Percussion page">
 <rect class="bx" x="20" y="20" width="110" height="45"/><text x="75" y="38" text-anchor="middle" font-weight="600" font-size="12">Kick pedal</text><text class="q" x="75" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="140" y="20" width="110" height="45"/><text x="195" y="38" text-anchor="middle" font-weight="600" font-size="12">Snare</text><text class="q" x="195" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="260" y="20" width="110" height="45"/><text x="315" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → hi-hat</text><text class="q" x="315" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="380" y="20" width="90" height="45"/><text x="425" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → ride</text><text class="q" x="425" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="480" y="20" width="90" height="45"/><text x="525" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 1</text><text class="q" x="525" y="55" text-anchor="middle" font-size="10">sensor</text>
 <rect class="bx" x="580" y="20" width="90" height="45"/><text x="625" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 2</text><text class="q" x="625" y="55" text-anchor="middle" font-size="10">sensor</text>
-<!-- HH pedal -->
-<rect class="bxd" x="260" y="80" width="110" height="35"/><text class="q" x="315" y="103" text-anchor="middle" font-size="10">Hi-hat pedal — routing TBC</text>
+<!-- HH pedal, moved clear of the hi-hat tom's sensor line at x=315 -->
+<rect class="bxd" x="200" y="80" width="100" height="35"/><text class="q" x="250" y="99" text-anchor="middle" font-size="10" font-weight="600">Hi-hat pedal</text><text class="q" x="250" y="112" text-anchor="middle" font-size="9">routing TBC</text>
+</a>
 <!-- sensor cables to Portal -->
 <g class="thin" style="color:var(--line)">
 <line x1="75" y1="65" x2="75" y2="170"/><line x1="195" y1="65" x2="195" y2="170"/>
 <line x1="315" y1="65" x2="315" y2="170"/><line x1="425" y1="65" x2="425" y2="170"/>
 <line x1="525" y1="65" x2="505" y2="170"/><line x1="625" y1="65" x2="575" y2="170"/>
 </g>
-<line class="lnq" x1="315" y1="115" x2="315" y2="170"/>
+<line class="lnq" x1="250" y1="115" x2="250" y2="170" marker-end="url(#arr)"/>
 <!-- Portal -->
-<rect class="hi" x="40" y="170" width="540" height="70"/>
+<rect class="hi" x="40" y="170" width="540" height="80"/>
 <text x="310" y="196" text-anchor="middle" font-weight="700" font-size="14">EVANS Portal</text>
-<text class="q" x="310" y="215" text-anchor="middle" font-size="11">7 sensor in · combo A/B (inst/line, +48V) · line C/D · main out L/R · aux 5-8 · phones · ADAT · MIDI DIN · USB-C</text>
-<!-- Bass chain left -->
-<rect class="bx" x="640" y="20" width="170" height="45"/><text x="725" y="38" text-anchor="middle" font-weight="600" font-size="12">Bass guitar</text><text class="q" x="725" y="55" text-anchor="middle" font-size="10">passive</text>
-<rect class="bx" x="640" y="85" width="80" height="40"/><text x="680" y="101" text-anchor="middle" font-size="11">Compressor</text>
-<rect class="bx" x="730" y="85" width="80" height="40"/><text x="770" y="101" text-anchor="middle" font-size="11">SansAmp</text>
+<text class="q" x="310" y="214" text-anchor="middle" font-size="10">7 sensor in · combo A/B (inst/line, +48V) · line C/D</text>
+<text class="q" x="310" y="230" text-anchor="middle" font-size="10">main out L/R · aux 5–8 · phones · ADAT · MIDI DIN · USB-C</text>
+<!-- Bass chain, shifted right clear of Tom 2 -->
+<a href="bass.html" aria-label="Bass page">
+<rect class="bx" x="700" y="20" width="170" height="45"/><text x="785" y="38" text-anchor="middle" font-weight="600" font-size="12">Bass guitar</text><text class="q" x="785" y="55" text-anchor="middle" font-size="10">passive</text>
+<rect class="bx" x="700" y="85" width="80" height="40"/><text x="740" y="101" text-anchor="middle" font-size="11">Compressor</text>
+<rect class="bx" x="790" y="85" width="80" height="40"/><text x="830" y="101" text-anchor="middle" font-size="11">SansAmp</text>
+</a>
 <g class="ln" style="color:var(--line)">
-<path d="M725 65L725 72L680 72L680 85" marker-end="url(#arr)"/>
-<path d="M720 105L730 105" marker-end="url(#arr)"/>
-<path d="M770 125L770 155L575 155L575 170" marker-end="url(#arr)"/>
+<path d="M785 65L785 72L740 72L740 85" marker-end="url(#arr)"/>
+<path d="M780 105L790 105" marker-end="url(#arr)"/>
+<path d="M830 125L830 155L555 155L555 170" marker-end="url(#arr)"/>
 </g>
-<text class="q" x="620" y="155" font-size="9">input A (inst)</text>
+<text class="q" x="600" y="152" font-size="9">input A (inst)</text>
 <!-- Synth -->
-<rect class="bx" x="640" y="180" width="170" height="50"/><text x="725" y="200" text-anchor="middle" font-weight="600" font-size="12">MiniFreak</text><text class="q" x="725" y="218" text-anchor="middle" font-size="10">audio + USB-MIDI</text>
-<g class="ln" style="color:var(--line)"><path d="M640 200L580 200" marker-end="url(#arr)"/></g>
-<text class="q" x="595" y="195" font-size="9">C/D line</text>
-<line class="usb" x1="725" y1="230" x2="725" y2="340" style="stroke-dasharray:6 4"/>
-<text class="q" x="735" y="290" font-size="9" transform="rotate(90 735 290)">USB-MIDI</text>
-<!-- USB from Portal to laptop -->
-<line class="usb" x1="310" y1="240" x2="310" y2="340"/>
-<text class="q" x="320" y="290" font-size="9" transform="rotate(90 320 290)">USB-C</text>
+<a href="synth.html" aria-label="Synth page">
+<rect class="bx" x="700" y="180" width="170" height="50"/><text x="785" y="200" text-anchor="middle" font-weight="600" font-size="12">MiniFreak</text><text class="q" x="785" y="218" text-anchor="middle" font-size="10">audio + USB-MIDI</text>
+</a>
+<g class="ln" style="color:var(--line)"><path d="M700 200L580 200" marker-end="url(#arr)"/></g>
+<text class="q" x="640" y="195" font-size="9">C/D line</text>
+<!-- MIDI controllers feeding the hub -->
+<a href="midi.html" aria-label="MIDI Controllers page">
+<rect class="bx" x="20" y="260" width="120" height="35"/><text x="80" y="278" text-anchor="middle" font-weight="600" font-size="11">Push 1</text><text class="q" x="80" y="291" text-anchor="middle" font-size="9">clips, scenes</text>
+<rect class="bx" x="20" y="305" width="120" height="35"/><text x="80" y="323" text-anchor="middle" font-size="11">Loop controller</text><text class="q" x="80" y="336" text-anchor="middle" font-size="9">foot MIDI</text>
+<rect class="bx" x="20" y="350" width="120" height="35"/><text x="80" y="368" text-anchor="middle" font-size="11">FX knobs</text><text class="q" x="80" y="381" text-anchor="middle" font-size="9">deferred modular controller</text>
+</a>
+<g class="usb">
+<path d="M140 277L170 277" marker-end="url(#arr)"/>
+<path d="M140 322L170 322" marker-end="url(#arr)"/>
+<path d="M140 367L170 367" marker-end="url(#arr)"/>
+</g>
+<!-- Powered USB hub: Portal, Push 1, Loop controller, FX knobs and MiniFreak USB-MIDI all plug in; one USB-C out to the laptop -->
+<rect class="hi" x="170" y="255" width="360" height="130"/>
+<text x="350" y="310" text-anchor="middle" font-weight="700" font-size="13">Powered USB hub</text>
+<text class="q" x="350" y="328" text-anchor="middle" font-size="9">needs its own test under load — see open questions</text>
+<line class="usb" x1="310" y1="250" x2="310" y2="255" marker-end="url(#arr)"/>
+<text class="q" x="318" y="247" font-size="9">USB-C</text>
+<path class="usb" d="M785 230L785 245L530 245L530 255" style="stroke-dasharray:6 4" marker-end="url(#arr)"/>
+<text class="q" x="640" y="240" font-size="9">USB-MIDI</text>
+<!-- One USB-C from the hub to the laptop -->
+<line class="usb" x1="350" y1="385" x2="350" y2="400" marker-end="url(#arr)"/>
+<text class="q" x="358" y="396" font-size="9">USB-C</text>
 <!-- Laptop -->
-<rect class="hi" x="140" y="340" width="620" height="70"/>
-<text x="450" y="365" text-anchor="middle" font-weight="700" font-size="14">Laptop</text>
-<text class="q" x="450" y="385" text-anchor="middle" font-size="11">Sensory Percussion 2 → MIDI/CC → Ableton Live (+ Max for Live) → Jam Origin MIDI Bass</text>
-<!-- Controllers -->
-<rect class="bx" x="20" y="350" width="100" height="45"/><text x="70" y="368" text-anchor="middle" font-weight="600" font-size="11">Push 1</text><text class="q" x="70" y="385" text-anchor="middle" font-size="9">clips, scenes</text>
-<line class="usb" x1="120" y1="372" x2="140" y2="372"/>
-<rect class="bx" x="20" y="420" width="100" height="40"/><text x="70" y="436" text-anchor="middle" font-size="11">Loop controller</text><text class="q" x="70" y="450" text-anchor="middle" font-size="9">foot MIDI</text>
-<line class="usb" x1="120" y1="440" x2="200" y2="440" x2="200" y2="410"/>
-<rect class="bx" x="20" y="480" width="100" height="40"/><text x="70" y="496" text-anchor="middle" font-size="11">FX knobs</text><text class="q" x="70" y="514" text-anchor="middle" font-size="9">MIDI controller</text>
-<line class="usb" x1="120" y1="500" x2="180" y2="500" x2="180" y2="410"/>
-<!-- Outputs -->
+<rect class="hi" x="140" y="400" width="620" height="70"/>
+<text x="450" y="425" text-anchor="middle" font-weight="700" font-size="14">Laptop</text>
+<text class="q" x="450" y="445" text-anchor="middle" font-size="11">Sensory Percussion 2 → MIDI/CC → Ableton Live (+ Max for Live) → Jam Origin MIDI Bass</text>
+<!-- Outputs, routed around the hub and the laptop rather than through them -->
 <g class="ln" style="color:var(--line)">
-<path d="M310 240L150 270L150 310L310 310" style="stroke:none"/>
+<path d="M40 235L15 235L15 522L260 522" marker-end="url(#arr)"/>
+<path d="M40 220L8 220L8 590L260 590" marker-end="url(#arr)"/>
 </g>
-<!-- Main out from Portal -->
-<g class="ln" style="color:var(--line)">
-<path d="M200 240L200 470L260 470" marker-end="url(#arr)"/>
-</g>
-<rect class="bx" x="260" y="450" width="180" height="45"/><text x="350" y="468" text-anchor="middle" font-weight="600" font-size="12">Speakers</text><text class="q" x="350" y="485" text-anchor="middle" font-size="10">Portal main out L/R</text>
-<!-- Headphones from Portal -->
-<g class="ln" style="color:var(--line)">
-<path d="M260" y1="240" x2="260" y2="540" style="stroke:none"/>
-<path d="M160 240L160 540L260 540" marker-end="url(#arr)"/>
-</g>
-<rect class="bx" x="260" y="520" width="180" height="45"/><text x="350" y="538" text-anchor="middle" font-weight="600" font-size="12">Headphones</text><text class="q" x="350" y="555" text-anchor="middle" font-size="10">Portal phones (3.5mm + ¼")</text>
+<rect class="bx" x="260" y="500" width="180" height="45"/><text x="350" y="518" text-anchor="middle" font-weight="600" font-size="12">Speakers</text><text class="q" x="350" y="535" text-anchor="middle" font-size="10">Portal main out L/R</text>
+<rect class="bx" x="260" y="568" width="180" height="45"/><text x="350" y="586" text-anchor="middle" font-weight="600" font-size="12">Headphones</text><text class="q" x="350" y="603" text-anchor="middle" font-size="10">Portal phones (3.5mm + ¼")</text>
 <!-- Fallback interface -->
-<rect class="bxd" x="520" y="460" width="200" height="50"/><text class="q" x="620" y="482" text-anchor="middle" font-size="11">Separate audio interface</text><text class="q" x="620" y="498" text-anchor="middle" font-size="9">fallback if Portal can't serve as sole I/O</text>
+<rect class="bxd" x="520" y="500" width="200" height="50"/><text class="q" x="620" y="522" text-anchor="middle" font-size="11">Separate audio interface</text><text class="q" x="620" y="538" text-anchor="middle" font-size="9">fallback if Portal can't serve as sole I/O</text>
 <!-- Legend -->
-<g transform="translate(40 610)">
+<g transform="translate(40 660)">
 <line class="ln" x1="0" y1="8" x2="30" y2="8" style="color:var(--line)"/><text x="36" y="12" font-size="10">Audio</text>
 <line class="usb" x1="100" y1="8" x2="130" y2="8"/><text x="136" y="12" font-size="10">USB / MIDI</text>
 <line class="thin" x1="210" y1="8" x2="240" y2="8" style="color:var(--line)"/><text x="246" y="12" font-size="10">Sensor cable</text>
@@ -253,7 +293,7 @@ def hookup():
 <rect class="bxd" x="440" y="0" width="16" height="16"/><text x="462" y="12" font-size="10">Fallback / optional</text>
 </g>
 </svg>
-<figcaption>Wiring diagram. The Portal handles both sensor inputs and audio I/O. Whether it can be the only audio interface is an open question.</figcaption>
+<figcaption>Wiring diagram. Drums, bass chain, synth and MIDI controllers are clickable through to their own pages. The Portal handles sensor inputs and audio I/O; a powered USB hub gathers every MIDI device — Portal, Push 1, loop controller, FX knobs and the MiniFreak's USB-MIDI — before a single USB-C run to the laptop.</figcaption>
 </figure>
 </div></div>
 
@@ -262,39 +302,49 @@ def hookup():
 <ul>
 <li><strong>Portal as sole interface?</strong> Bass into input A (inst), MiniFreak into C/D, speakers on Main Out, headphones on phones. If it works, no separate audio interface is needed.</li>
 <li><strong>Hi-hat pedal:</strong> the Portal has 7 sensor inputs (3.5 mm TRS) plus combo inputs A/B, but a hi-hat pedal/controller connection is not documented.</li>
+<li><strong>USB hub under load:</strong> needs testing with everything plugged in at once — Portal, Push 1, loop controller, FX knobs and the MiniFreak's USB-MIDI all sharing one hub and one USB-C run to the laptop. Bus power and enumeration order are both unverified.</li>
+<li><strong>Push 1 power:</strong> Push 1 needs its own power supply — it cannot be bus-powered off the hub alongside everything else.</li>
 </ul>
 </div></div>'''
 
 
-def layout():
-    return hero("Layout", "Percussion in the centre, synth and bass either side — a turn of the head, not a move of the chair. The MIDI foot controllers sit between the player and the laptop.") + '''
+def arrangement():
+    return hero("Arrangement", "Percussion in the centre, synth and bass either side — a turn of the head, not a move of the chair. The MIDI foot controllers sit between the player and the laptop.") + '''
 <div class="row"><h2>Room plan</h2>
 <div class="b8">
 <figure>
-<svg class="sv" viewBox="0 0 800 460" role="img" aria-label="Room plan: bass to the left, percussion centred on the seat, synth to the right, MIDI controllers between the player and the laptop">
+<svg class="sv" viewBox="0 0 800 460" role="img" aria-label="Room plan: bass to the left, percussion centred on the seat, synth to the right, MIDI controllers between the player and the laptop. Bass, percussion, synth and MIDI controller boxes link to their pages">
 <!-- back row: bass / percussion / synth -->
+<a href="bass.html" aria-label="Bass page">
 <rect class="bx" x="20" y="20" width="200" height="140"/>
 <text x="120" y="80" text-anchor="middle" font-weight="600">Bass</text>
 <text class="q" x="120" y="100" text-anchor="middle" font-size="12">guitar on a stand,</text>
 <text class="q" x="120" y="116" text-anchor="middle" font-size="12">pedals on the floor</text>
+</a>
 
+<a href="percussion.html" aria-label="Percussion page">
 <rect class="bx hi" x="260" y="20" width="280" height="200"/>
 <text x="400" y="50" text-anchor="middle" font-weight="700">Percussion</text>
 <text class="q" x="400" y="70" text-anchor="middle" font-size="12">centred on the seat — see kit layout below</text>
+</a>
 
+<a href="synth.html" aria-label="Synth page">
 <rect class="bx" x="580" y="20" width="200" height="140"/>
 <text x="680" y="80" text-anchor="middle" font-weight="600">Synth</text>
 <text class="q" x="680" y="100" text-anchor="middle" font-size="12">MiniFreak on a stand,</text>
 <text class="q" x="680" y="116" text-anchor="middle" font-size="12">within reach of the seat</text>
+</a>
 
 <!-- seat, nested inside the percussion zone -->
 <circle class="bx" cx="400" cy="160" r="28"/>
 <text x="400" y="165" text-anchor="middle" font-weight="600" font-size="12">Seat</text>
 
 <!-- MIDI controllers band: between the player and the laptop -->
+<a href="midi.html" aria-label="MIDI Controllers page">
 <rect class="bx hi" x="160" y="280" width="480" height="70"/>
 <text x="400" y="308" text-anchor="middle" font-weight="700">MIDI foot controllers</text>
 <text class="q" x="400" y="328" text-anchor="middle" font-size="12">Morningstar loop/FX footswitches + expression + hi-hat pedal — underfoot, between the kit and the laptop</text>
+</a>
 
 <!-- laptop + push, furthest out front -->
 <rect class="bx" x="220" y="390" width="360" height="55"/>
@@ -316,6 +366,16 @@ def layout():
 <p class="sm">Which side bass sits on versus synth is still open — reach and cable runs from the seat will decide it once the gear is in the room. What is fixed is percussion in the middle: it is the busiest voice and the one the seat is built around.</p>
 </div>
 </div>
+
+<div class="row"><h2>Jump to a station</h2>
+<div class="b12">
+<div class="grid4">
+<a class="card" href="bass.html"><h3>Bass</h3><p class="sm">Guitar on a stand, pedals on the floor.</p></a>
+<a class="card" href="percussion.html"><h3>Percussion</h3><p class="sm">Centred on the seat — the busiest voice in the room.</p></a>
+<a class="card" href="synth.html"><h3>Synth</h3><p class="sm">MiniFreak on a stand, within reach of the seat.</p></a>
+<a class="card" href="midi.html"><h3>MIDI Controllers</h3><p class="sm">Footswitches, expression pedal and pads underfoot and in hand.</p></a>
+</div>
+</div></div>
 
 <div class="row"><h2>Kit layout</h2>
 <div class="b8">
@@ -368,8 +428,8 @@ def layout():
 </div>'''
 
 
-def signal():
-    return hero("Signal flow", "Two parallel paths: audio and control. Audio is sound; control is MIDI, CC, and automation.") + '''
+def routing():
+    return hero("Routing", "Two parallel paths: audio and control. Audio is sound; control is MIDI, CC, and automation.") + '''
 <div class="row"><h2>Audio path</h2>
 <div class="b8">
 <figure>
@@ -414,7 +474,10 @@ def looping():
 <div class="row"><h2>Method: Session View clip recording</h2>
 <div class="b8">
 <p class="lg">Ableton's Session View is the looper. Fixed-length recording captures a clip of exactly N bars and starts looping it without stopping playback.</p>
-<p>Every voice can be looped independently. Audio loops of the drums and bass free your hands for the synth. Audio loops of the MiniFreak free it for new layers — the synth can be re-patched while its last phrase keeps playing. Drums can also be looped as MIDI (the raw zone/velocity data) and re-routed to a different creature or voice.</p>
+<p>Every voice can be looped independently. Audio loops of the drums and bass free your hands for the synth. Audio loops of the MiniFreak free it for new layers — the synth can be re-patched while its last phrase keeps playing. Drums can also be looped as MIDI (the raw zone/velocity data) and re-routed to a different character or voice.</p>
+<div class="rule"><h3>Why loops need the grid</h3>
+<p class="sm">Loops lock to a fixed-length grid, not to each other directly — see <a href="clock.html">Clock</a> for when that grid is set. Without it, independently-played layers drift apart bar by bar: a 4-bar drum loop and a 4-bar bass loop recorded a few milliseconds apart from true tempo will slowly fall out of phase over a long set. Locking every <code>Fixed Length</code> recording to the same frozen grid is what keeps them stacking cleanly instead of smearing.</p>
+</div>
 </div></div>
 
 <div class="row"><h2>How to control loops</h2>
@@ -482,21 +545,30 @@ def looping():
 <li>Pick up the bass, noodle into a riff. Record a 4-bar bass loop.</li>
 <li>Reach for the MiniFreak, play a pad over the top. Record that too.</li>
 <li>Now all three are looping. Pick up the sticks again and play live over the bed.</li>
-<li>On the turnaround, trigger the next scene — the drum loop evolves, the bass hands off to the synth, the creatures wake up.</li>
+<li>On the turnaround, trigger the next scene — the drum loop evolves, the bass hands off to the synth, the characters wake up.</li>
 </ol>
+</div></div>
+
+<div class="row"><h2>Open: how loop length is chosen</h2>
+<div class="b8">
+<p>Loop lengths of 4, 8 and 16 bars cover most of what this rig needs, but which one is live for a given recording is still an open design question. Two shapes are on the table:</p>
+<ul>
+<li><strong>Three length buttons</strong> — dedicated 4/8/16 triggers, one press picks the length and arms the record.</li>
+<li><strong>One record button plus a length selector</strong> — a single transport action, with the length set separately (a knob position, a pad, a mode toggle) before you commit.</li>
+</ul>
+<p>Either shape wants pads or knobs within easy hand-reach — Push 1's grid or the modular FX-knob controller (see <a href="midi.html">MIDI Controllers</a>) — rather than a footswitch, which has too few discrete positions to spare for this on top of record/stop/scene/undo.</p>
 </div></div>'''
 
 
-def time_tempo():
-    return hero("Time and tempo", "Playing without a click and letting Live follow.") + '''
+def clock():
+    return hero("Clock", "Tempo follows your playing until the first loop closes — then it freezes as the grid.") + '''
 <div class="row">
 <div class="b8">
-<p class="lg">Live 11 introduced a built-in Tempo Follower. Before that it was BeatSeeker, a paid Max for Live device from Queen Mary's Centre for Digital Music.</p>
-<p>Either listens to a rhythmic audio signal and moves Live's tempo to match. Switching between fixed and following modes can be mapped to a footswitch.</p>
-<p><strong>What it tolerates:</strong> subtle fluctuation, ordinary push-and-pull. <strong>What it struggles with:</strong> sustained drift — speeding up or slowing down over several bars — where it can latch onto the initial tempo and let the grid slip away.</p>
-<p>This needs testing with the real kit. A hybrid where the drums set tempo at the start of a section and the grid holds for the loop may be the practical answer.</p>
+<p class="lg">The rule: tempo follows your playing until the first loop closes, then it freezes as the grid. Before that first close, there is no grid to drift against — Live's Tempo Follower (or BeatSeeker, the earlier Max for Live device, on older Live versions) tracks a rhythmic audio signal and moves Live's tempo to match it. The moment a loop locks, that tempo becomes the fixed grid for everything recorded afterward — see <a href="looping.html">Looping</a> for why layered loops need that grid to stay together.</p>
+<p>Switching between following and fixed modes can be mapped to a footswitch, for the rare case you want to re-anchor tempo mid-set rather than wait for the next loop to close.</p>
+<p><strong>What tempo-following tolerates:</strong> subtle fluctuation, ordinary push-and-pull. <strong>What it struggles with:</strong> sustained drift — speeding up or slowing down over several bars — where it can latch onto an early tempo and let the grid slip away. This is exactly why the freeze-at-first-loop rule exists: it gives the follower a narrow, forgiving window rather than asking it to track a whole performance.</p>
 <div class="rule"><h3>Clock master</h3>
-<p class="sm">If the MiniFreak's sequencer is synced to Live, following tempo moves everything together. If it runs free, loops recorded into Live are unquantised and the feel is looser.</p>
+<p class="sm">If the MiniFreak's sequencer is synced to Live, the freeze moves everything together. If it runs free, loops recorded into Live are quantised to the frozen grid but the MiniFreak's own sequencer is not, and the feel is looser.</p>
 </div>
 </div></div>'''
 
@@ -506,33 +578,69 @@ def expression():
 <div class="row">
 <div class="b12">
 <figure>
-<svg class="sv" viewBox="0 0 660 320" role="img" aria-label="Expression tiers diagram: four layers from direct one-to-one mappings up to system personality">
-<defs><marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
-<g style="fill:var(--panel);stroke:var(--line);stroke-width:1.5">
-<rect x="10" y="10" width="640" height="60" rx="4"/>
-<rect x="10" y="85" width="640" height="60" rx="4"/>
-<rect x="10" y="160" width="640" height="60" rx="4"/>
-<rect x="10" y="235" width="640" height="60" rx="4"/>
+<svg class="sv" viewBox="0 0 700 330" role="img" aria-label="Expression mapping diagram: eight playing dynamics on the left connected to four effect targets on the right, with first experiments and suggested next mappings highlighted">
+<defs>
+<marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+<marker id="eah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/></marker>
+<marker id="ean" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--ink-3)"/></marker>
+</defs>
+<text x="10" y="14" font-size="10" font-weight="700" style="fill:var(--ink-3)">PLAYING DYNAMICS</text>
+<text x="690" y="14" text-anchor="end" font-size="10" font-weight="700" style="fill:var(--ink-3)">WHAT IT AFFECTS</text>
+<g class="bx">
+<rect x="10" y="20" width="170" height="30"/><rect x="10" y="56" width="170" height="30"/>
+<rect x="10" y="92" width="170" height="30"/><rect x="10" y="128" width="170" height="30"/>
+<rect x="10" y="164" width="170" height="30"/><rect x="10" y="200" width="170" height="30"/>
+<rect x="10" y="236" width="170" height="30"/><rect x="10" y="272" width="170" height="30"/>
 </g>
-<g font-size="13" font-weight="700" style="fill:var(--ink)">
-<text x="30" y="37">Tier 1</text><text x="100" y="37" font-weight="400" font-size="11">Direct, one to one</text>
-<text x="30" y="112">Tier 2</text><text x="100" y="112" font-weight="400" font-size="11">Shaping rather than switching</text>
-<text x="30" y="187">Tier 3</text><text x="100" y="187" font-weight="400" font-size="11">Derived and relational</text>
-<text x="30" y="262">Tier 4</text><text x="100" y="262" font-weight="400" font-size="11">The system has a personality</text>
+<g font-size="11" font-weight="600" style="fill:var(--ink)">
+<text x="95" y="39" text-anchor="middle">Velocity</text>
+<text x="95" y="75" text-anchor="middle">Consistency</text>
+<text x="95" y="111" text-anchor="middle">Play area</text>
+<text x="95" y="147" text-anchor="middle">Timing (ahead/behind)</text>
+<text x="95" y="183" text-anchor="middle">Speed</text>
+<text x="95" y="219" text-anchor="middle">Energy</text>
+<text x="95" y="255" text-anchor="middle">Strike type</text>
+<text x="95" y="291" text-anchor="middle">Silence</text>
 </g>
-<g font-size="10" style="fill:var(--ink-2)">
-<text x="30" y="55">velocity → volume · zone → patch · strike type → voice</text>
-<text x="30" y="130">velocity → envelope · position → pan · speed → delay feedback</text>
-<text x="30" y="205">micro-timing → destabilise · dynamic variance → randomisation · position drift → wavetable</text>
-<text x="30" y="280">silence → growth · fatigue arc · harmonic memory · surprise threshold</text>
+<g class="bx">
+<rect x="520" y="15" width="170" height="60"/><rect x="520" y="95" width="170" height="60"/>
+<rect x="520" y="175" width="170" height="60"/><rect x="520" y="255" width="170" height="60"/>
 </g>
-<g style="color:var(--accent)">
-<text x="600" y="37" text-anchor="end" font-size="10" font-weight="600" style="fill:var(--accent)">legible</text>
-<text x="600" y="262" text-anchor="end" font-size="10" font-weight="600" style="fill:var(--accent)">poetic</text>
-<line x1="630" y1="50" x2="630" y2="255" stroke="currentColor" stroke-width="1.5" marker-end="url(#ea)"/>
+<g font-size="12" font-weight="600" style="fill:var(--ink)">
+<text x="605" y="49" text-anchor="middle">Synth parameters</text>
+<text x="605" y="129" text-anchor="middle">Effects</text>
+<text x="605" y="209" text-anchor="middle">Generative controls</text>
+<text x="605" y="289" text-anchor="middle">Drum sounds</text>
+</g>
+<g style="stroke:var(--ink-3);stroke-width:1.3;fill:none">
+<path d="M180 35L520 45" marker-end="url(#ean)"/>
+<path d="M180 143L520 125" marker-end="url(#ean)"/>
+<path d="M180 179L520 125" marker-end="url(#ean)"/>
+<path d="M180 219L520 209" marker-end="url(#ean)"/>
+<path d="M180 255L520 289" marker-end="url(#ean)"/>
+<path d="M180 287L520 209" marker-end="url(#ean)"/>
+</g>
+<g style="stroke:var(--accent);stroke-width:2.2;fill:none">
+<path d="M180 35L520 125" marker-end="url(#eah)"/>
+<path d="M180 179L520 45" marker-end="url(#eah)"/>
+</g>
+<g style="stroke:var(--accent);stroke-width:2.2;stroke-dasharray:6 4;fill:none">
+<path d="M180 111L520 45" marker-end="url(#eah)"/>
+<path d="M180 71L520 209" marker-end="url(#eah)"/>
+</g>
+<g font-size="9" style="fill:var(--ink-3)">
+<text x="350" y="30">volume, amplitude</text>
+<text x="350" y="245">voicing</text>
+<text x="350" y="268">growth</text>
+</g>
+<g font-size="9" font-weight="700" style="fill:var(--accent)">
+<text x="190" y="28">reverb send — first experiment</text>
+<text x="190" y="90">randomisation — suggested next</text>
+<text x="190" y="130">timbre blend — suggested next</text>
+<text x="190" y="172">filter cutoff — first experiment</text>
 </g>
 </svg>
-<figcaption>Four layers of expression mapping, from simple input→output to emergent system behaviour.</figcaption>
+<figcaption>Solid accent lines are the first experiments already running (hi-hat speed → filter cutoff, snare velocity → reverb send). Dashed accent lines are the suggested next mappings (play area → timbre blend, consistency → randomisation). Grey lines are mapped but not yet prioritised.</figcaption>
 </figure>
 </div></div>
 
@@ -575,17 +683,17 @@ def expression():
 </div></div>'''
 
 
-def creatures():
-    return hero("Creatures", "The synth sounds are not patches — they are creatures, each with a character, living in the environment the drums create.") + '''
+def chemistry():
+    return hero("Chemistry", "The synth sounds are not patches — they are characters, each with its own feel, living in the environment the drums create.") + '''
 <div class="row">
 <div class="b8">
-<p class="lg">Each creature has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one creature per scene.</p>
+<p class="lg">Each character has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one character per scene.</p>
 </div></div>
 
 <div class="row">
 <div class="b12">
 ''' + creature("The turnaround", "form-aware — knows where it is in the bar count",
-    "The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the creatures brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new creature wakes up.",
+    "The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the characters brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new character wakes up.",
     [
         'Live\'s transport is the form clock: a Max for Live device reads <code>live.set</code> current bar and counts within an 8-bar phrase.',
         'Bars 7–8 raise a "turnaround" signal mapped to tension parameters: pad filter down, delay feedback up, arp rate halving.',
@@ -609,7 +717,7 @@ def creatures():
 <div class="row">
 <div class="b12">
 ''' + creature("The mimic", "listens, learns the groove, carries it on — and decays without attention",
-    "You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a creature you have to keep feeding.",
+    "You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a character you have to keep feeding.",
     [
         '<strong>Capture:</strong> Max for Live records incoming drum MIDI into a rolling buffer (last 2–4 bars), storing beat position, velocity, zone and micro-timing.',
         '<strong>Model:</strong> per-step hit probabilities and a velocity profile (first-order Markov chain, weighted by recency).',
@@ -632,9 +740,9 @@ def creatures():
 
 <div class="row"><h2>Voice routing</h2>
 <div class="b8">
-<p class="lg">Each creature can be set to listen to any other creature's output — its notes, its dynamics, its life signal. When two creatures listen to each other, they start forming feedback loops.</p>
+<p class="lg">Each character can be set to listen to any other character's output — its notes, its dynamics, its life signal. When two characters listen to each other, they start forming feedback loops.</p>
 <figure>
-<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four creatures connected by directional arrows">
+<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four characters connected by directional arrows">
 <defs><marker id="ra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
 <g class="node" transform="translate(100 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Turnaround</text></g>
 <g class="node" transform="translate(340 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Surface</text></g>
@@ -653,7 +761,7 @@ def creatures():
 <text x="60" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">life signal</text>
 <text x="385" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">groove data</text>
 </svg>
-<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any creature can listen to any other.</figcaption>
+<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any character can listen to any other.</figcaption>
 </figure>
 </div></div>
 
@@ -661,17 +769,17 @@ def creatures():
 <div class="b12">
 ''' + detail("Routing architecture", '''
 <ul>
-<li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each creature's output signals (notes fired, velocity profile, life meter, density) are published, and each creature subscribes to whichever others it wants to hear.</li>
-<li><strong>Response rules:</strong> when creature A hears creature B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
-<li><strong>Locking in:</strong> two creatures listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
+<li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each character's output signals (notes fired, velocity profile, life meter, density) are published, and each character subscribes to whichever others it wants to hear.</li>
+<li><strong>Response rules:</strong> when character A hears character B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
+<li><strong>Locking in:</strong> two characters listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
 <li><strong>Spiralling out:</strong> or they do not converge. The feedback amplifies differences instead of smoothing them — density escalates, timing scatters, the texture grows chaotic. A life-meter decay or a turnaround event can reset the spiral, or you can let it ride and play into the chaos.</li>
-<li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which creatures are in conversation.</li>
+<li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which characters are in conversation.</li>
 </ul>''', "Max for Live") + '''
 </div></div>
 
 <div class="row"><h2>Where this leads</h2>
 <div class="b8">
-<p>The creatures are not just listening to the drummer — they are listening to each other. One Max for Live device per creature, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
+<p>The characters are not just listening to the drummer — they are listening to each other. One Max for Live device per character, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
 </div></div>'''
 
 
@@ -740,7 +848,7 @@ def roadmap():
         {"n":3, "title":"Build sonic environments", "sub":"Worlds for the drums to land in",
          "body":"""<p>With the Portal providing clean audio and cue monitoring, build the worlds the drums and bass will eventually live in. Create Ableton sessions with ambient pads and textures from the MiniFreak, effects chains (reverb, delay, granular processing), rhythmic patterns, and multiple scenes — each a different mood or energy level.</p>
 <p>Think of each session as an environment you'll walk into with drumsticks later. When the SP2 arrives, you want to hit a drum and immediately hear it inside a world that responds — not a blank project.</p>
-<p>This is also when to start exploring Max for Live. The expression mapping and creature behaviours all run through M4L later.</p>""",
+<p>This is also when to start exploring Max for Live. The expression mapping and character behaviours all run through M4L later.</p>""",
          "gate":"You have a few sessions that feel like places — environments you enjoy playing inside, with layered textures and effects."},
         {"n":4, "title":"Get your hands off the computer", "sub":"Foot-controlled looping + FX",
          "body":"""<p>The minimum gear to make the rig performable. Right now everything runs through Push 1 and the mouse — fine for building, but you can't loop and play at the same time if your hands are on the keys.</p>
@@ -752,14 +860,14 @@ def roadmap():
 <p>The Portal and the snare's sensor are already in hand from Phase 2 — this phase is the four remaining sensors (for the hi-hat tom, ride tom, and two more toms), the kick pedal, the hi-hat pedal, and the shells and mesh heads to put them on.</p>
 <p>The kit itself is deliberately compact: snare centre, a tom either side standing in for hi-hat and ride, two more toms top-left and top-right, plus a kick pedal and a hi-hat pedal at your feet. Five struck surfaces, two pedals — everything reachable without standing up.</p>
 <p>Because you built environments in Phase 3, the drums plug into something alive on day one. The SP2 zones also become expression controllers: pressing a head can swell a reverb, a rimshot can trigger a scene change.</p>
-<p>This is when the creatures come alive — turnaround, surface, mimic.</p>""",
-         "gate":"You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one creature behaviour from the kit."},
-        {"n":6, "title":"Add bass", "sub":"Understudy creature online",
-         "body":"""<p>Bass completes the trio — drums, synth, bass — and brings the understudy creature online. Unlike the other two instruments, the bass itself still needs buying; $2,000 is earmarked for it, model still open.</p>
+<p>This is when the characters come alive — turnaround, surface, mimic.</p>""",
+         "gate":"You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one character behaviour from the kit."},
+        {"n":6, "title":"Add bass", "sub":"Understudy character online",
+         "body":"""<p>Bass completes the trio — drums, synth, bass — and brings the understudy character online. Unlike the other two instruments, the bass itself still needs buying; $2,000 is earmarked for it, model still open.</p>
 <p>The understudy is powered by Jam Origin MIDI Bass (free), converting bass audio into MIDI in real time. One instrument, two outputs: the bass sound and the MIDI translation running in parallel.</p>
 <p>The SansAmp Bass Driver DI gives you character and a clean DI signal. A compressor tames dynamics for consistent loop levels.</p>
-<p>With bass in, the full rig is operational. From here it's about depth — refining the creatures, building more environments, developing a performance practice.</p>""",
-         "gate":"You can play all three instruments, loop any of them, preview silently in headphones, control effects from your feet, and the creatures respond to how you play."},
+<p>With bass in, the full rig is operational. From here it's about depth — refining the characters, building more environments, developing a performance practice.</p>""",
+         "gate":"You can play all three instruments, loop any of them, preview silently in headphones, control effects from your feet, and the characters respond to how you play."},
     ]
 
     for p in phases:
@@ -906,7 +1014,7 @@ def gear():
         running += phase_totals[pn]
         subtotals_rows += f'<tr><td>Phase {pn}</td><td class="cost">${phase_totals[pn]:,}</td><td class="cost">${running:,}</td></tr>\n'
 
-    return hero("Gear", "Everything the rig needs — what's owned, what to buy, and what it costs.") + f'''
+    return hero("Gear List", "Everything the rig needs — what's owned, what to buy, and what it costs.") + f'''
 <div class="row">
 <div class="b12">
 <div class="gear-controls">
@@ -1012,7 +1120,7 @@ def gear():
 
 
 def decisions():
-    return hero("Open decisions", "Things to decide or test before buying.") + '''
+    return hero("Open Decisions", "Things to decide or test before buying.") + '''
 <div class="row">
 <div class="b8">
 <ul class="tasks">
@@ -1027,6 +1135,9 @@ def decisions():
 <li><input type="checkbox" id="d9"><label for="d9">Monitors vs headphones vs PA</label></li>
 <li><input type="checkbox" id="d10"><label for="d10">Test Tempo Follower with real playing: how much drift it tracks</label></li>
 <li><input type="checkbox" id="d11"><label for="d11">Which side each instrument sits on, by reach from the seat</label></li>
+<li><input type="checkbox" id="d12"><label for="d12">Exactly when tempo locks: the first loop's end, a manual tap, or a dedicated button — Clock currently assumes first loop end</label></li>
+<li><input type="checkbox" id="d13"><label for="d13">Loop-length control: three length buttons, or one record button plus a length selector</label></li>
+<li><input type="checkbox" id="d14"><label for="d14">USB hub load test with everything plugged in at once; Push 1 needs its own power supply, not bus power from the hub</label></li>
 </ul>
 </div></div>'''
 
@@ -1053,7 +1164,7 @@ def research():
 
 <div class="row">
 <div class="b4"><div class="rule"><h3>Visual feedback</h3><p class="sm">What needs to be seen without a screen: a small display, Push's LEDs, or nothing.</p></div></div>
-<div class="b4"><div class="rule"><h3>Voice routing architecture</h3><p class="sm">Max for Live send/receive bus design for creature-to-creature signals. How to make routing switchable mid-performance.</p></div></div>
+<div class="b4"><div class="rule"><h3>Voice routing architecture</h3><p class="sm">Max for Live send/receive bus design for character-to-character signals. How to make routing switchable mid-performance.</p></div></div>
 </div>'''
 
 
@@ -1239,15 +1350,16 @@ PAGES = {
     'bass': ('Bass', bass),
     'synth': ('Synth', synth),
     'hookup': ('Hook-up', hookup),
-    'layout': ('Layout', layout),
-    'signal': ('Signal flow', signal),
+    'midi': ('MIDI Controllers', midi),
+    'arrangement': ('Arrangement', arrangement),
+    'routing': ('Routing', routing),
     'looping': ('Looping', looping),
-    'time': ('Time and tempo', time_tempo),
+    'clock': ('Clock', clock),
     'expression': ('Expression', expression),
-    'creatures': ('Creatures', creatures),
-    'gear': ('Gear', gear),
+    'chemistry': ('Chemistry', chemistry),
+    'gear': ('Gear List', gear),
     'roadmap': ('Roadmap', roadmap),
-    'decisions': ('Open decisions', decisions),
+    'decisions': ('Open Decisions', decisions),
     'research': ('Research', research),
     'influences': ('Influences', influences),
     'name': ('Name?', name),
@@ -1306,7 +1418,8 @@ def build():
         {"version": "0.4.0", "date": "2026-11-11", "notes": "Interactive roadmap + gear with costs", "path": "builds/0.4.0/index.html"},
         {"version": "0.4.1", "date": "2026-11-11", "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan", "path": "builds/0.4.1/index.html"},
         {"version": "0.4.2", "date": "2026-11-11", "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)", "path": "builds/0.4.2/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Correction: Portal is a real Phase 2 purchase, not owned", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.4.3", "date": "2026-11-11", "notes": "Correction: Portal is a real Phase 2 purchase, not owned", "path": "builds/0.4.3/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Constellation nav restructure: Arrangement/Routing/Concept hierarchy, new MIDI Controllers page, hub-based hookup diagram, two-column Expression map, Creatures renamed to Chemistry", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)

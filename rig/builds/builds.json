@@ -46,5 +46,11 @@
     "date": "2026-11-11",
     "notes": "Correction: Portal is a real Phase 2 purchase, not owned",
     "path": "builds/0.4.3/index.html"
+  },
+  {
+    "version": "0.5.0",
+    "date": "2026-11-11",
+    "notes": "Constellation nav restructure: Arrangement/Routing/Concept hierarchy, new MIDI Controllers page, hub-based hookup diagram, two-column Expression map, Creatures renamed to Chemistry",
+    "path": "builds/0.5.0/index.html"
   }
 ]

@@ -15,7 +15,10 @@
 <div class="row"><h2>Method: Session View clip recording</h2>
 <div class="b8">
 <p class="lg">Ableton's Session View is the looper. Fixed-length recording captures a clip of exactly N bars and starts looping it without stopping playback.</p>
-<p>Every voice can be looped independently. Audio loops of the drums and bass free your hands for the synth. Audio loops of the MiniFreak free it for new layers — the synth can be re-patched while its last phrase keeps playing. Drums can also be looped as MIDI (the raw zone/velocity data) and re-routed to a different creature or voice.</p>
+<p>Every voice can be looped independently. Audio loops of the drums and bass free your hands for the synth. Audio loops of the MiniFreak free it for new layers — the synth can be re-patched while its last phrase keeps playing. Drums can also be looped as MIDI (the raw zone/velocity data) and re-routed to a different character or voice.</p>
+<div class="rule"><h3>Why loops need the grid</h3>
+<p class="sm">Loops lock to a fixed-length grid, not to each other directly — see <a href="clock.html">Clock</a> for when that grid is set. Without it, independently-played layers drift apart bar by bar: a 4-bar drum loop and a 4-bar bass loop recorded a few milliseconds apart from true tempo will slowly fall out of phase over a long set. Locking every <code>Fixed Length</code> recording to the same frozen grid is what keeps them stacking cleanly instead of smearing.</p>
+</div>
 </div></div>
 
 <div class="row"><h2>How to control loops</h2>
@@ -86,8 +89,18 @@
 <li>Pick up the bass, noodle into a riff. Record a 4-bar bass loop.</li>
 <li>Reach for the MiniFreak, play a pad over the top. Record that too.</li>
 <li>Now all three are looping. Pick up the sticks again and play live over the bed.</li>
-<li>On the turnaround, trigger the next scene — the drum loop evolves, the bass hands off to the synth, the creatures wake up.</li>
+<li>On the turnaround, trigger the next scene — the drum loop evolves, the bass hands off to the synth, the characters wake up.</li>
 </ol>
+</div></div>
+
+<div class="row"><h2>Open: how loop length is chosen</h2>
+<div class="b8">
+<p>Loop lengths of 4, 8 and 16 bars cover most of what this rig needs, but which one is live for a given recording is still an open design question. Two shapes are on the table:</p>
+<ul>
+<li><strong>Three length buttons</strong> — dedicated 4/8/16 triggers, one press picks the length and arms the record.</li>
+<li><strong>One record button plus a length selector</strong> — a single transport action, with the length set separately (a knob position, a pad, a mode toggle) before you commit.</li>
+</ul>
+<p>Either shape wants pads or knobs within easy hand-reach — Push 1's grid or the modular FX-knob controller (see <a href="midi.html">MIDI Controllers</a>) — rather than a footswitch, which has too few discrete positions to spare for this on top of record/stop/scene/undo.</p>
 </div></div>
 </main>
 <script src="version.js"></script>
