@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Set Template — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="template">
+<main class="pg">
+<div class="hero"><h1>Set Template</h1>
+<p class="thesis">One Live Set, one scene per environment. The controls never move; the chains behind them do.</p>
+<div class="meta"><div><b>Status</b>Draft, pre-kit prototype</div><div><b>Needs</b>Live 11 Suite and the MiniFreak</div><div><b>Roadmap</b><a href="roadmap.html">Phase 3, build sonic environments</a></div></div>
+</div>
+<div class="row"><h2>The set at a glance</h2>
+<div class="b12">
+<p class="lg">Session View as it will look. Select a scene to see what it does, or a track name to see what it is for.</p>
+<div class="lv" role="group" aria-label="Mock of Ableton Live Session View">
+<div class="lv-bar"><b>Environment Set</b><span>BPM <b id="lvBpm">85.00</b></span><span>4/4</span><span>Quantise 1 Bar</span></div>
+<div class="lv-scroll"><div class="lvg" id="lvGrid"></div></div>
+</div>
+<p class="sm" id="lvNote"></p>
+<div class="lvd" id="lvDetail" aria-live="polite"></div>
+<p class="xs">Scene content is example data until the first real environment is chosen.</p>
+</div></div>
+
+<div class="row"><h2>Signals</h2>
+<div class="b8">
+<p class="lg">Four generic signals. Everything downstream reads these, never the raw source, so swapping the stand-in for the SP2 changes one input and rebuilds nothing.</p>
+<div class="tw"><table>
+<thead><tr><th>Signal</th><th>Prototype source</th><th>SP2 later</th><th>Lands on</th><th>CC</th></tr></thead>
+<tbody>
+<tr><td>Zone</td><td>MIDI note per drum voice</td><td>Zone note from the notes generator</td><td>Drum Rack chains</td><td class="st">note</td></tr>
+<tr><td>Velocity</td><td>Note velocity</td><td>Same</td><td>Level and filter, through a Velocity MIDI effect</td><td class="st">note</td></tr>
+<tr><td>Speed</td><td>Envelope Follower on the drum audio</td><td>SP2 Speed controller, sent as CC</td><td>Space send, filter</td><td class="st need">TBD</td></tr>
+<tr><td>Timbre</td><td>CC lane in a clip, standing in for head position</td><td>SP2 Timbre controller, sent as CC</td><td>Macro 1 of every rack</td><td class="st need">TBD</td></tr>
+</tbody></table></div>
+<p class="sm">CC numbers are left open on purpose and get assigned in the next pass. Notes and CCs travel together over one virtual MIDI bus.</p>
+</div>
+<div class="b12">
+<figure>
+<svg class="sv" viewBox="0 0 760 290" role="img" aria-label="Signal flow: the stand-in kit and, later, the SP2 both send notes and CCs over a virtual MIDI bus into Live, where they land on Drum Rack chains and on rack Macros">
+<defs><marker id="tsa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<g class="usb"><path d="M180 55L240 80" marker-end="url(#tsa)"/><path d="M180 135L240 110" marker-end="url(#tsa)"/><path d="M390 95L450 95" marker-end="url(#tsa)"/></g>
+<g class="ln" style="color:var(--line)"><path d="M520 140L520 190" marker-end="url(#tsa)"/><path d="M670 140L670 190" marker-end="url(#tsa)"/></g>
+<rect class="bx" x="20" y="30" width="160" height="50"/><text x="100" y="52" text-anchor="middle" font-weight="600" font-size="12">Stand-in kit</text><text class="q" x="100" y="68" text-anchor="middle" font-size="10">clips: notes + CC lane</text>
+<rect class="bxd" x="20" y="110" width="160" height="50"/><text x="100" y="132" text-anchor="middle" font-weight="600" font-size="12">SP2 (later)</text><text class="q" x="100" y="148" text-anchor="middle" font-size="10">notes + CC generators</text>
+<rect class="hi" x="240" y="60" width="150" height="70"/><text x="315" y="90" text-anchor="middle" font-weight="700" font-size="13">IAC Bus 1</text><text class="q" x="315" y="108" text-anchor="middle" font-size="10">virtual MIDI bus</text>
+<rect class="bx" x="450" y="50" width="290" height="90"/><text x="595" y="85" text-anchor="middle" font-weight="700" font-size="13">Ableton Live</text><text class="q" x="595" y="105" text-anchor="middle" font-size="10">MIDI input, Remote on</text><text class="q" x="595" y="121" text-anchor="middle" font-size="10">Map Mode targets</text>
+<rect class="bx" x="450" y="190" width="140" height="60"/><text x="520" y="215" text-anchor="middle" font-weight="600" font-size="12">Zone, Velocity</text><text class="q" x="520" y="232" text-anchor="middle" font-size="10">Drum Rack chains</text>
+<rect class="bx" x="600" y="190" width="140" height="60"/><text x="670" y="215" text-anchor="middle" font-weight="600" font-size="12">Timbre, Speed</text><text class="q" x="670" y="232" text-anchor="middle" font-size="10">Macros and sends</text>
+<rect class="bxd" x="20" y="190" width="300" height="60"/><text x="170" y="214" text-anchor="middle" font-weight="600" font-size="12">Prototype only: Envelope Follower</text><text class="q" x="170" y="232" text-anchor="middle" font-size="10">reads the drum audio and stands in for the Speed CC</text>
+<path class="lnq" d="M320 220L450 220" marker-end="url(#tsa)"/>
+<g transform="translate(20 272)"><line class="usb" x1="0" y1="0" x2="26" y2="0"/><text x="32" y="4" font-size="10">MIDI</text><line class="ln" x1="90" y1="0" x2="116" y2="0" style="color:var(--line)"/><text x="122" y="4" font-size="10">Inside Live</text><line class="lnq" x1="210" y1="0" x2="236" y2="0"/><text x="242" y="4" font-size="10">Stand-in path</text></g>
+</svg>
+<figcaption>The SP2 slot stays empty and muted until the kit arrives. Its notes and CCs enter on the same bus, so every mapping downstream stays as built.</figcaption>
+</figure>
+</div>
+<div class="b8">
+<details>
+<summary>Why a virtual bus<span class="dtag">IAC</span></summary>
+<div class="dbody"><p>Ableton sums all MIDI coming out of the SP2 plugin onto a single channel, and CCs from the plugin cannot directly drive Live's own knobs. Sunhouse's own examples send MIDI out of Sensory Percussion over the IAC Bus Driver and back into Live. Building the stand-in the same way means the real kit is a re-point, not a rewrite.</p>
+<p>The SP2 plugin also needs Live 11.3 or later. See <a href="percussion.html">Percussion</a> for the controller types.</p></div>
+</details><details>
+<summary>MiniFreak CCs for Timbre targets<span class="dtag">Arturia</span></summary>
+<div class="dbody"><p class="mono">VCO 1 Timbre 15 · VCO 2 Timbre 19 · Filter Cutoff 74 · Resonance 71 · FX1/2/3 Amount 25 / 28 / 31 · Macros M1 117, M2 118</p>
+<p class="sm">From Arturia's MIDI implementation chart. The chart I fetched listed macros M1 and M2 only; check the manual for the rest.</p></div>
+</details>
+</div></div>
+
+<div class="row"><h2>Tracks</h2>
+<div class="b8">
+<p class="lg">Three synth slots named by position, not by role. The scene decides whether a slot plays bass, keys, pad or stabs.</p>
+<div class="tw"><table>
+<thead><tr><th>Track</th><th>Holds</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Slot 1</td><td>MiniFreak through External Instrument</td><td>One physical patch at a time. Each scene recalls its own patch, see MiniFreak recall below.</td></tr>
+<tr><td>Slot 2</td><td>Wavetable, Operator, Drift or Meld</td><td>Second voice, usually the low end or the keys.</td></tr>
+<tr><td>Slot 3</td><td>A second soft synth, or empty</td><td>Empty in scenes that do not need it.</td></tr>
+<tr><td>Stand-in kit, SP2</td><td>Source tracks</td><td>Send notes and CCs to IAC Bus 1. The SP2 track stays muted and empty until the kit exists.</td></tr>
+<tr><td>Loop 1, Loop 2</td><td>Audio tracks</td><td>Record from the Play bus, see Looping below.</td></tr>
+</tbody></table></div>
+<p class="sm">Each slot is an Instrument Rack with one chain per environment. In the prototype phase the MiniFreak's audio comes in through its own USB interface; later it goes through the Portal. See <a href="synth.html">Synth</a>.</p>
+</div></div>
+
+<div class="row"><h2>Chains</h2>
+<div class="b8">
+<p class="lg">Live mappings belong to the whole set, so a scene cannot have its own. Instead Macro 1 always carries Timbre, and each chain maps Macro 1 to something different. Only the active chain responds.</p>
+<div class="tw"><table>
+<thead><tr><th>Control</th><th>Chain 1</th><th>Chain 2</th><th>Chain 3</th></tr></thead>
+<tbody>
+<tr><td>Macro 1, Timbre</td><td>Filter cutoff</td><td>FM amount</td><td>Reverb size</td></tr>
+<tr><td>Macro 2, Tone</td><td>Resonance</td><td>Operator ratio</td><td>Chorus depth</td></tr>
+<tr><td>Macro 3, Space</td><td>Send A</td><td>Send A</td><td>Send B</td></tr>
+<tr><td>Macro 4, Level</td><td>Chain gain</td><td>Chain gain</td><td>Chain gain</td></tr>
+</tbody></table></div>
+<p class="xs">Example mappings. The meanings of the four Macros stay fixed; the targets are per chain.</p>
+<details>
+<summary>Switching chains per scene<span class="dtag">Live 11</span></summary>
+<div class="dbody"><p>Put a clip in the scene on that slot, with a clip envelope on the rack's Chain Selector. Launching the scene moves the selector. If that does not work in Live 11, the fallback is a mapped button or a Push 1 control.</p></div>
+</details><details>
+<summary>Turning unused chains fully off<span class="dtag">CPU</span></summary>
+<div class="dbody"><p>Yes, with some setup. Ableton says racks already conserve CPU in inactive chains. Its method for going further is to map each device's on/off to the Chain Selector, so only the selected chain has an active device.</p>
+<ul>
+<li>Wrap each chain's contents in one nested rack, so there is one on/off per chain instead of one per device.</li>
+<li>Map that wrapper's on/off to the Chain Selector range for its chain.</li>
+<li>Watch Live's CPU meter before and after. Stock devices are cheap, so the saving may be small; heavy plugins gain most.</li>
+</ul>
+<p class="sm">Turning a device off also cuts its tail. The MiniFreak chain costs no computer CPU either way, because it is hardware.</p></div>
+</details>
+</div></div>
+
+<div class="row"><h2>Effects</h2>
+<div class="b8">
+<p class="lg">Both, with one rule: anything the hands rely on never moves, and anything with character lives inside a chain.</p>
+<div class="tw"><table>
+<thead><tr><th>Layer</th><th>Where it lives</th><th>Changes per scene</th></tr></thead>
+<tbody>
+<tr><td>Character</td><td>Inserts inside each slot's chains</td><td>Yes, it switches with the chain</td></tr>
+<tr><td>Space and throw</td><td>Return A reverb, Return B delay</td><td>No, neutral in Live 11</td></tr>
+<tr><td>Performance FX</td><td>Group with four Macros: filter sweep, wash, stutter, drive</td><td>No, always on and mapped the same way</td></tr>
+<tr><td>Safety</td><td>Limiter on master</td><td>No</td></tr>
+</tbody></table></div>
+<p class="sm">Live 13's Envelope Clips would let the returns vary per scene, but nothing here depends on that.</p>
+</div></div>
+
+<div class="row"><h2>Looping</h2>
+<div class="b8">
+<p class="lg">Drums and synths sum into a Play bus. Loop 1 and Loop 2 record from it, before the returns, so a loop captures what was played and not the room around it.</p>
+<p>A scene with no clip on a loop track leaves that track alone, so its loop carries over. A scene with a clip or a stop button replaces it. Push 1 handles record, overdub and undo for now; see <a href="looping.html">Looping</a> for the controller plan.</p>
+<div class="rule"><h3>Tempo and carried loops</h3>
+<p class="sm">A scene that carries a loop has to keep the tempo, or the warped loop retimes. In the prototype, tempo is typed per scene. With the real kit, the rule on <a href="clock.html">Clock</a> applies instead: follow the playing, then freeze at the first loop.</p>
+</div>
+</div></div>
+
+<div class="row"><h2>MiniFreak recall</h2>
+<div class="b8">
+<p class="lg">Each scene's MiniFreak clip carries a Bank and a Program, so launching the scene recalls the patch. Arturia's chart gives this layout.</p>
+<div class="tw"><table>
+<thead><tr><th>Presets</th><th>Bank</th><th>Program change</th></tr></thead>
+<tbody>
+<tr><td>1 to 128</td><td>Bank 1</td><td class="st">0 to 127</td></tr>
+<tr><td>129 to 256</td><td>Bank 2</td><td class="st">0 to 127</td></tr>
+<tr><td>257 and above</td><td>Bank 3</td><td class="st">0 to 127</td></tr>
+</tbody></table></div>
+<p class="sm">Keep the environment patches together in one bank so recall is predictable, for example environments 1 to 4 as presets 1 to 4.</p>
+<div class="rule"><h3>Not yet confirmed</h3>
+<p class="sm">Which bank-select message the MiniFreak listens to. A user report says Bank 2 is value 1 and Bank 3 is value 2, but that is not the manual. Arturia's forum points to page 110 of the hardware manual. Test by launching a clip with a Bank and Program and watching the MiniFreak display, and check for an off-by-one, since Live may number programs from 1.</p>
+</div>
+</div></div>
+
+<div class="row"><h2>Build order</h2>
+<div class="b8">
+<p>Each step ends with something finished. This is a real sequence, so the numbers mean something. The last step is the signal to move on to <a href="roadmap.html">the drums</a>.</p>
+<ol class="lg">
+<li><strong>Wiring check.</strong> The stand-in kit sends one CC over IAC Bus 1 and one mapped knob moves. Nothing else.</li>
+<li><strong>One environment.</strong> A MiniFreak patch, one chain, one effect chain, the drum loop playing. Bounce it.</li>
+<li><strong>One clean loop.</strong> One layer and one overdub that hold together. Bounce it.</li>
+<li><strong>One reactive environment.</strong> The Timbre lane moving a destination. Bounce it.</li>
+<li><strong>Three or four environments as scenes,</strong> each bounced and named.</li>
+</ol>
+</div></div>
+
+<div class="row"><h2>Verify in Live 11</h2>
+<div class="b8">
+<p>Things I am fairly sure of but have not seen in your version. Tick them off as you test.</p>
+<ul class="tasks">
+<li><input type="checkbox" id="tp1"><label for="tp1">Map Mode learns CCs arriving from IAC Bus 1 with Remote on.</label></li>
+<li><input type="checkbox" id="tp2"><label for="tp2">A clip envelope can move a rack's Chain Selector when a scene launches.</label></li>
+<li><input type="checkbox" id="tp3"><label for="tp3">An empty clip slot leaves a playing loop alone on scene launch.</label></li>
+<li><input type="checkbox" id="tp4"><label for="tp4">Bank and Program in a clip recall a MiniFreak patch.<small>Check which bank message it reads, and the off-by-one.</small></label></li>
+<li><input type="checkbox" id="tp5"><label for="tp5">Mapping a nested rack's on/off to the Chain Selector saves measurable CPU.</label></li>
+<li><input type="checkbox" id="tp6"><label for="tp6">Live is 11.3 or later, which the SP2 plugin needs.</label></li>
+<li><input type="checkbox" id="tp7"><label for="tp7">The SP2 manual confirms Speed and Timbre can each be sent as CC.<small>The Sunhouse pages I read cover the notes and CC generators; the controller types come from the Percussion page.</small></label></li>
+</ul>
+</div></div>
+
+<div class="row"><h2>Sources</h2>
+<div class="b8">
+<p class="xs"><a href="https://support.arturia.com/hc/en-us/articles/6316523876764-MiniFreak-MIDI-Implementation-Chart">Arturia, MiniFreak MIDI chart</a> · <a href="https://help.ableton.com/hc/en-us/articles/360000727359-Using-the-chain-selector-in-a-Rack">Ableton, chain selector in a Rack</a> · <a href="https://help.sunhou.se/v2/how-to/ableton-plugin/">Sunhouse, SP2 Ableton plugin</a> · <a href="https://help.sunhou.se/v2/software-overview/modules/generators/midi-output/">Sunhouse, SP2 MIDI output</a> · <a href="https://forum.morningstar.io/t/minifreak-bank-preset-select/12190">Morningstar forum, MiniFreak banks</a></p>
+</div></div>
+
+<script>
+(function(){
+  var tracks=[
+    {n:"Stand-in kit",g:"Source",io:"MIDI out to IAC 1",note:"Stands in for the SP2. Holds drum loops (voice is the note, velocity is hit strength) and CC clips carrying the Timbre lane. Output goes to IAC Bus 1, the same bus the real kit will use."},
+    {n:"SP2 (later)",g:"Source",muted:true,io:"MIDI in from IAC 1",note:"Empty and muted until the kit arrives. It sends notes and CCs over the same bus, so nothing downstream changes."},
+    {n:"Slot 1 MiniFreak",g:"Synth",io:"Ext. Instrument, USB",note:"MIDI out over USB, audio back from the MiniFreak interface. One patch at a time, recalled per scene with Bank and Program."},
+    {n:"Slot 2 Soft synth",g:"Synth",io:"Instrument Rack",note:"One chain per environment (Wavetable, Operator, Drift, Meld). The scene decides whether it plays bass, keys or chords."},
+    {n:"Slot 3 Soft synth",g:"Synth",io:"Instrument Rack",note:"Optional third voice. Leave it empty in scenes that do not need it."},
+    {n:"Loop 1",g:"Loop",io:"Audio from Play bus",note:"Records from the Play bus (drums and synths, before the returns). An empty slot in a scene means the loop carries on."},
+    {n:"Loop 2",g:"Loop",io:"Audio from Play bus",note:"Second looper for an overdub layer or a separate part."},
+    {n:"A Space",g:"Return",ret:true,io:"Return, reverb",note:"Fixed reverb, neutral in every scene. Return tracks have no clip slots in Live."},
+    {n:"B Throw",g:"Return",ret:true,io:"Return, delay",note:"Fixed delay for throws. Return tracks have no clip slots in Live."}
+  ];
+  var scenes=[
+    {n:"HOME",t:85,cells:["stop","stop","stop","stop","stop","stop","stop"],
+     d:{title:"Home",tempo:"Keeps the current tempo",mf:"Init patch",slots:"All Macros neutral, nothing playing",loop:"Both loops stopped",timbre:"Idle",note:"A known-good reset between environments."}},
+    {n:"Env 01",t:85,cells:["groove A","","patch 001","chain 1","","rec",""],
+     d:{title:"Environment 01",tempo:"85",mf:"Bank 1, Program 0 (preset 1)",slots:"Slot 2 chain 1 as the low end, Slot 3 empty",loop:"Loop 1 records, Loop 2 untouched",timbre:"CC lane to Macro 1 (filter cutoff on the MiniFreak chain)",note:"Placeholder for the first real environment."}},
+    {n:"Env 02",t:85,cells:["groove B","","patch 002","chain 2","chain 1","","rec"],
+     d:{title:"Environment 02",tempo:"85, unchanged so the carried loop keeps time",mf:"Bank 1, Program 1 (preset 2)",slots:"Slot 2 chain 2, Slot 3 chain 1",loop:"Loop 1 carries over from Env 01, Loop 2 records",timbre:"CC lane to Macro 1 (FM amount)",note:"Shows a loop surviving a scene change."}},
+    {n:"Env 03",t:78,cells:["groove A","","patch 003","chain 3","","stop","loop 3"],
+     d:{title:"Environment 03",tempo:"78, free to change because both loops are replaced",mf:"Bank 1, Program 2 (preset 3)",slots:"Slot 2 chain 3, Slot 3 empty",loop:"Loop 1 stopped, Loop 2 replaced",timbre:"CC lane to Macro 1 (reverb size)",note:"Shows a loop being replaced."}},
+    {n:"Env 04",t:78,cells:["groove C","","patch 004","chain 4","chain 2","rec",""],
+     d:{title:"Environment 04",tempo:"78, unchanged so Loop 2 keeps time",mf:"Bank 1, Program 3 (preset 4)",slots:"Slot 2 chain 4, Slot 3 chain 2",loop:"Loop 1 records fresh, Loop 2 carries over from Env 03",timbre:"CC lane to Macro 1",note:"Placeholder."}}
+  ];
+  var grid=document.getElementById("lvGrid"),detail=document.getElementById("lvDetail"),noteEl=document.getElementById("lvNote"),bpm=document.getElementById("lvBpm");
+  if(!grid) return;
+  var cur=1,pickT=-1;
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function build(){
+    grid.textContent="";
+    grid.appendChild(el("div","g",""));
+    var prev=null;
+    tracks.forEach(function(t){grid.appendChild(el("div","g",t.g!==prev?t.g:""));prev=t.g;});
+    grid.appendChild(el("div","g","Scenes"));
+    tracks.forEach(function(t,i){
+      var b=el("button","h"+(t.muted?" dim":"")+(i===pickT?" pick":""),t.n);
+      b.type="button";
+      b.addEventListener("click",function(){pickT=i;noteEl.textContent=t.n+": "+t.note;build();});
+      grid.appendChild(b);
+    });
+    scenes.forEach(function(s,si){
+      var sb=el("button","sc"+(si===cur?" on":""));
+      sb.type="button";
+      sb.appendChild(el("span","tri"));sb.appendChild(el("span",null,s.n));sb.appendChild(el("small",null,String(s.t)));
+      sb.addEventListener("click",function(){cur=si;render();});
+      grid.appendChild(sb);
+      tracks.forEach(function(t,ti){
+        var v=t.ret?null:s.cells[ti],cls="cl";
+        if(t.ret)cls+=" na";
+        else if(v==="stop")cls+=" stop";
+        else if(v==="rec")cls+=" has rec";
+        else if(v)cls+=" has";
+        if(t.muted)cls+=" mute";
+        if(si===cur)cls+=" on";
+        grid.appendChild(el("div",cls,v&&v!=="stop"?(v==="rec"?"Record":v):""));
+      });
+    });
+    grid.appendChild(el("div","g","Routing"));
+    tracks.forEach(function(t){grid.appendChild(el("div","io",t.io));});
+    grid.appendChild(el("div","g","Level"));
+    tracks.forEach(function(t,i){var f=el("div","lvl"),bar=el("i");bar.style.setProperty("--w",(50+(i*7)%30)+"%");f.appendChild(bar);grid.appendChild(f);});
+  }
+  function renderDetail(){
+    var d=scenes[cur].d;
+    detail.textContent="";
+    detail.appendChild(el("h3",null,d.title));
+    [["Tempo",d.tempo],["MiniFreak patch",d.mf],["Synth slots",d.slots],["Loops",d.loop],["Timbre",d.timbre],["Note",d.note]].forEach(function(r){
+      var w=el("div");w.appendChild(el("span","k",r[0]));w.appendChild(el("p","v",r[1]));detail.appendChild(w);
+    });
+  }
+  function render(){bpm.textContent=scenes[cur].t.toFixed(2);build();renderDetail();}
+  noteEl.textContent="Select a track name for its role.";
+  render();
+})();
+</script>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

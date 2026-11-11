@@ -25,6 +25,7 @@
     {id:'clock',t:'Clock',z:1,parent:'routing'},
     {id:'expression',t:'Expression',z:1,parent:'routing'},
     {id:'chemistry',t:'Chemistry',z:1,parent:'routing'},
+    {id:'template',t:'Set Template',z:1,parent:'routing'},
     {id:'concept',t:'Concept',z:3},
     {id:'influences',t:'Influences',z:3,parent:'concept'},
     {id:'name',t:'Name?',z:3,parent:'concept'},

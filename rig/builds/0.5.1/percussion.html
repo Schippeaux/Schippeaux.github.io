@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Percussion — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="percussion">
+<main class="pg">
+<div class="hero"><h1>Percussion</h1>
+<p class="thesis">Sensory Percussion 2 on five mesh-head drums arranged around the seat, plus a kick pedal and a hi-hat pedal at the feet. Expression comes from zones and technique, not from pad count.</p>
+</div>
+<div class="row"><h2>What the sensor reads</h2>
+<div class="b8">
+<p>It does not read acoustic timbre. What the software calls "timbre" is derived from where and how the head is struck — position and strike classification — not from spectral analysis. The raw axes are <strong>position/zone</strong>, <strong>velocity</strong>, and <strong>speed</strong> (hit rate). Everything else in the expression list is computed from those three.</p>
+<details>
+<summary>Zone training<span class="dtag">SP2</span></summary>
+<div class="dbody"><p>Each sensor can be trained with up to <strong>ten zones per drum</strong>: centre, edge, rimshot-centre, rimshot-edge, rim tip, rim shoulder, cross-stick, damped, shell, and a "void" zone for things to ignore. Most players train four to six that they can strike reliably and distinctly; zones can be blended so they flow into each other proportionally rather than switching hard.</p>
+<p>Built-in controller types: Timbre, Velocity, Speed and LFO — each mappable to any parameter or sent out as MIDI CC.</p></div>
+</details>
+</div></div>
+
+<div class="row"><h2>The kit</h2>
+<div class="b8">
+<p>No separate kick drum or hi-hat cymbal. Five mesh-head drums carry all the struck zones — two of them standing in for hi-hat and ride — plus a dedicated kick pedal and hi-hat pedal underfoot. See <a href="arrangement.html">Arrangement</a> for how they sit around the seat.</p>
+<table>
+<thead><tr><th>Drum / control</th><th>Position</th><th>Diameter</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>Snare</td><td>Centre</td><td>12–13"</td><td>Compact, still a real rim for rimshots and cross-stick</td></tr>
+<tr><td>Tom → hi-hat</td><td>Left</td><td>8–10"</td><td>Struck surface standing in for a hi-hat; open/close colour comes from the hi-hat pedal, not a physical cymbal</td></tr>
+<tr><td>Tom → ride</td><td>Right</td><td>10–12"</td><td>Struck surface standing in for a ride; zone training (edge/bell-equivalent) carries the voicing</td></tr>
+<tr><td>Tom 1</td><td>Top-left</td><td>8"</td><td>Smallest common rack tom; mesh heads easy to find</td></tr>
+<tr><td>Tom 2</td><td>Top-right</td><td>10"</td><td></td></tr>
+<tr><td>Kick pedal</td><td>Feet</td><td>—</td><td>Compact pad played with a standard bass-drum pedal beater, SP2 sensor — not a full-size kick drum</td></tr>
+<tr><td>Hi-hat pedal</td><td>Feet</td><td>—</td><td>Continuous foot controller; open/close position sent as CC. Portal's pedal input is unconfirmed — may route via the Morningstar's spare expression input instead</td></tr>
+</tbody>
+</table>
+<p class="sm">Since the sensor reads position and dynamics rather than resonance, diameter affects stick feel, not what can be triggered. Shallower shells (100–130 mm) save more space than dropping a diameter and change playability less.</p>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>
