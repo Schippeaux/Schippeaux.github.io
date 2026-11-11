@@ -40,5 +40,11 @@
     "date": "2026-11-11",
     "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)",
     "path": "builds/0.4.2/index.html"
+  },
+  {
+    "version": "0.4.3",
+    "date": "2026-11-11",
+    "notes": "Correction: Portal is a real Phase 2 purchase, not owned",
+    "path": "builds/0.4.3/index.html"
   }
 ]

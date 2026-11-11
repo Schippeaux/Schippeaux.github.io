@@ -4,7 +4,7 @@
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.4.2"
+VERSION = "0.4.3"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -681,8 +681,11 @@ GEAR = [
     {"item":"Arturia MiniFreak",           "role":"Synth",    "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Onboard sequencer and arp first"},
     {"item":"Ableton Live Suite",          "role":"Hub",      "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Max for Live required"},
     {"item":"Ableton Push 1",              "role":"Control",  "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Session view looping, Fixed Length first"},
-    # Phase 2 — audio path
-    {"item":"EVANS Portal (interface)",    "role":"Audio I/O","phase":2, "status":"Owned",  "cost":0,"cables":"USB-C cable 3m ($25)", "notes":"Same physical unit as the SP2 Starter Pack below — it is both the sensor hub and the audio interface. 16-ch I/O, dedicated headphone out, ADAT expansion."},
+    # Phase 2 — audio path. The EVANS Portal is bought here as the SP2
+    # Starter Pack bundle — it is both the audio interface and the sensor
+    # hub, and the bundle price includes the first drum sensor as a bonus,
+    # so there is no separate Portal purchase in Phase 5.
+    {"item":"EVANS Portal — SP2 Starter Pack (interface + 1 sensor)", "role":"Audio I/O","phase":2, "status":"Needed",  "cost":1240,"cables":"USB-C cable 3m ($25)", "notes":"One purchase, two jobs: 16-ch audio interface (dedicated headphone out, ADAT expansion) and the SP2 sensor hub. Comes with the first drum sensor — goes on the snare (centre) — ready for Phase 5."},
     {"item":"Audio-Technica ATH-M50x",     "role":"Output",   "phase":2, "status":"Needed",  "cost":250, "cables":"6.35mm → 3.5mm adapter (included)", "notes":"Closed-back for low-volume cue monitoring"},
     {"item":"6.35mm TRS cable 3m (×2)",    "role":"Cable",    "phase":2, "status":"Needed",  "cost":40,  "cables":"", "notes":"Portal main out → monitors/amp"},
     {"item":"3.5mm TRS cable 1m",          "role":"Cable",    "phase":2, "status":"Needed",  "cost":15,  "cables":"", "notes":"MiniFreak audio out → Portal input"},
@@ -693,8 +696,9 @@ GEAR = [
     {"item":"TRS cables for MC6",          "role":"Cable",    "phase":4, "status":"Needed",  "cost":40,  "cables":"", "notes":"USB-C ($25) + TRS MIDI ($15)"},
     # Phase 5 — drums: snare (centre), tom-as-hi-hat (left), tom-as-ride (right),
     # tom 1 (top-left), tom 2 (top-right), kick pedal, hi-hat pedal — 5 struck
-    # surfaces + 2 foot pedals, all reading through SP2 sensors.
-    {"item":"SP2 Starter Pack (Portal + 1 sensor)", "role":"Percussion", "phase":5, "status":"Owned", "cost":0, "cables":"", "notes":"Already owned — Portal + 1 drum sensor + software. The Portal is the same unit listed under Audio I/O (Phase 2) — it doubles as the audio interface. Sensor goes on the snare (centre)."},
+    # surfaces + 2 foot pedals, all reading through SP2 sensors. The Portal
+    # and the snare's sensor were already bought in Phase 2 (see above) —
+    # this phase is just the four remaining sensors plus the pedals and shells.
     {"item":"SP2 Drum Sensor Expansion (×4)", "role":"Percussion","phase":5,"status":"Needed",  "cost":920, "cables":"Sensor cables ×4 (included)", "notes":"One sensor each for: tom acting as hi-hat (left), tom acting as ride (right), tom 1 (top-left), tom 2 (top-right)"},
     {"item":"Kick pedal (trigger pad + SP2 sensor)", "role":"Percussion","phase":5,"status":"Needed", "cost":290, "cables":"Sensor cable (included)", "notes":"Compact pad played with a standard bass-drum pedal beater — not a full-size kick drum"},
     {"item":"Hi-hat pedal (foot controller)", "role":"Percussion","phase":5,"status":"Needed", "cost":90, "cables":"TRS cable to Portal or Morningstar expression in ($15)", "notes":"Continuous pedal — open/close position sent as CC to blend the hi-hat tom's sample layers; Portal's pedal input is unconfirmed, may route via the Morningstar's spare expression input instead"},
@@ -728,9 +732,10 @@ def roadmap():
 <p>The MiniFreak's audio goes straight into your computer's built-in audio interface. Latency will be noticeable but workable for practice. You're not performing — you're getting your hands on the workflow.</p>""",
          "gate":"You can record a loop, layer a second part over it, and switch scenes without fumbling."},
         {"n":2, "title":"Get the audio path right", "sub":"Cue monitoring, low latency",
-         "body":"""<p>The Portal is already in hand — it came with the Sensory Percussion 2 Starter Pack and does double duty as the audio interface. This phase is about setting it up and using it properly, not buying it: 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
+         "body":"""<p>Buy the EVANS Portal here, as the Sensory Percussion 2 Starter Pack — one purchase that does two jobs: it is both the audio interface for this phase and the sensor hub the drums will plug into in Phase 5. The bundle includes the first drum sensor (destined for the snare), so there is nothing left to buy for the Portal later.</p>
+<p>It gives you 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
 <p>Set up Ableton's cue/solo system: Main Out → Portal Main L/R (speakers), Cue Out → Portal Headphone L/R. Click the headphone icon on any track to preview it in your ears while the audience hears only the master mix — the "silent jamming" workflow.</p>
-<p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise — and the only new purchase here is a pair of closed-back headphones.</p>""",
+<p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise.</p>""",
          "gate":"Portal is patched in, cue monitoring works, and the MiniFreak's round-trip latency feels invisible."},
         {"n":3, "title":"Build sonic environments", "sub":"Worlds for the drums to land in",
          "body":"""<p>With the Portal providing clean audio and cue monitoring, build the worlds the drums and bass will eventually live in. Create Ableton sessions with ambient pads and textures from the MiniFreak, effects chains (reverb, delay, granular processing), rhythmic patterns, and multiple scenes — each a different mood or energy level.</p>
@@ -744,6 +749,7 @@ def roadmap():
          "gate":"You can play the MiniFreak, loop a part, layer a second part, and control at least one effect parameter — all without touching the laptop."},
         {"n":5, "title":"Add drums", "sub":"SP2 plugs into your environments",
          "body":"""<p>The drums are the rig's primary instrument and its richest control surface. SP2 turns each drum into dozens of zones — centre, edge, rim, cross-stick, press, dampen — and each zone can trigger samples, synths, effects, or MIDI.</p>
+<p>The Portal and the snare's sensor are already in hand from Phase 2 — this phase is the four remaining sensors (for the hi-hat tom, ride tom, and two more toms), the kick pedal, the hi-hat pedal, and the shells and mesh heads to put them on.</p>
 <p>The kit itself is deliberately compact: snare centre, a tom either side standing in for hi-hat and ride, two more toms top-left and top-right, plus a kick pedal and a hi-hat pedal at your feet. Five struck surfaces, two pedals — everything reachable without standing up.</p>
 <p>Because you built environments in Phase 3, the drums plug into something alive on day one. The SP2 zones also become expression controllers: pressing a head can swell a reverb, a rimshot can trigger a scene change.</p>
 <p>This is when the creatures come alive — turnaround, surface, mimic.</p>""",
@@ -1299,7 +1305,8 @@ def build():
         {"version": "0.3.2", "date": "2026-11-11", "notes": "Build roadmap page", "path": "builds/0.3.2/index.html"},
         {"version": "0.4.0", "date": "2026-11-11", "notes": "Interactive roadmap + gear with costs", "path": "builds/0.4.0/index.html"},
         {"version": "0.4.1", "date": "2026-11-11", "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan", "path": "builds/0.4.1/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.4.2", "date": "2026-11-11", "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)", "path": "builds/0.4.2/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Correction: Portal is a real Phase 2 purchase, not owned", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
