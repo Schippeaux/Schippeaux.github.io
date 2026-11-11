@@ -34,5 +34,11 @@
     "date": "2026-11-11",
     "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan",
     "path": "builds/0.4.1/index.html"
+  },
+  {
+    "version": "0.4.2",
+    "date": "2026-11-11",
+    "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)",
+    "path": "builds/0.4.2/index.html"
   }
 ]

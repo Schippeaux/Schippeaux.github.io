@@ -4,7 +4,7 @@
 import json, os, shutil, datetime, textwrap
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.4.1"
+VERSION = "0.4.2"
 DATE = "2026-11-11"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -682,7 +682,7 @@ GEAR = [
     {"item":"Ableton Live Suite",          "role":"Hub",      "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Max for Live required"},
     {"item":"Ableton Push 1",              "role":"Control",  "phase":1, "status":"Owned",   "cost":0,   "cables":"", "notes":"Session view looping, Fixed Length first"},
     # Phase 2 — audio path
-    {"item":"EVANS Portal (interface)",    "role":"Audio I/O","phase":2, "status":"Needed",  "cost":1240,"cables":"USB-C cable 3m ($25)", "notes":"16-ch I/O, dedicated headphone out, ADAT expansion"},
+    {"item":"EVANS Portal (interface)",    "role":"Audio I/O","phase":2, "status":"Owned",  "cost":0,"cables":"USB-C cable 3m ($25)", "notes":"Same physical unit as the SP2 Starter Pack below — it is both the sensor hub and the audio interface. 16-ch I/O, dedicated headphone out, ADAT expansion."},
     {"item":"Audio-Technica ATH-M50x",     "role":"Output",   "phase":2, "status":"Needed",  "cost":250, "cables":"6.35mm → 3.5mm adapter (included)", "notes":"Closed-back for low-volume cue monitoring"},
     {"item":"6.35mm TRS cable 3m (×2)",    "role":"Cable",    "phase":2, "status":"Needed",  "cost":40,  "cables":"", "notes":"Portal main out → monitors/amp"},
     {"item":"3.5mm TRS cable 1m",          "role":"Cable",    "phase":2, "status":"Needed",  "cost":15,  "cables":"", "notes":"MiniFreak audio out → Portal input"},
@@ -694,13 +694,13 @@ GEAR = [
     # Phase 5 — drums: snare (centre), tom-as-hi-hat (left), tom-as-ride (right),
     # tom 1 (top-left), tom 2 (top-right), kick pedal, hi-hat pedal — 5 struck
     # surfaces + 2 foot pedals, all reading through SP2 sensors.
-    {"item":"SP2 Starter Pack (Portal + 1 sensor)", "role":"Percussion", "phase":5, "status":"Owned", "cost":0, "cables":"", "notes":"Already owned — Portal + 1 drum sensor + software. Sensor goes on the snare (centre)."},
+    {"item":"SP2 Starter Pack (Portal + 1 sensor)", "role":"Percussion", "phase":5, "status":"Owned", "cost":0, "cables":"", "notes":"Already owned — Portal + 1 drum sensor + software. The Portal is the same unit listed under Audio I/O (Phase 2) — it doubles as the audio interface. Sensor goes on the snare (centre)."},
     {"item":"SP2 Drum Sensor Expansion (×4)", "role":"Percussion","phase":5,"status":"Needed",  "cost":920, "cables":"Sensor cables ×4 (included)", "notes":"One sensor each for: tom acting as hi-hat (left), tom acting as ride (right), tom 1 (top-left), tom 2 (top-right)"},
     {"item":"Kick pedal (trigger pad + SP2 sensor)", "role":"Percussion","phase":5,"status":"Needed", "cost":290, "cables":"Sensor cable (included)", "notes":"Compact pad played with a standard bass-drum pedal beater — not a full-size kick drum"},
     {"item":"Hi-hat pedal (foot controller)", "role":"Percussion","phase":5,"status":"Needed", "cost":90, "cables":"TRS cable to Portal or Morningstar expression in ($15)", "notes":"Continuous pedal — open/close position sent as CC to blend the hi-hat tom's sample layers; Portal's pedal input is unconfirmed, may route via the Morningstar's spare expression input instead"},
     {"item":"Low-volume shells + mesh heads (snare + 4 toms)","role":"Percussion","phase":5,"status":"Needed","cost":850,"cables":"", "notes":"5 drums total, arranged around the seat: snare centre, 2 toms repurposed as hi-hat/ride either side, 2 further toms top-left/top-right"},
     # Phase 6 — bass
-    {"item":"Bass guitar",                 "role":"Bass",     "phase":6, "status":"Owned",   "cost":0,   "cables":"", "notes":"Already owned"},
+    {"item":"Bass guitar",                 "role":"Bass",     "phase":6, "status":"Needed",   "cost":2000,   "cables":"", "notes":"Not yet owned — budget earmarked, model TBC"},
     {"item":"SansAmp Bass Driver DI V2",   "role":"Bass",     "phase":6, "status":"Needed",  "cost":520, "cables":"Instrument cable 3m ($25) bass → DI; XLR cable 3m ($25) DI → Portal", "notes":"Preamp + DI in one pedal"},
     {"item":"MXR Bass Compressor",         "role":"Bass",     "phase":6, "status":"Needed",  "cost":390, "cables":"Patch cable ($15) DI → compressor", "notes":"Tames dynamics for consistent loop levels"},
     {"item":"Jam Origin MIDI Bass (plugin)","role":"Bass → MIDI","phase":6,"status":"Needed","cost":0,   "cables":"", "notes":"Free — real-time bass-to-MIDI conversion"},
@@ -728,9 +728,9 @@ def roadmap():
 <p>The MiniFreak's audio goes straight into your computer's built-in audio interface. Latency will be noticeable but workable for practice. You're not performing — you're getting your hands on the workflow.</p>""",
          "gate":"You can record a loop, layer a second part over it, and switch scenes without fumbling."},
         {"n":2, "title":"Get the audio path right", "sub":"Cue monitoring, low latency",
-         "body":"""<p>The Portal is the backbone: 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
+         "body":"""<p>The Portal is already in hand — it came with the Sensory Percussion 2 Starter Pack and does double duty as the audio interface. This phase is about setting it up and using it properly, not buying it: 16 channels of I/O, a dedicated headphone output with its own volume knob, ultra-low latency, and ADAT expansion for later.</p>
 <p>Set up Ableton's cue/solo system: Main Out → Portal Main L/R (speakers), Cue Out → Portal Headphone L/R. Click the headphone icon on any track to preview it in your ears while the audience hears only the master mix — the "silent jamming" workflow.</p>
-<p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise.</p>""",
+<p>The Portal's low latency means the MiniFreak will feel much tighter through Ableton's effects chain. This is when playing through the computer stops feeling like a compromise — and the only new purchase here is a pair of closed-back headphones.</p>""",
          "gate":"Portal is patched in, cue monitoring works, and the MiniFreak's round-trip latency feels invisible."},
         {"n":3, "title":"Build sonic environments", "sub":"Worlds for the drums to land in",
          "body":"""<p>With the Portal providing clean audio and cue monitoring, build the worlds the drums and bass will eventually live in. Create Ableton sessions with ambient pads and textures from the MiniFreak, effects chains (reverb, delay, granular processing), rhythmic patterns, and multiple scenes — each a different mood or energy level.</p>
@@ -749,7 +749,7 @@ def roadmap():
 <p>This is when the creatures come alive — turnaround, surface, mimic.</p>""",
          "gate":"You can play drums inside your environments, loop drum parts with the foot controller, and trigger at least one creature behaviour from the kit."},
         {"n":6, "title":"Add bass", "sub":"Understudy creature online",
-         "body":"""<p>Bass completes the trio — drums, synth, bass — and brings the understudy creature online.</p>
+         "body":"""<p>Bass completes the trio — drums, synth, bass — and brings the understudy creature online. Unlike the other two instruments, the bass itself still needs buying; $2,000 is earmarked for it, model still open.</p>
 <p>The understudy is powered by Jam Origin MIDI Bass (free), converting bass audio into MIDI in real time. One instrument, two outputs: the bass sound and the MIDI translation running in parallel.</p>
 <p>The SansAmp Bass Driver DI gives you character and a clean DI signal. A compressor tames dynamics for consistent loop levels.</p>
 <p>With bass in, the full rig is operational. From here it's about depth — refining the creatures, building more environments, developing a performance practice.</p>""",
@@ -1298,7 +1298,8 @@ def build():
         {"version": "0.3.1", "date": "2026-11-11", "notes": "Collapsible sections, diagrams, map hierarchy, layout fix", "path": "builds/0.3.1/index.html"},
         {"version": "0.3.2", "date": "2026-11-11", "notes": "Build roadmap page", "path": "builds/0.3.2/index.html"},
         {"version": "0.4.0", "date": "2026-11-11", "notes": "Interactive roadmap + gear with costs", "path": "builds/0.4.0/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.4.1", "date": "2026-11-11", "notes": "Real kit layout: 5 drums + kick/hi-hat pedals, room plan", "path": "builds/0.4.1/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
