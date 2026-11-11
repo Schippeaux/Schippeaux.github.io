@@ -22,5 +22,11 @@
     "date": "2026-11-11",
     "notes": "Build roadmap page",
     "path": "builds/0.3.2/index.html"
+  },
+  {
+    "version": "0.4.0",
+    "date": "2026-11-11",
+    "notes": "Interactive roadmap + gear with costs",
+    "path": "builds/0.4.0/index.html"
   }
 ]

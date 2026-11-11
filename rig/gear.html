@@ -10,33 +10,138 @@
 <body data-page="gear">
 <main class="pg">
 <div class="hero"><h1>Gear</h1>
-<p class="thesis">What is owned, what is needed, and what has been deliberately left out.</p>
+<p class="thesis">Everything the rig needs — what's owned, what to buy, and what it costs.</p>
 </div>
 <div class="row">
 <div class="b12">
-<table>
-<thead><tr><th>Role</th><th>Item</th><th>Status</th><th>Notes</th></tr></thead>
+<div class="gear-controls">
+<label>Sort by:</label>
+<button class="gear-sort active" data-sort="phase">Phase</button>
+<button class="gear-sort" data-sort="role">Role</button>
+<button class="gear-sort" data-sort="status">Status</button>
+<button class="gear-sort" data-sort="cost">Cost</button>
+<label style="margin-left:1.5rem">Filter:</label>
+<select id="gearFilter">
+<option value="all">All items</option>
+<option value="1">Phase 1</option>
+<option value="2">Phase 2</option>
+<option value="3">Phase 3</option>
+<option value="4">Phase 4</option>
+<option value="5">Phase 5</option>
+<option value="6">Phase 6</option>
+<option value="needed">Needed only</option>
+<option value="owned">Owned only</option>
+</select>
+</div>
+<table class="gear-table" id="gearTable">
+<thead><tr>
+<th data-col="role">Role</th><th data-col="item">Item</th><th data-col="status">Status</th>
+<th data-col="phase">Phase</th><th data-col="cost">Est. cost</th>
+<th>Cables needed</th><th>Notes</th>
+</tr></thead>
 <tbody>
-<tr><td>Percussion</td><td>Sensory Percussion 2 + Portal</td><td>Owned</td><td>Sensors + hi-hat; train 4–6 zones per drum</td></tr>
-<tr><td>Percussion</td><td>Kick, 12–13" snare, hi-hat, 8"+10"+12" toms, mesh heads</td><td class="st need">Needed</td><td>Shallow shells for compactness</td></tr>
-<tr><td>Synth</td><td>Arturia MiniFreak</td><td>Owned</td><td>Onboard sequencer and arp first</td></tr>
-<tr><td>Synth</td><td>Hardware step sequencer</td><td>Deferred</td><td>Only if MiniFreak + Live runs out</td></tr>
-<tr><td>Bass</td><td>Bass guitar</td><td>Owned</td><td></td></tr>
-<tr><td>Bass</td><td>SansAmp Bass Driver DI</td><td class="st need">Needed</td><td>Character + DI in one</td></tr>
-<tr><td>Bass</td><td>Bass compressor</td><td class="st need">Needed</td><td>Dynamics and loop levels</td></tr>
-<tr><td>Bass → MIDI</td><td>Jam Origin MIDI Bass (plugin)</td><td class="st need">Needed</td><td>Real-time bass-to-MIDI for synth handoff</td></tr>
-<tr><td>Session control</td><td>Ableton Push 1</td><td>Owned</td><td>Clunky but works; Fixed Length first</td></tr>
-<tr><td>Loop control</td><td>MIDI foot controller</td><td class="st need">Needed</td><td>Morningstar MC6 / SoftStep 2 / simple 2–4 button</td></tr>
-<tr><td>Effects</td><td>Modular MIDI controller</td><td class="st need">Needed</td><td>Intech Grid / Monogram; follows selected track</td></tr>
-<tr><td>Footswitch</td><td>MIDI footswitch</td><td class="st need">Needed</td><td>Record, track select, tempo follow on/off</td></tr>
-<tr><td>Audio I/O</td><td>Portal (as interface)</td><td>Owned</td><td>May serve as sole audio interface — testing needed</td></tr>
-<tr><td>Audio I/O</td><td>Separate audio interface (fallback)</td><td>Deferred</td><td>Only if Portal can't handle all I/O</td></tr>
-<tr><td>Hub</td><td>Ableton Live Suite</td><td>Owned</td><td>Max for Live required</td></tr>
-<tr><td>Output</td><td>Monitors / headphones</td><td class="st need">Needed</td><td>Closed-back for low-volume practice</td></tr>
-<tr><td>Dropped</td><td>Keyboard</td><td>—</td><td>Sequencer and Push pads cover melodic input</td></tr>
+<tr data-phase="1" data-role="Synth"><td>Synth</td><td>Arturia MiniFreak</td><td>Owned</td><td>Phase 1</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Onboard sequencer and arp first</td></tr>
+<tr data-phase="1" data-role="Hub"><td>Hub</td><td>Ableton Live Suite</td><td>Owned</td><td>Phase 1</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Max for Live required</td></tr>
+<tr data-phase="1" data-role="Control"><td>Control</td><td>Ableton Push 1</td><td>Owned</td><td>Phase 1</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Session view looping, Fixed Length first</td></tr>
+<tr data-phase="2" data-role="Audio I/O"><td>Audio I/O</td><td>EVANS Portal (interface)</td><td class="st need">Needed</td><td>Phase 2</td><td class="cost">$1,240</td><td class="cables">USB-C cable 3m ($25)</td><td class="notes">16-ch I/O, dedicated headphone out, ADAT expansion</td></tr>
+<tr data-phase="2" data-role="Output"><td>Output</td><td>Audio-Technica ATH-M50x</td><td class="st need">Needed</td><td>Phase 2</td><td class="cost">$250</td><td class="cables">6.35mm → 3.5mm adapter (included)</td><td class="notes">Closed-back for low-volume cue monitoring</td></tr>
+<tr data-phase="2" data-role="Cable"><td>Cable</td><td>6.35mm TRS cable 3m (×2)</td><td class="st need">Needed</td><td>Phase 2</td><td class="cost">$40</td><td class="cables">—</td><td class="notes">Portal main out → monitors/amp</td></tr>
+<tr data-phase="2" data-role="Cable"><td>Cable</td><td>3.5mm TRS cable 1m</td><td class="st need">Needed</td><td>Phase 2</td><td class="cost">$15</td><td class="cables">—</td><td class="notes">MiniFreak audio out → Portal input</td></tr>
+<tr data-phase="4" data-role="Control"><td>Control</td><td>Morningstar MC6 Pro</td><td class="st need">Needed</td><td>Phase 4</td><td class="cost">$560</td><td class="cables">USB-C cable 3m ($25); TRS MIDI cable 1.5m ($15)</td><td class="notes">6 footswitches, deeply programmable MIDI</td></tr>
+<tr data-phase="4" data-role="Control"><td>Control</td><td>Moog EP-3 expression pedal</td><td class="st need">Needed</td><td>Phase 4</td><td class="cost">$90</td><td class="cables">TRS cable 2m ($15) to MC6 expression input</td><td class="notes">Continuous control — filter, volume, FX depth</td></tr>
+<tr data-phase="4" data-role="Cable"><td>Cable</td><td>TRS cables for MC6</td><td class="st need">Needed</td><td>Phase 4</td><td class="cost">$40</td><td class="cables">—</td><td class="notes">USB-C ($25) + TRS MIDI ($15)</td></tr>
+<tr data-phase="5" data-role="Percussion"><td>Percussion</td><td>SP2 Starter Pack (Portal + 1 sensor)</td><td>Owned</td><td>Phase 5</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Already owned — Portal + 1 drum sensor + software</td></tr>
+<tr data-phase="5" data-role="Percussion"><td>Percussion</td><td>SP2 Drum Sensor Expansion</td><td class="st need">Needed</td><td>Phase 5</td><td class="cost">$230</td><td class="cables">Sensor cable (included)</td><td class="notes">Second drum sensor — snare or second tom</td></tr>
+<tr data-phase="5" data-role="Percussion"><td>Percussion</td><td>SP2 Hi-Hat Sensor Expansion</td><td class="st need">Needed</td><td>Phase 5</td><td class="cost">$540</td><td class="cables">Sensor cable (included)</td><td class="notes">Hi-hat triggering and open/close zones</td></tr>
+<tr data-phase="5" data-role="Percussion"><td>Percussion</td><td>Low-volume kit shells + mesh heads</td><td class="st need">Needed</td><td>Phase 5</td><td class="cost">$800</td><td class="cables">—</td><td class="notes">Snare 13", toms 8"+10"+12", mesh heads, shallow shells</td></tr>
+<tr data-phase="5" data-role="Percussion"><td>Percussion</td><td>Evans dB One cymbal pack</td><td class="st need">Needed</td><td>Phase 5</td><td class="cost">$130</td><td class="cables">—</td><td class="notes">Low-volume cymbals — or small toms as cymbals for SP2</td></tr>
+<tr data-phase="6" data-role="Bass"><td>Bass</td><td>Bass guitar</td><td>Owned</td><td>Phase 6</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Already owned</td></tr>
+<tr data-phase="6" data-role="Bass"><td>Bass</td><td>SansAmp Bass Driver DI V2</td><td class="st need">Needed</td><td>Phase 6</td><td class="cost">$520</td><td class="cables">Instrument cable 3m ($25) bass → DI; XLR cable 3m ($25) DI → Portal</td><td class="notes">Preamp + DI in one pedal</td></tr>
+<tr data-phase="6" data-role="Bass"><td>Bass</td><td>MXR Bass Compressor</td><td class="st need">Needed</td><td>Phase 6</td><td class="cost">$390</td><td class="cables">Patch cable ($15) DI → compressor</td><td class="notes">Tames dynamics for consistent loop levels</td></tr>
+<tr data-phase="6" data-role="Bass → MIDI"><td>Bass → MIDI</td><td>Jam Origin MIDI Bass (plugin)</td><td class="st need">Needed</td><td>Phase 6</td><td class="cost">Free</td><td class="cables">—</td><td class="notes">Free — real-time bass-to-MIDI conversion</td></tr>
+<tr data-phase="6" data-role="Cable"><td>Cable</td><td>Bass cables</td><td class="st need">Needed</td><td>Phase 6</td><td class="cost">$65</td><td class="cables">—</td><td class="notes">Instrument cable 3m ($25) + XLR 3m ($25) + patch ($15)</td></tr>
+<tr data-phase="0" data-role="Synth"><td>Synth</td><td>Hardware step sequencer</td><td class="st defer">Deferred</td><td>—</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Only if MiniFreak + Live runs out</td></tr>
+<tr data-phase="0" data-role="Audio I/O"><td>Audio I/O</td><td>Separate audio interface</td><td class="st defer">Deferred</td><td>—</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Fallback if Portal can't handle all I/O</td></tr>
+<tr data-phase="0" data-role="Control"><td>Control</td><td>Modular MIDI controller</td><td class="st defer">Deferred</td><td>—</td><td class="cost">—</td><td class="cables">—</td><td class="notes">Intech Grid / Monogram; follows selected track</td></tr>
 </tbody>
 </table>
 </div></div>
+
+<div class="row">
+<div class="b6">
+<h3>Cost by phase</h3>
+<table class="subtotals">
+<thead><tr><th>Phase</th><th>Phase cost</th><th>Running total</th></tr></thead>
+<tbody><tr><td>Phase 1</td><td class="cost">$0</td><td class="cost">$0</td></tr>
+<tr><td>Phase 2</td><td class="cost">$1,545</td><td class="cost">$1,545</td></tr>
+<tr><td>Phase 4</td><td class="cost">$690</td><td class="cost">$2,235</td></tr>
+<tr><td>Phase 5</td><td class="cost">$1,700</td><td class="cost">$3,935</td></tr>
+<tr><td>Phase 6</td><td class="cost">$975</td><td class="cost">$4,910</td></tr>
+</tbody>
+<tfoot><tr><td><strong>Total (new gear)</strong></td><td class="cost"><strong>$4,910</strong></td><td></td></tr></tfoot>
+</table>
+<p class="sm" style="margin-top:.8rem">All prices are AUD estimates as of Nov 2026. Actual prices will vary.</p>
+</div>
+<div class="b6">
+<p><a href="roadmap.html">← Back to Build Roadmap</a></p>
+</div>
+</div>
+
+<script>
+(function(){
+  const table = document.getElementById('gearTable');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const filter = document.getElementById('gearFilter');
+  const sortBtns = document.querySelectorAll('.gear-sort');
+
+  // Parse from URL
+  const u = new URLSearchParams(location.search);
+  if (u.has('phase')) filter.value = u.get('phase');
+
+  function getVal(row, key) {
+    if (key === 'phase') return parseInt(row.dataset.phase) || 99;
+    if (key === 'role') return row.dataset.role.toLowerCase();
+    if (key === 'status') {
+      const s = row.children[2].textContent;
+      return s === 'Owned' ? 0 : s === 'Needed' ? 1 : 2;
+    }
+    if (key === 'cost') {
+      const t = row.children[4].textContent.replace(/[$,—Free]/g,'');
+      return parseFloat(t) || 0;
+    }
+    return row.children[1].textContent.toLowerCase();
+  }
+
+  let currentSort = 'phase';
+  function doSort(key) {
+    currentSort = key;
+    rows.sort((a,b) => {
+      const av = getVal(a, key), bv = getVal(b, key);
+      if (typeof av === 'number') return av - bv;
+      return av < bv ? -1 : av > bv ? 1 : 0;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+    sortBtns.forEach(b => b.classList.toggle('active', b.dataset.sort === key));
+  }
+
+  function doFilter() {
+    const v = filter.value;
+    rows.forEach(r => {
+      if (v === 'all') { r.hidden = false; return; }
+      if (v === 'needed') { r.hidden = r.children[2].textContent !== 'Needed'; return; }
+      if (v === 'owned') { r.hidden = r.children[2].textContent !== 'Owned'; return; }
+      r.hidden = r.dataset.phase !== v;
+    });
+  }
+
+  sortBtns.forEach(b => b.addEventListener('click', () => doSort(b.dataset.sort)));
+  filter.addEventListener('change', doFilter);
+
+  doSort(currentSort);
+  doFilter();
+})();
+</script>
 </main>
 <script src="version.js"></script>
 <script src="shared.js"></script>
