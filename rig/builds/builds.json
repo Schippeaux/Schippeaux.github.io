@@ -58,5 +58,11 @@
     "date": "2026-11-11",
     "notes": "New Set Template page: one Ableton set, one scene per environment, signal adapter for the SP2",
     "path": "builds/0.5.1/index.html"
+  },
+  {
+    "version": "0.6.0",
+    "date": "2026-11-12",
+    "notes": "New Practice page: beginner rudiment ladder in text notation, three playable patterns with tempo and swing, downloadable .mid files",
+    "path": "builds/0.6.0/index.html"
   }
 ]

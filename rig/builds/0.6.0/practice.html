@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="practice">
+<main class="pg">
+<div class="hero"><h1>Practice</h1>
+<p class="thesis">Learn the hands first. Repeat until it stops being a decision. The synths and effects come after.</p>
+<div class="meta"><div><b>Status</b>Draft: three patterns playable, rest listed</div><div><b>Level</b>Beginner, hands only (L and R)</div><div><b>Part of</b><a href="template.html">Set Template</a></div></div>
+</div>
+<div class="row"><h2>How to read the notation</h2>
+<div class="b8">
+<p class="lg">Sixteen letters make one bar. Each group of four is one beat.</p>
+<ul class="pr-key">
+<li><b class="mono">R</b> and <b class="mono">L</b> are right and left hand. <b>Capital</b> letters are accents, <b>lowercase</b> are normal notes.</li>
+<li><b class="mono">.</b> is a rest.</li>
+<li><b class="mono">(l)R</b> is a flam: a quiet left grace note just before an accented right.</li>
+<li><b class="mono">|: ... :|</b> means repeat. Patterns marked as triplets have three letters per beat.</li>
+</ul>
+<p class="sm">Example: <span class="mono">Rlrr Lrll</span> is a single paradiddle, and the capitals show the accent landing on the lead hand.</p>
+</div></div>
+
+<div class="row"><h2>Three to review</h2>
+<div class="b12">
+<p class="lg">Press play. They loop until you stop them.</p>
+<div class="pr-bar" role="group" aria-label="Playback controls">
+<label>Tempo <input type="range" id="prBpm" min="40" max="140" step="1" value="60"> <b id="prBpmV" class="mono">60</b> BPM</label>
+<label>Swing <input type="range" id="prSwing" min="50" max="75" step="1" value="50"> <b id="prSwingV" class="mono">50</b>%</label>
+<label class="pr-chk"><input type="checkbox" id="prClick" checked> Click</label>
+</div>
+<div class="pr-cards"><article class="pr-card" data-id="single-stroke-roll">
+<div class="pr-head"><h3>Single stroke roll</h3><span class="pr-tag">Level 1</span></div>
+<p class="pr-txt">Rlrl Rlrl Rlrl Rlrl</p>
+<div class="pr-grid" aria-hidden="true"><span class="pr-c a" data-i="0">R</span><span class="pr-c" data-i="1">l</span><span class="pr-c" data-i="2">r</span><span class="pr-c" data-i="3">l</span><span class="pr-c a" data-i="4">R</span><span class="pr-c" data-i="5">l</span><span class="pr-c" data-i="6">r</span><span class="pr-c" data-i="7">l</span><span class="pr-c a" data-i="8">R</span><span class="pr-c" data-i="9">l</span><span class="pr-c" data-i="10">r</span><span class="pr-c" data-i="11">l</span><span class="pr-c a" data-i="12">R</span><span class="pr-c" data-i="13">l</span><span class="pr-c" data-i="14">r</span><span class="pr-c" data-i="15">l</span></div>
+<p class="sm">Hands alternate, right leads every beat. Make the lowercase notes match each other in volume and height.</p>
+<div class="pr-act"><button type="button" class="pr-play" aria-pressed="false">Play</button>
+<a class="pr-dl" href="practice/single-stroke-roll.mid" download>Download .mid</a></div>
+</article><article class="pr-card" data-id="double-stroke-roll">
+<div class="pr-head"><h3>Double stroke roll</h3><span class="pr-tag">Level 1</span></div>
+<p class="pr-txt">RrLl RrLl RrLl RrLl</p>
+<div class="pr-grid" aria-hidden="true"><span class="pr-c a" data-i="0">R</span><span class="pr-c" data-i="1">r</span><span class="pr-c a" data-i="2">L</span><span class="pr-c" data-i="3">l</span><span class="pr-c a" data-i="4">R</span><span class="pr-c" data-i="5">r</span><span class="pr-c a" data-i="6">L</span><span class="pr-c" data-i="7">l</span><span class="pr-c a" data-i="8">R</span><span class="pr-c" data-i="9">r</span><span class="pr-c a" data-i="10">L</span><span class="pr-c" data-i="11">l</span><span class="pr-c a" data-i="12">R</span><span class="pr-c" data-i="13">r</span><span class="pr-c a" data-i="14">L</span><span class="pr-c" data-i="15">l</span></div>
+<p class="sm">Two notes per hand. The second of each pair is a rebound, not a second hit. Let the stick bounce.</p>
+<div class="pr-act"><button type="button" class="pr-play" aria-pressed="false">Play</button>
+<a class="pr-dl" href="practice/double-stroke-roll.mid" download>Download .mid</a></div>
+</article><article class="pr-card" data-id="single-paradiddle">
+<div class="pr-head"><h3>Single paradiddle</h3><span class="pr-tag">Level 1</span></div>
+<p class="pr-txt">Rlrr Lrll Rlrr Lrll</p>
+<div class="pr-grid" aria-hidden="true"><span class="pr-c a" data-i="0">R</span><span class="pr-c" data-i="1">l</span><span class="pr-c" data-i="2">r</span><span class="pr-c" data-i="3">r</span><span class="pr-c a" data-i="4">L</span><span class="pr-c" data-i="5">r</span><span class="pr-c" data-i="6">l</span><span class="pr-c" data-i="7">l</span><span class="pr-c a" data-i="8">R</span><span class="pr-c" data-i="9">l</span><span class="pr-c" data-i="10">r</span><span class="pr-c" data-i="11">r</span><span class="pr-c a" data-i="12">L</span><span class="pr-c" data-i="13">r</span><span class="pr-c" data-i="14">l</span><span class="pr-c" data-i="15">l</span></div>
+<p class="sm">Right-left-right-right, then left-right-left-left. The accent always lands on the lead hand, so it swaps sides every beat.</p>
+<div class="pr-act"><button type="button" class="pr-play" aria-pressed="false">Play</button>
+<a class="pr-dl" href="practice/single-paradiddle.mid" download>Download .mid</a></div>
+</article></div>
+<p class="sm">Swing delays every second 16th note: 50% is straight, about 67% is a triplet feel, 75% is very late. Leave it at 50% while learning the sticking, then use it to hear the same pattern in a jazz feel. It affects playback here only. The downloaded .mid files are straight; in Live you add swing by dropping a groove from the Groove Pool onto the clip.</p>
+<p class="sm">The sound is a simple synthesised snare so you can check timing and sticking. The right hand sits a little higher in pitch than the left to make the sticking audible. In the .mid files both hands use the same snare note (General MIDI 38), so any Drum Rack snare will play them. Accents are velocity 112, normal notes 72.</p>
+</div></div>
+
+<div class="row"><h2>The ladder, easy to hard</h2>
+<div class="b8">
+<p class="lg">Nineteen patterns in five levels, written as text. The next step is to turn each into a .mid file and a player once the first three feel right.</p>
+<details>
+<summary>Level 1: Foundations<span class="dtag">4 patterns</span></summary>
+<div class="dbody"><p class="sm">Alternating hands, one accent per beat. Move on when you can play each for a full minute with an even sound at 70 BPM.</p><div class="tw"><table><thead><tr><th>Pattern</th><th>Notation</th><th>Notes</th></tr></thead><tbody><tr><td>Single strokes, 8th notes</td><td class="mono">|: R.l. R.l. :|</td><td>Count 1 and 2 and. Just alternate.</td></tr><tr><td>Single stroke roll, 16ths</td><td class="mono">Rlrl Rlrl Rlrl Rlrl</td><td>Playable below. <b>Playable.</b></td></tr><tr><td>Double stroke roll, 16ths</td><td class="mono">RrLl RrLl RrLl RrLl</td><td>Playable below. <b>Playable.</b></td></tr><tr><td>Single paradiddle</td><td class="mono">Rlrr Lrll Rlrr Lrll</td><td>Playable below. <b>Playable.</b></td></tr></tbody></table></div></div>
+</details><details>
+<summary>Level 2: Triplets and flams<span class="dtag">3 patterns</span></summary>
+<div class="dbody"><p class="sm">Three notes per beat, and the first grace notes. Move on when triplets stay even and flams sound like one fat note.</p><div class="tw"><table><thead><tr><th>Pattern</th><th>Notation</th><th>Notes</th></tr></thead><tbody><tr><td>Single stroke triplets</td><td class="mono">|: Rlr Lrl :|</td><td>Three letters per beat (triplet grid). The lead hand swaps every beat.</td></tr><tr><td>Flam</td><td class="mono">|: (l)R... (r)L... :|</td><td>(l)R is a quiet left grace note just before an accented right. Low stick for the grace, high stick for the main note.</td></tr><tr><td>Flam tap</td><td class="mono">|: (l)R R (r)L L :|</td><td>A flam, then a tap on the same hand, then swap.</td></tr></tbody></table></div></div>
+</details><details>
+<summary>Level 3: Rolls<span class="dtag">4 patterns</span></summary>
+<div class="dbody"><p class="sm">Longer runs of doubles that end on an accent. Move on when the last note of each roll lands on the beat.</p><div class="tw"><table><thead><tr><th>Pattern</th><th>Notation</th><th>Notes</th></tr></thead><tbody><tr><td>Five stroke roll</td><td class="mono">|: RrLl R... LlRr L... :|</td><td>Two doubles and a single. The single lands on beat 2 and beat 4.</td></tr><tr><td>Seven stroke roll</td><td class="mono">|: RrLl RrL. LlRr LlR. :|</td><td>Same idea, one more double.</td></tr><tr><td>Nine stroke roll</td><td class="mono">|: RrLl RrLl R... LlRr LlRr L... :|</td><td>Each roll takes three beats, so the full pattern is six beats and the lead hand swaps halfway.</td></tr><tr><td>Triple stroke roll</td><td class="mono">|: Rrr Lll :|</td><td>Triplet grid. Three notes per hand.</td></tr></tbody></table></div></div>
+</details><details>
+<summary>Level 4: Drags and flam combinations<span class="dtag">3 patterns</span></summary>
+<div class="dbody"><p class="sm">Two grace notes, and flams joined to other patterns. Move on when the grace notes are quiet and the accents are clear.</p><div class="tw"><table><thead><tr><th>Pattern</th><th>Notation</th><th>Notes</th></tr></thead><tbody><tr><td>Single drag tap</td><td class="mono">|: (ll)R l (rr)L r :|</td><td>Two quick grace notes (a drag) before the accent, then a tap with the other hand.</td></tr><tr><td>Flam accent</td><td class="mono">|: (l)R l r (r)L r l :|</td><td>Triplet grid. The flam is on beat one of each group.</td></tr><tr><td>Flam paradiddle</td><td class="mono">|: (l)R l r r (r)L r l l :|</td><td>A paradiddle with a flam on the lead note.</td></tr></tbody></table></div></div>
+</details><details>
+<summary>Level 5: Long combinations<span class="dtag">5 patterns</span></summary>
+<div class="dbody"><p class="sm">Longer sticking patterns and moving accents. Move on when you can start any of them on either hand.</p><div class="tw"><table><thead><tr><th>Pattern</th><th>Notation</th><th>Notes</th></tr></thead><tbody><tr><td>Double paradiddle</td><td class="mono">|: Rlrlrr Lrlrll :|</td><td>Six notes per half, played as a triplet feel.</td></tr><tr><td>Paradiddle-diddle</td><td class="mono">|: Rlrrll Lrllrr :|</td><td>Six notes per half. A common one for fills and ride patterns.</td></tr><tr><td>Triple paradiddle</td><td class="mono">|: Rlrlrlrr Lrlrlrll :|</td><td>Eight notes per half, played as 16ths over two beats.</td></tr><tr><td>Flam paradiddle-diddle</td><td class="mono">|: (l)R l r r l l (r)L r l l r r :|</td><td>A paradiddle-diddle with a flam on the lead note.</td></tr><tr><td>Paradiddle accent displacement</td><td class="mono">|: Rlrr Lrll :|  |: rLrr lRll :|  |: rlRr lrLl :|  |: rlrR lrlL :|</td><td>Same sticking, accent moved through all four positions.</td></tr></tbody></table></div></div>
+</details>
+<p class="sm">This is a starter list built from the standard rudiments. The full set of 40 comes later, with the same notation.</p>
+</div></div>
+
+<div class="row"><h2>A session</h2>
+<div class="b8">
+<ol class="pr-steps">
+<li><b>Warm up, 3 minutes.</b> Single stroke roll at a tempo that feels easy.</li>
+<li><b>One new pattern, 10 minutes.</b> Slow, with the click, until three passes in a row are even.</li>
+<li><b>One review pattern, 5 minutes.</b> Something from last session, a little faster.</li>
+<li><b>Play, 2 minutes.</b> No click. Mix anything you know.</li>
+</ol>
+<p class="sm">A common rule is to raise the tempo by about 4 BPM only after a few clean passes. The aim is the same pattern, repeated until your hands do it without you.</p>
+<p class="sm">In the Ableton set these loops would sit in a practice scene, played by the stand-in Drum Rack. Once the hands are there, synth layers and effects are added on top and the loops become the environments from the <a href="template.html">Set Template</a>.</p>
+</div></div>
+
+<script>
+(function(){
+var D={"patterns": {"single-stroke-roll": "RlrlRlrlRlrlRlrl", "double-stroke-roll": "RrLlRrLlRrLlRrLl", "single-paradiddle": "RlrrLrllRlrrLrll"}, "bpm": {"single-stroke-roll": 70, "double-stroke-roll": 60, "single-paradiddle": 60}};
+var AC=null,timer=null,raf=null,cur=null,step=0,next=0,queue=[];
+var $=function(id){return document.getElementById(id);};
+var bpm=$('prBpm'),sw=$('prSwing'),ck=$('prClick');
+function lab(){$('prBpmV').textContent=bpm.value;$('prSwingV').textContent=sw.value;}
+bpm.addEventListener('input',lab);sw.addEventListener('input',lab);lab();
+function noiseBuf(){var n=AC.sampleRate*0.2,b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);for(var i=0;i<n;i++)d[i]=Math.random()*2-1;return b;}
+var NB=null;
+function snare(t,acc,right){
+  var g=AC.createGain(),pan=AC.createStereoPanner?AC.createStereoPanner():null;
+  var v=acc?1:0.5;
+  var s=AC.createBufferSource();s.buffer=NB;
+  var hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=1500;
+  var ng=AC.createGain();ng.gain.setValueAtTime(0.7*v,t);ng.gain.exponentialRampToValueAtTime(0.001,t+0.14);
+  s.connect(hp);hp.connect(ng);ng.connect(g);
+  var o=AC.createOscillator();o.type='triangle';
+  var f=right?210:175;o.frequency.setValueAtTime(f*1.4,t);o.frequency.exponentialRampToValueAtTime(f,t+0.05);
+  var og=AC.createGain();og.gain.setValueAtTime(0.6*v,t);og.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+  o.connect(og);og.connect(g);
+  if(pan){pan.pan.value=right?0.25:-0.25;g.connect(pan);pan.connect(AC.destination);}else{g.connect(AC.destination);}
+  s.start(t);s.stop(t+0.2);o.start(t);o.stop(t+0.2);
+}
+function click(t,strong){
+  var o=AC.createOscillator(),g=AC.createGain();o.frequency.value=strong?1600:1100;
+  g.gain.setValueAtTime(0.15,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.04);
+  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+0.05);
+}
+function schedule(){
+  var pat=D.patterns[cur];
+  while(next<AC.currentTime+0.12){
+    var dur=60/bpm.value/4,i=step%16,c=pat.charAt(i);
+    var t=next+((i%2)?dur*(sw.value-50)/50:0);
+    if(c!=='.')snare(t,c===c.toUpperCase(),c.toUpperCase()==='R');
+    if(ck.checked&&i%4===0)click(next,i===0);
+    queue.push({t:t,i:i});
+    next+=dur;step++;
+  }
+}
+function paint(){
+  var card=document.querySelector('.pr-card[data-id="'+cur+'"]');
+  if(card){
+    while(queue.length&&queue[0].t<=AC.currentTime){
+      var q=queue.shift();
+      var on=card.querySelector('.pr-c.on');if(on)on.classList.remove('on');
+      card.querySelector('.pr-c[data-i="'+q.i+'"]').classList.add('on');
+    }
+  }
+  raf=requestAnimationFrame(paint);
+}
+function stop(){
+  if(timer){clearInterval(timer);timer=null;}
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  queue=[];
+  document.querySelectorAll('.pr-c.on').forEach(function(e){e.classList.remove('on');});
+  document.querySelectorAll('.pr-play').forEach(function(b){b.textContent='Play';b.setAttribute('aria-pressed','false');});
+  cur=null;
+}
+function play(id,btn){
+  if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();NB=noiseBuf();}
+  if(AC.state==='suspended')AC.resume();
+  var was=cur;stop();
+  if(was===id)return;
+  cur=id;bpm.value=D.bpm[id];lab();
+  step=0;next=AC.currentTime+0.08;
+  btn.textContent='Stop';btn.setAttribute('aria-pressed','true');
+  timer=setInterval(schedule,25);schedule();raf=requestAnimationFrame(paint);
+}
+document.querySelectorAll('.pr-card').forEach(function(card){
+  var b=card.querySelector('.pr-play');
+  b.addEventListener('click',function(){play(card.dataset.id,b);});
+});
+document.addEventListener('visibilitychange',function(){if(document.hidden)stop();});
+})();
+</script>
+
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

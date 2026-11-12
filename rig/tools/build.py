@@ -2,10 +2,11 @@
 """Generate rig site v0.3.1: collapsible sections, map hierarchy, diagrams, layout fix."""
 
 import json, os, shutil, datetime, textwrap
+import practice as practice_mod
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.5.1"
-DATE = "2026-11-11"
+VERSION = "0.6.0"
+DATE = "2026-11-12"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
 
@@ -1595,6 +1596,7 @@ PAGES = {
     'expression': ('Expression', expression),
     'chemistry': ('Chemistry', chemistry),
     'template': ('Set Template', template),
+    'practice': ('Practice', lambda: practice_mod.practice(hero, detail)),
     'gear': ('Gear List', gear),
     'roadmap': ('Roadmap', roadmap),
     'decisions': ('Open Decisions', decisions),
@@ -1645,6 +1647,9 @@ def build():
             f.write(html)
         print(f"  wrote {page_id}.html")
 
+    practice_mod.write_midi(DIR)
+    print("  wrote practice/*.mid")
+
     # builds manifest
     builds_dir = os.path.join(DIR, 'builds')
     os.makedirs(builds_dir, exist_ok=True)
@@ -1658,7 +1663,8 @@ def build():
         {"version": "0.4.2", "date": "2026-11-11", "notes": "Fix Portal double-count; bass guitar not yet owned ($2k earmarked)", "path": "builds/0.4.2/index.html"},
         {"version": "0.4.3", "date": "2026-11-11", "notes": "Correction: Portal is a real Phase 2 purchase, not owned", "path": "builds/0.4.3/index.html"},
         {"version": "0.5.0", "date": "2026-11-11", "notes": "Constellation nav restructure: Arrangement/Routing/Concept hierarchy, new MIDI Controllers page, hub-based hookup diagram, two-column Expression map, Creatures renamed to Chemistry", "path": "builds/0.5.0/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "New Set Template page: one Ableton set, one scene per environment, signal adapter for the SP2", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.5.1", "date": "2026-11-11", "notes": "New Set Template page: one Ableton set, one scene per environment, signal adapter for the SP2", "path": "builds/0.5.1/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "New Practice page: beginner rudiment ladder in text notation, three playable patterns with tempo and swing, downloadable .mid files", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
