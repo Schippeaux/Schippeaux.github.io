@@ -5,7 +5,7 @@ import json, os, shutil, datetime, textwrap
 import practice as practice_mod
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 DATE = "2026-11-12"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
@@ -1664,7 +1664,8 @@ def build():
         {"version": "0.4.3", "date": "2026-11-11", "notes": "Correction: Portal is a real Phase 2 purchase, not owned", "path": "builds/0.4.3/index.html"},
         {"version": "0.5.0", "date": "2026-11-11", "notes": "Constellation nav restructure: Arrangement/Routing/Concept hierarchy, new MIDI Controllers page, hub-based hookup diagram, two-column Expression map, Creatures renamed to Chemistry", "path": "builds/0.5.0/index.html"},
         {"version": "0.5.1", "date": "2026-11-11", "notes": "New Set Template page: one Ableton set, one scene per environment, signal adapter for the SP2", "path": "builds/0.5.1/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "New Practice page: beginner rudiment ladder in text notation, three playable patterns with tempo and swing, downloadable .mid files", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.6.0", "date": "2026-11-12", "notes": "New Practice page: beginner rudiment ladder in text notation, three playable patterns with tempo and swing, downloadable .mid files", "path": "builds/0.6.0/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "Practice: all 19 patterns playable and downloadable as MIDI (plus a zip), click sounds with a five-way sound menu, left and right hands pitched apart", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
