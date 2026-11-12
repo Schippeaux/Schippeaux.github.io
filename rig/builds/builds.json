@@ -70,5 +70,11 @@
     "date": "2026-11-12",
     "notes": "Practice: all 19 patterns playable and downloadable as MIDI (plus a zip), click sounds with a five-way sound menu, left and right hands pitched apart",
     "path": "builds/0.6.1/index.html"
+  },
+  {
+    "version": "0.7.0",
+    "date": "2026-11-12",
+    "notes": "New Grooves page: nine full-kit study grooves with scores, players and MIDI files",
+    "path": "builds/0.7.0/index.html"
   }
 ]

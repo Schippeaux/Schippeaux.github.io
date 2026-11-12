@@ -332,3 +332,25 @@ body.map{overflow:hidden;height:100vh;height:100dvh;touch-action:none}
 .pr-dl{font-size:.85rem}
 .pr-steps{margin:0 0 .8rem;padding-left:1.2rem;display:grid;gap:.5rem;font-size:1rem}
 @media (max-width:700px){.row,.hero{column-gap:0}}
+
+/* Grooves page */
+.gv-cards{display:grid;gap:1.6rem;margin-top:1rem}
+.gv-card{border:2px solid var(--line);padding:1.1rem;display:grid;gap:.7rem;align-content:start;min-width:0}
+.gv-card h3{font-size:1.2rem;margin:0}
+.gv-meta{margin:0;color:var(--ink-2);font-size:.85rem}
+.gv-score{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:.9rem 1.4rem}
+.gv-bar{display:grid;gap:2px;min-width:0}
+.gv-n{font-family:var(--font-mono);font-size:.68rem;color:var(--ink-3)}
+.gv-row{display:flex;gap:1px;align-items:stretch}
+.gv-l{flex:none;width:1.9rem;font-family:var(--font-mono);font-size:.68rem;font-weight:500;color:var(--ink-3);display:flex;align-items:center}
+.gv-c{flex:1 1 0;min-width:0;max-width:1.5rem;height:1.3rem;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.68rem;border:1px solid var(--line-2);color:var(--ink-3)}
+.gv-c.g{border-left:2px solid var(--line)}
+.gv-c.h{color:var(--ink);background:var(--panel);border-color:var(--ink-3)}
+.gv-c.a{font-weight:700;background:var(--ink);color:var(--bg)}
+.gv-c.o{color:var(--ink-3);border-color:var(--line-2)}
+.gv-c.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.gv-c.h.on{background:var(--accent);color:var(--bg)}
+.gv-tempo{display:flex;align-items:center;gap:.5rem;font-size:.9rem}
+.gv-tempo input{width:min(150px,32vw);accent-color:var(--accent)}
+.gv-pre{margin:0;font-family:var(--font-mono);font-size:.8rem;overflow-x:auto;line-height:1.5}
+.gv-card details{margin:0}

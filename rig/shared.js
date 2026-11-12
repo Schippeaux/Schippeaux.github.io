@@ -27,6 +27,7 @@
     {id:'chemistry',t:'Chemistry',z:1,parent:'routing'},
     {id:'template',t:'Set Template',z:1,parent:'routing'},
     {id:'practice',t:'Practice',z:1,parent:'template'},
+    {id:'grooves',t:'Grooves',z:1,parent:'practice'},
     {id:'concept',t:'Concept',z:3},
     {id:'influences',t:'Influences',z:3,parent:'concept'},
     {id:'name',t:'Name?',z:3,parent:'concept'},
