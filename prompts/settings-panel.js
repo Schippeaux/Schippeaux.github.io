@@ -131,7 +131,7 @@
 
           <div class="sp-group">
             <h3>Preview</h3>
-            <div class="sp-field"><div class="sp-label">Mobile device<small>Used by the phone-preview button in the header</small></div><div class="sp-ctl"><select id="spPreviewDevice"></select></div></div>
+            <div class="sp-field"><div class="sp-label">Mobile device<small>Used by "View as mobile" in the header</small></div><div class="sp-ctl"><select id="spPreviewDevice"></select></div></div>
           </div>
 
           <div class="sp-group">

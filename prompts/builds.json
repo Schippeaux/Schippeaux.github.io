@@ -13,5 +13,10 @@
     "version": "0.3.0",
     "date": "2026-11-15",
     "notes": "Settings panel moved to the right (same side as the Claude panel); the two are now mutually exclusive, only one open at a time. Added a mobile-preview button (phone icon) showing the site in a device frame, with the device itself a setting."
+  },
+  {
+    "version": "0.4.0",
+    "date": "2026-11-15",
+    "notes": "Mobile preview is no longer a framed overlay — the phone icon now narrows the real page to the chosen device's width (via a @container query instead of @media), reflowing the live, interactive site. Icon swaps to a desktop glyph while active and moved to the left of Settings."
   }
 ]
