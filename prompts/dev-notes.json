@@ -1,4 +1,4 @@
 {
-  "notes": "",
-  "updated": null
+  "notes": "The settings pane pops up on the left.  It should pop up on the right.  Hitting dev or settings will minimise the other one if open - only one can be open at a time.\n\nHave a button for mobile which shows what the website looks like rendered on a Samsung S23.  Have a setting for changing what mobile gets used.\n\nSave those changes to the \"Add a Settings panel + Claude dev panel to an existing static site\" prompt.\n\nChange the title of this prompt to \"Website Settings, Dev, Phone setup\".",
+  "updated": "2026-11-15T04:35:57.701Z"
 }
