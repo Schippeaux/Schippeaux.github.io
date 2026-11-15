@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prompts</title>
+<style>
+  :root{
+    --bg: #faf9f6;
+    --card: #ffffff;
+    --fg: #1a1a18;
+    --fg-dim: #6b6a63;
+    --fg-faint: #9c9a90;
+    --border: #e4e1d8;
+    --accent: #c25a1e;
+    --accent-bg: #fbeee4;
+    --radius: 10px;
+    --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --f-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family: var(--f-body);
+    background: var(--bg);
+    color: var(--fg);
+    padding: 28px 18px 60px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  header{ margin-bottom: 22px; }
+  header h1{ font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p{ font-size: 13px; color: var(--fg-dim); margin: 0; }
+
+  .toolbar{
+    display:flex; gap:8px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .search{
+    flex: 1 1 220px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    background: var(--card);
+    color: var(--fg);
+  }
+  .search:focus{ outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .tags{ display:flex; gap:6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tag-btn{
+    font-family: var(--f-mono);
+    font-size: 11px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg-dim);
+    cursor: pointer;
+  }
+  .tag-btn[aria-pressed="true"]{
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .count{ font-size: 12px; color: var(--fg-faint); margin-bottom: 10px; }
+
+  .list{ display:flex; flex-direction: column; gap: 10px; }
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+  .card h2{
+    font-size: 15px;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .card .meta{
+    font-size: 11px;
+    color: var(--fg-faint);
+    font-family: var(--f-mono);
+    margin-bottom: 8px;
+  }
+  .card .snippet{
+    font-size: 13px;
+    color: var(--fg-dim);
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+  }
+  .card.open .snippet{ -webkit-line-clamp: unset; }
+  .card:not(.open) .snippet{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card .cardtags{ display:flex; gap:6px; flex-wrap:wrap; margin-top: 10px; }
+  .card .cardtags span{
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+
+  .card .actions{
+    margin-top: 12px;
+    display: none;
+    gap: 8px;
+  }
+  .card.open .actions{ display:flex; }
+  .card .actions button{
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  .card .actions button:hover{ border-color: var(--accent); color: var(--accent); }
+
+  .empty{
+    text-align:center;
+    color: var(--fg-faint);
+    font-size: 13px;
+    padding: 40px 0;
+  }
+
+  footer{
+    margin-top: 40px;
+    font-size: 11px;
+    color: var(--fg-faint);
+    text-align: center;
+  }
+  footer a{ color: var(--fg-dim); text-decoration:none; }
+  footer a:hover{ text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Prompts</h1>
+  <p>A searchable library of prompts worth reusing.</p>
+</header>
+
+<div class="toolbar">
+  <input class="search" id="search" type="text" placeholder="Search prompts…" autocomplete="off">
+</div>
+
+<div class="tags" id="tags"></div>
+
+<div class="count" id="count"></div>
+
+<div class="list" id="list"></div>
+<div class="empty" id="empty" hidden>No prompts match that search.</div>
+
+<footer>
+  <a href="/">← back to schippeaux.github.io</a>
+</footer>
+
+<script>
+(async function(){
+  const listEl = document.getElementById('list');
+  const emptyEl = document.getElementById('empty');
+  const tagsEl = document.getElementById('tags');
+  const countEl = document.getElementById('count');
+  const searchEl = document.getElementById('search');
+
+  let prompts = [];
+  try {
+    const res = await fetch('prompts.json', { cache: 'no-store' });
+    prompts = await res.json();
+  } catch (e) {
+    listEl.innerHTML = '<div class="empty">Couldn\'t load prompts.json.</div>';
+    return;
+  }
+
+  const activeTags = new Set();
+  let query = '';
+
+  const allTags = [...new Set(prompts.flatMap(p => p.tags || []))].sort();
+  tagsEl.innerHTML = allTags.map(t =>
+    `<button class="tag-btn" data-tag="${escapeAttr(t)}" aria-pressed="false">${escapeHtml(t)}</button>`
+  ).join('');
+  tagsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tag-btn');
+    if (!btn) return;
+    const tag = btn.dataset.tag;
+    if (activeTags.has(tag)) { activeTags.delete(tag); btn.setAttribute('aria-pressed', 'false'); }
+    else { activeTags.add(tag); btn.setAttribute('aria-pressed', 'true'); }
+    render();
+  });
+
+  searchEl.addEventListener('input', () => { query = searchEl.value.trim().toLowerCase(); render(); });
+
+  listEl.addEventListener('click', (e) => {
+    const copyBtn = e.target.closest('[data-action="copy"]');
+    if (copyBtn) {
+      e.stopPropagation();
+      const body = decodeURIComponent(copyBtn.dataset.body);
+      navigator.clipboard?.writeText(body).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = orig; }, 1200);
+      }).catch(() => {});
+      return;
+    }
+    const card = e.target.closest('.card');
+    if (card) card.classList.toggle('open');
+  });
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function escapeAttr(s){ return escapeHtml(s); }
+
+  function matches(p){
+    if (activeTags.size && !(p.tags || []).some(t => activeTags.has(t))) return false;
+    if (!query) return true;
+    const hay = (p.title + ' ' + (p.tags||[]).join(' ') + ' ' + p.body).toLowerCase();
+    return hay.includes(query);
+  }
+
+  function render(){
+    const filtered = prompts.filter(matches);
+    countEl.textContent = filtered.length === prompts.length
+      ? `${prompts.length} prompt${prompts.length === 1 ? '' : 's'}`
+      : `${filtered.length} of ${prompts.length}`;
+    emptyEl.hidden = filtered.length !== 0;
+    listEl.innerHTML = filtered.map(p => `
+      <div class="card" data-id="${escapeAttr(p.id)}">
+        <h2>${escapeHtml(p.title)}</h2>
+        <div class="meta">${escapeHtml(p.added || '')}</div>
+        <p class="snippet">${escapeHtml(p.body)}</p>
+        <div class="cardtags">${(p.tags||[]).map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
+        <div class="actions">
+          <button data-action="copy" data-body="${encodeURIComponent(p.body)}">Copy prompt</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  render();
+})();
+</script>
+
+</body></html>
