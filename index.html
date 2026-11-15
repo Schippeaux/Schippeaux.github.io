@@ -119,6 +119,42 @@
   }
   footer a{ color: var(--fg-dim); text-decoration:none; }
   footer a:hover{ text-decoration:underline; }
+
+  .gh-token{
+    margin-top: 36px;
+    width: 100%;
+    max-width: 360px;
+    font-size: 12px;
+    color: var(--fg-dim);
+  }
+  .gh-token summary{
+    cursor: pointer;
+    text-align: center;
+    list-style: none;
+    color: var(--fg-faint);
+  }
+  .gh-token summary::-webkit-details-marker{ display:none; }
+  .gh-token label{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .gh-token input{
+    font: inherit;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: var(--fg);
+  }
+  .gh-token p{
+    margin: 8px 0 0;
+    color: var(--fg-faint);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .gh-token .gh-status{ display:block; min-height: 14px; margin-top: 6px; color: var(--fg-dim); font-size: 11px; }
 </style>
 
 <div class="wallpaper-header">
@@ -215,8 +251,39 @@
 
 </div>
 
+<details class="gh-token">
+  <summary>GitHub token</summary>
+  <label>Personal access token
+    <input type="password" id="gh-token" autocomplete="off" placeholder="github_pat_…">
+  </label>
+  <span class="gh-status" id="gh-token-status"></span>
+  <p>Shared by every page on this site, so you only enter it once per browser. Stored only in this browser and sent only to api.github.com. Use a fine-grained token scoped to the repos you want the pages to write to.</p>
+</details>
+
 <footer>
   <a href="https://github.com/schippeaux" target="_blank" rel="noopener">github.com/schippeaux</a>
 </footer>
+
+<script>
+(function(){
+  // Same key the New Home schedule reads, so one token covers both.
+  var KEY = "github-token";
+  var input = document.getElementById("gh-token");
+  var status = document.getElementById("gh-token-status");
+  try { input.value = localStorage.getItem(KEY) || ""; } catch(e){}
+  var timer = null;
+  input.addEventListener("input", function(){
+    var v = input.value.trim();
+    try {
+      if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY);
+      status.textContent = v ? "Saved in this browser" : "Token cleared";
+    } catch(e){
+      status.textContent = "Couldn't save in this browser";
+    }
+    clearTimeout(timer);
+    timer = setTimeout(function(){ status.textContent = ""; }, 1500);
+  });
+})();
+</script>
 
 </body></html>
