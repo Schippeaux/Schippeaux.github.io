@@ -1,0 +1,161 @@
+/* ============================================================
+   Prompts — theming foundation
+   Every colour / font / size / spacing choice lives here as a
+   CSS custom property. Nothing below is hard-coded in the pages
+   themselves — index.html and settings.html just consume these.
+   ============================================================ */
+
+:root{
+  /* ---- font roles ---- */
+  --f-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-head:    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-body:    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-ui:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+
+  --w-display: 500;
+  --w-head: 500;
+
+  /* ---- scale multipliers (everything is multiplied by these) ---- */
+  --k-all: 1;
+  --k-body: 1;
+  --k-head: 1;
+  --k-display: 1;
+  --k-space: 1;
+
+  --lh: 1.5;
+  --wrap-w: 760px;
+
+  /* ---- colour tokens (light default) ---- */
+  --bg: #faf9f6;
+  --card: #ffffff;
+  --fg: #1a1a18;
+  --fg-dim: #6b6a63;
+  --fg-faint: #9c9a90;
+  --border: #e4e1d8;
+  --radius: 10px;
+
+  /* accent — overridden per html[data-accent] below */
+  --accent: #c25a1e;
+  --accent-bg: #fbeee4;
+
+  color-scheme: light;
+}
+
+html[data-mode="dark"]{
+  --bg: #15140f;
+  --card: #1f1e18;
+  --fg: #f1efe8;
+  --fg-dim: #b2afa2;
+  --fg-faint: #7c7a6e;
+  --border: #35332a;
+  --accent-bg: #3a2414;
+  color-scheme: dark;
+}
+
+/* accent overrides — default is the orange set in :root */
+html[data-accent="teal"]{ --accent: #0f766e; --accent-bg: #e3f4f1; }
+html[data-mode="dark"][data-accent="teal"]{ --accent-bg: #12302c; }
+html[data-accent="indigo"]{ --accent: #4338ca; --accent-bg: #ebe9fc; }
+html[data-mode="dark"][data-accent="indigo"]{ --accent-bg: #211d4a; }
+html[data-accent="rose"]{ --accent: #be123c; --accent-bg: #fbe4ea; }
+html[data-mode="dark"][data-accent="rose"]{ --accent-bg: #3a1420; }
+html[data-accent="olive"]{ --accent: #65731a; --accent-bg: #eef1dd; }
+html[data-mode="dark"][data-accent="olive"]{ --accent-bg: #2a3008; }
+
+/* label style: UPPERCASE spaced vs Sentence case, applied to .ui-label elements */
+html[data-labels="upper"] .ui-label{ text-transform: uppercase; letter-spacing: 0.06em; }
+html:not([data-labels="upper"]) .ui-label{ text-transform: none; letter-spacing: normal; }
+
+/* reduced animation */
+html[data-anim="reduced"] *{ transition: none !important; animation: none !important; }
+
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  font-family: var(--f-body);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 28px 18px 60px;
+  max-width: var(--wrap-w);
+  margin: 0 auto;
+  font-size: calc(clamp(14px, 1vw + 11px, 16px) * var(--k-all) * var(--k-body));
+  line-height: var(--lh);
+}
+
+.ui-label{ font-family: var(--f-ui); }
+
+.page-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: calc(22px * var(--k-space));
+}
+.page-header .titles h1{
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: calc(clamp(20px, 3vw, 28px) * var(--k-all) * var(--k-display));
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+.page-header .titles p{
+  font-family: var(--f-ui);
+  font-size: calc(clamp(12px, 1vw, 14px) * var(--k-all));
+  color: var(--fg-dim);
+  margin: 0;
+}
+
+/* gear + claude icon buttons, top right of header */
+.header-controls{ display:flex; gap:8px; flex-shrink:0; padding-top: 2px; }
+.icon-btn{
+  width: 34px; height: 34px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg-dim);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+.icon-btn:hover{ color: var(--accent); border-color: var(--accent); }
+.icon-btn svg{ width: 17px; height: 17px; }
+.icon-btn .dot{
+  position:absolute; top:-3px; right:-3px;
+  width:8px; height:8px; border-radius:50%;
+  background: var(--accent);
+  border: 1.5px solid var(--bg);
+  display:none;
+}
+
+.draft-label{
+  font-family: var(--f-ui);
+  font-size: 11px;
+  color: var(--fg-faint);
+  letter-spacing: 0.04em;
+}
+.version-badge{
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--fg-faint);
+}
+
+.site-footer{
+  margin-top: calc(40px * var(--k-space));
+  font-size: 11px;
+  color: var(--fg-faint);
+  text-align: center;
+  font-family: var(--f-ui);
+}
+.site-footer a{ color: var(--fg-dim); text-decoration:none; }
+.site-footer a:hover{ text-decoration:underline; }
+.site-footer .version-badge{ display:block; margin-top: 6px; }
+
+h2.section-heading, .card h2{
+  font-family: var(--f-head);
+  font-weight: var(--w-head);
+  font-size: calc(clamp(15px, 2vw, 18px) * var(--k-all) * var(--k-head));
+}
+
+button, select, input[type="text"], input[type="search"]{ font-family: var(--f-ui); }

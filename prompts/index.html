@@ -4,52 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Prompts</title>
+<script>
+  // Apply dark mode (if set) before first paint, to avoid a flash.
+  (function(){
+    try {
+      var s = JSON.parse(localStorage.getItem("prompts.settings.v1") || "{}");
+      var mode = s.appearance === "dark" || (s.appearance === "match" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      document.documentElement.setAttribute("data-mode", mode);
+      if (s.accent) document.documentElement.setAttribute("data-accent", s.accent);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="theme.css">
 <style>
-  :root{
-    --bg: #faf9f6;
-    --card: #ffffff;
-    --fg: #1a1a18;
-    --fg-dim: #6b6a63;
-    --fg-faint: #9c9a90;
-    --border: #e4e1d8;
-    --accent: #c25a1e;
-    --accent-bg: #fbeee4;
-    --radius: 10px;
-    --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --f-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
-    color-scheme: light;
-  }
-  *{ box-sizing: border-box; }
-  html,body{ margin:0; padding:0; }
-  body{
-    font-family: var(--f-body);
-    background: var(--bg);
-    color: var(--fg);
-    padding: 28px 18px 60px;
-    max-width: 760px;
-    margin: 0 auto;
-  }
-  header{ margin-bottom: 22px; }
-  header h1{ font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
-  header p{ font-size: 13px; color: var(--fg-dim); margin: 0; }
-
-  .toolbar{
-    display:flex; gap:8px; margin-bottom: 18px; flex-wrap: wrap;
-  }
+  .toolbar{ display:flex; gap:8px; margin-bottom: calc(18px * var(--k-space)); flex-wrap: wrap; }
   .search{
     flex: 1 1 220px;
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    font-size: 14px;
+    font-size: calc(14px * var(--k-all));
+    font-family: var(--f-ui);
     background: var(--card);
     color: var(--fg);
   }
   .search:focus{ outline: 2px solid var(--accent); outline-offset: -1px; }
 
-  .tags{ display:flex; gap:6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tags{ display:flex; gap:6px; flex-wrap: wrap; margin-bottom: calc(18px * var(--k-space)); }
   .tag-btn{
-    font-family: var(--f-mono);
+    font-family: var(--f-ui);
     font-size: 11px;
     padding: 4px 9px;
     border-radius: 999px;
@@ -64,20 +47,15 @@
     color: var(--accent);
   }
 
-  .count{ font-size: 12px; color: var(--fg-faint); margin-bottom: 10px; }
+  .count{ font-family: var(--f-ui); font-size: 12px; color: var(--fg-faint); margin-bottom: 10px; }
 
-  .list{ display:flex; flex-direction: column; gap: 10px; }
+  .list{ display:flex; flex-direction: column; gap: calc(10px * var(--k-space)); }
   .card{
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 14px 16px;
     cursor: pointer;
-  }
-  .card h2{
-    font-size: 15px;
-    margin: 0 0 4px;
-    font-weight: 600;
   }
   .card .meta{
     font-size: 11px;
@@ -86,19 +64,20 @@
     margin-bottom: 8px;
   }
   .card .snippet{
-    font-size: 13px;
+    font-family: var(--f-body);
+    font-size: calc(13px * var(--k-all) * var(--k-body));
+    line-height: var(--lh);
     color: var(--fg-dim);
-    line-height: 1.5;
     margin: 0;
     white-space: pre-line;
   }
-  .card.open .snippet{ -webkit-line-clamp: unset; }
   .card:not(.open) .snippet{
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .list.compact .card:not(.open) .snippet{ display:none; }
 
   .card .cardtags{ display:flex; gap:6px; flex-wrap:wrap; margin-top: 10px; }
   .card .cardtags span{
@@ -111,13 +90,10 @@
     padding: 2px 8px;
   }
 
-  .card .actions{
-    margin-top: 12px;
-    display: none;
-    gap: 8px;
-  }
+  .card .actions{ margin-top: 12px; display: none; gap: 8px; }
   .card.open .actions{ display:flex; }
   .card .actions button{
+    font-family: var(--f-ui);
     font-size: 12px;
     padding: 6px 10px;
     border-radius: 6px;
@@ -131,26 +107,29 @@
   .empty{
     text-align:center;
     color: var(--fg-faint);
+    font-family: var(--f-ui);
     font-size: 13px;
     padding: 40px 0;
   }
-
-  footer{
-    margin-top: 40px;
-    font-size: 11px;
-    color: var(--fg-faint);
-    text-align: center;
-  }
-  footer a{ color: var(--fg-dim); text-decoration:none; }
-  footer a:hover{ text-decoration:underline; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Prompts</h1>
-  <p>A searchable library of prompts worth reusing.</p>
-</header>
+<div class="page-header">
+  <div class="titles">
+    <h1>Prompts</h1>
+    <p>A searchable library of prompts worth reusing.</p>
+  </div>
+  <div class="header-controls">
+    <button class="icon-btn" title="Settings" id="gearIconBtn" onclick="location.href='settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+    </button>
+    <button class="icon-btn" title="Claude dev panel" id="claudeIconBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 7.2l2.1 2.1M17.7 14.7l2.1 2.1M3 12h3M18 12h3M4.2 16.8l2.1-2.1M17.7 9.3l2.1-2.1"/><circle cx="12" cy="12" r="3.3"/></svg>
+      <span class="dot" id="claudeDot"></span>
+    </button>
+  </div>
+</div>
 
 <div class="toolbar">
   <input class="search" id="search" type="text" placeholder="Search prompts…" autocomplete="off">
@@ -163,17 +142,28 @@
 <div class="list" id="list"></div>
 <div class="empty" id="empty" hidden>No prompts match that search.</div>
 
-<footer>
-  <a href="/">← back to schippeaux.github.io</a>
-</footer>
+<div class="site-footer">
+  <a href="https://github.com/schippeaux/schippeaux.github.io" target="_blank" rel="noopener">github.com/schippeaux</a>
+  <span class="version-badge" id="footVersion"></span>
+</div>
 
+<script src="theme.js"></script>
 <script>
 (async function(){
+  const T = window.PromptsTheme;
+  const settingsNow = T.load();
+
   const listEl = document.getElementById('list');
   const emptyEl = document.getElementById('empty');
   const tagsEl = document.getElementById('tags');
   const countEl = document.getElementById('count');
   const searchEl = document.getElementById('search');
+
+  if (settingsNow.toggles.compact) listEl.classList.add('compact');
+
+  fetch('version.json', { cache: 'no-store' }).then(r => r.json()).then(v => {
+    document.getElementById('footVersion').textContent = `Draft build v${v.version} · ${v.date}`;
+  }).catch(() => {});
 
   let prompts = [];
   try {
@@ -231,6 +221,7 @@
   }
 
   function render(){
+    const showIds = T.load().toggles.showIds;
     const filtered = prompts.filter(matches);
     countEl.textContent = filtered.length === prompts.length
       ? `${prompts.length} prompt${prompts.length === 1 ? '' : 's'}`
@@ -239,7 +230,7 @@
     listEl.innerHTML = filtered.map(p => `
       <div class="card" data-id="${escapeAttr(p.id)}">
         <h2>${escapeHtml(p.title)}</h2>
-        <div class="meta">${escapeHtml(p.added || '')}</div>
+        <div class="meta">${escapeHtml(p.added || '')}${showIds ? ' · ' + escapeHtml(p.id) : ''}</div>
         <p class="snippet">${escapeHtml(p.body)}</p>
         <div class="cardtags">${(p.tags||[]).map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
         <div class="actions">
@@ -252,5 +243,6 @@
   render();
 })();
 </script>
+<script src="claude-panel.js"></script>
 
 </body></html>

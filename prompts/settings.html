@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Settings — Prompts</title>
+<script>
+  // Apply dark mode (if set) before first paint, to avoid a flash.
+  (function(){
+    try {
+      var s = JSON.parse(localStorage.getItem("prompts.settings.v1") || "{}");
+      var mode = s.appearance === "dark" || (s.appearance === "match" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      document.documentElement.setAttribute("data-mode", mode);
+      if (s.accent) document.documentElement.setAttribute("data-accent", s.accent);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="theme.css">
+<style>
+  .settings-wrap{ display:flex; flex-direction:column; gap: calc(28px * var(--k-space)); }
+  .group{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 18px 6px; }
+  .group h2{ font-family:var(--f-head); font-weight:var(--w-head); font-size:15px; margin:0 0 4px; }
+  .group > p.hint{ font-size:12px; color:var(--fg-dim); margin:0 0 14px; }
+  .field{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:11px 0; border-top:1px solid var(--border); }
+  .field:first-of-type{ border-top:none; }
+  .field .label{ font-size:13px; }
+  .field .label small{ display:block; font-size:11px; color:var(--fg-faint); margin-top:2px; max-width:220px; }
+  .field .ctl{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  select, input[type="range"]{ font-size:13px; }
+  select{ padding:5px 7px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--fg); }
+  input[type="range"]{ width:120px; }
+  .rangeval{ font-family:var(--f-mono); font-size:11px; color:var(--fg-faint); min-width:34px; text-align:right; }
+  .seg{ display:flex; border:1px solid var(--border); border-radius:7px; overflow:hidden; }
+  .seg button{ font-family:var(--f-ui); font-size:12px; padding:6px 11px; border:none; background:var(--bg); color:var(--fg-dim); cursor:pointer; }
+  .seg button[aria-pressed="true"]{ background:var(--accent); color:#fff; }
+  .swatches{ display:flex; gap:6px; }
+  .swatch{ width:22px; height:22px; border-radius:50%; border:2px solid var(--border); cursor:pointer; padding:0; }
+  .swatch[aria-pressed="true"]{ border-color:var(--fg); }
+  .btn{ font-family:var(--f-ui); font-size:12px; padding:7px 12px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--fg); cursor:pointer; }
+  .btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .toggle-row{ display:flex; align-items:center; gap:8px; padding:9px 0; border-top:1px solid var(--border); font-size:13px; }
+  .toggle-row:first-of-type{ border-top:none; }
+  #copyOut{ width:100%; min-height:110px; font-family:var(--f-mono); font-size:11px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--fg); padding:10px; margin-top:10px; }
+  .specimen{ padding: 16px 0; }
+  .specimen .d{ font-family:var(--f-display); font-weight:var(--w-display); font-size: calc(26px * var(--k-all) * var(--k-display)); margin:0 0 10px; }
+  .specimen .h{ font-family:var(--f-head); font-weight:var(--w-head); font-size: calc(17px * var(--k-all) * var(--k-head)); margin:0 0 8px; }
+  .specimen .b{ font-family:var(--f-body); font-size: calc(14px * var(--k-all) * var(--k-body)); line-height:var(--lh); margin:0 0 10px; color:var(--fg-dim); }
+  .build-note{ font-size:12px; color:var(--fg-dim); padding: 4px 0 14px; }
+</style>
+</head>
+<body data-page="settings">
+
+<div class="page-header">
+  <div class="titles">
+    <span class="draft-label ui-label">Not part of the public site</span>
+    <h1>Settings</h1>
+    <p>Global design controls — applied live, saved in this browser. <span class="version-badge" id="headVersion"></span></p>
+  </div>
+  <div class="header-controls">
+    <button class="icon-btn" aria-current="page" title="Settings" id="gearIconBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+    </button>
+    <button class="icon-btn" title="Claude dev panel" id="claudeIconBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 7.2l2.1 2.1M17.7 14.7l2.1 2.1M3 12h3M18 12h3M4.2 16.8l2.1-2.1M17.7 9.3l2.1-2.1"/><circle cx="12" cy="12" r="3.3"/></svg>
+      <span class="dot" id="claudeDot"></span>
+    </button>
+  </div>
+</div>
+
+<div class="settings-wrap">
+
+  <div class="group">
+    <h2 class="ui-label">Typography</h2>
+    <p class="hint">Four independent font roles, plus weight for display and headings.</p>
+    <div class="field"><div class="label ui-label">Display font<small>Hero text, big numbers, quotes</small></div><div class="ctl"><select id="fontDisplay"></select></div></div>
+    <div class="field"><div class="label ui-label">Heading font</div><div class="ctl"><select id="fontHead"></select></div></div>
+    <div class="field"><div class="label ui-label">Body font</div><div class="ctl"><select id="fontBody"></select></div></div>
+    <div class="field"><div class="label ui-label">Labels / nav / buttons</div><div class="ctl"><select id="fontUi"></select></div></div>
+    <div class="field"><div class="label ui-label">Display weight</div><div class="ctl seg" id="weightDisplaySeg"></div></div>
+    <div class="field"><div class="label ui-label">Heading weight</div><div class="ctl seg" id="weightHeadSeg"></div></div>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Size &amp; spacing</h2>
+    <p class="hint">Everything is multiplied from here — nothing is a fixed pixel value.</p>
+    <div class="field"><div class="label ui-label">Overall text size</div><div class="ctl"><input type="range" id="kAll" min="0.85" max="1.25" step="0.01"><span class="rangeval" id="kAllVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Body size</div><div class="ctl"><input type="range" id="kBody" min="0.85" max="1.3" step="0.01"><span class="rangeval" id="kBodyVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Heading size</div><div class="ctl"><input type="range" id="kHead" min="0.85" max="1.3" step="0.01"><span class="rangeval" id="kHeadVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Display size</div><div class="ctl"><input type="range" id="kDisplay" min="0.85" max="1.4" step="0.01"><span class="rangeval" id="kDisplayVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Line spacing</div><div class="ctl"><input type="range" id="lh" min="1.2" max="1.8" step="0.01"><span class="rangeval" id="lhVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Section spacing</div><div class="ctl"><input type="range" id="kSpace" min="0.7" max="1.6" step="0.01"><span class="rangeval" id="kSpaceVal"></span></div></div>
+    <div class="field"><div class="label ui-label">Content width</div><div class="ctl seg" id="wrapWSeg">
+      <button data-v="narrow">Narrow</button><button data-v="standard">Standard</button><button data-v="wide">Wide</button>
+    </div></div>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Look &amp; feel</h2>
+    <div class="field"><div class="label ui-label">Appearance</div><div class="ctl seg" id="appearanceSeg">
+      <button data-v="light">Light</button><button data-v="dark">Dark</button><button data-v="match">Match this device</button>
+    </div></div>
+    <div class="field"><div class="label ui-label">Accent colour</div><div class="ctl swatches" id="accentSwatches"></div></div>
+    <div class="field"><div class="label ui-label">Label style</div><div class="ctl seg" id="labelsSeg">
+      <button data-v="upper">UPPERCASE</button><button data-v="sentence">Sentence case</button>
+    </div></div>
+    <div class="field"><div class="label ui-label">Animation</div><div class="ctl seg" id="animSeg">
+      <button data-v="full">Full</button><button data-v="reduced">Reduced</button>
+    </div></div>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Presets</h2>
+    <div class="field"><div class="label ui-label">Apply a combination</div><div class="ctl">
+      <select id="presetSelect"></select>
+      <button class="btn" id="resetBtn">Reset to defaults</button>
+    </div></div>
+    <div class="field"><div class="label ui-label">Copy settings<small>For pasting back into a chat with Claude</small></div><div class="ctl"><button class="btn" id="copyBtn">Copy settings</button></div></div>
+    <textarea id="copyOut" readonly hidden></textarea>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Type specimen</h2>
+    <div class="specimen">
+      <p class="d">Display text, 0123</p>
+      <p class="h">A heading looks like this</p>
+      <p class="b">Body copy looks like this — enough of it to judge line length and spacing at a glance, set in whatever body font and size you've chosen above.</p>
+      <button class="btn primary ui-label">Button label</button>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Other draft toggles</h2>
+    <div class="toggle-row"><input type="checkbox" id="toggleShowIds"><label for="toggleShowIds">Show prompt IDs on cards</label></div>
+    <div class="toggle-row"><input type="checkbox" id="toggleCompact"><label for="toggleCompact">Compact list (collapse all snippets by default)</label></div>
+  </div>
+
+  <div class="group">
+    <h2 class="ui-label">Build</h2>
+    <p class="build-note" id="buildNote">Loading build info…</p>
+  </div>
+
+</div>
+
+<div class="site-footer">
+  <a href="/prompts/">← back to Prompts</a>
+  <span class="version-badge" id="footVersion"></span>
+</div>
+
+<script src="theme.js"></script>
+<script src="settings.js"></script>
+<script src="claude-panel.js"></script>
+</body></html>
