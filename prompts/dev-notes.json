@@ -1,4 +1,4 @@
 {
-  "notes": "",
-  "updated": null
+  "notes": "When I hit the phone button, it should actually format the website as it would appear on a phone, not just pop up a screenshot.  The phone icon turns into a desktop icon which changes the website back to desktop mode when I hit it.  Move the phone icon to the left of settings.\n\nUpdate the Website Settings, Dev, Phone setup prompt to reflect this.",
+  "updated": "2026-11-15T04:44:19.295Z"
 }
