@@ -6,15 +6,20 @@
    the GitHub Contents API, using a token kept only in this
    browser's localStorage — never committed anywhere.
 
-   Slides in from the RIGHT. No dimming backdrop and nothing
-   blocks clicks on the rest of the page — the site stays fully
-   interactive while this is open. Close via the × button, the
-   Claude icon again, or Esc.
+   Slides in from the RIGHT (same side as the Settings panel). No
+   dimming backdrop and nothing blocks clicks on the rest of the
+   page — the site stays fully interactive while this is open.
+   Close via the × button, the Claude icon again, or Esc.
+
+   Only one of the Claude / Settings panels is ever open at a time —
+   opening this one closes the other (see the prompts:panel-opening
+   event below, also listened for in settings-panel.js).
 
    Include this script on every page that has a
    <button id="claudeIconBtn"> in its header.
    ============================================================ */
 (function () {
+  const PANEL_NAME = "claude";
   const REPO = "schippeaux/schippeaux.github.io";
   const NOTES_PATH = "prompts/dev-notes.json";
   const TOKEN_KEY = "prompts.devnotes.token";
@@ -100,12 +105,18 @@
 
     let loaded = false;
     function open() {
+      window.dispatchEvent(new CustomEvent("prompts:panel-opening", { detail: { name: PANEL_NAME } }));
       pane.classList.add("open");
       if (!loaded) { loadVersion(); loadBuilds(); loadNotes(); loaded = true; }
       renderTokenArea();
     }
     function close() { pane.classList.remove("open"); }
     function toggle() { pane.classList.contains("open") ? close() : open(); }
+
+    // Only one of Claude / Settings is ever open — close this one if another is opening.
+    window.addEventListener("prompts:panel-opening", (e) => {
+      if (e.detail.name !== PANEL_NAME && pane.classList.contains("open")) close();
+    });
 
     pane.querySelector(".cp-close").addEventListener("click", close);
     document.addEventListener("keydown", (e) => {

@@ -45,10 +45,19 @@
     accent: "default",   // default | teal | indigo | rose | olive
     labels: "sentence",  // sentence | upper
     anim: "full",        // full | reduced
+    previewDevice: "s23",
     toggles: { showIds: false, compact: false },
   };
 
   const WRAP_WIDTHS = { narrow: "560px", standard: "760px", wide: "960px" };
+
+  // Logical CSS-pixel viewports (portrait) for the mobile preview.
+  const DEVICES = [
+    { id: "s23",     label: "Samsung Galaxy S23", width: 360, height: 780 },
+    { id: "iphone15", label: "iPhone 15",          width: 393, height: 852 },
+    { id: "iphonese", label: "iPhone SE",          width: 375, height: 667 },
+    { id: "pixel8",  label: "Pixel 8",             width: 412, height: 915 },
+  ];
 
   const PRESETS = {
     "Default": {},
@@ -149,7 +158,7 @@
   apply(settings);
 
   window.PromptsTheme = {
-    STORAGE_KEY, FONTS, WEIGHTS, DEFAULTS, WRAP_WIDTHS, PRESETS,
+    STORAGE_KEY, FONTS, WEIGHTS, DEFAULTS, WRAP_WIDTHS, PRESETS, DEVICES,
     load: loadSettings, save: saveSettings, apply, fontById,
   };
 })();

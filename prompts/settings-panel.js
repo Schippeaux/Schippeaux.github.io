@@ -1,17 +1,22 @@
 /* ============================================================
    Prompts — Settings panel.
    A slide-out pane (not a page) of global design controls, driven
-   by window.PromptsTheme. Slides in from the LEFT. No dimming
-   backdrop and nothing blocks clicks on the rest of the page — the
-   site stays fully interactive and every change applies live, so
-   you can tune it while watching the result. Close via the ×
-   button, the gear icon again, or Esc.
+   by window.PromptsTheme. Slides in from the RIGHT (same side as
+   the Claude dev panel). No dimming backdrop and nothing blocks
+   clicks on the rest of the page — the site stays fully interactive
+   and every change applies live, so you can tune it while watching
+   the result. Close via the × button, the gear icon again, or Esc.
+
+   Only one of the Settings / Claude panels is ever open at a time —
+   opening this one closes the other (see the prompts:panel-opening
+   event below, also listened for in claude-panel.js).
 
    Include this script (after theme.js) on every page that has a
    <button id="gearIconBtn"> in its header.
    ============================================================ */
 (function () {
   const T = window.PromptsTheme;
+  const PANEL_NAME = "settings";
 
   function h(html) {
     const t = document.createElement("template");
@@ -33,10 +38,10 @@
   function injectStyles() {
     const css = `
       .sp-pane{
-        position:fixed; top:0; left:0; height:100%; width:min(360px, 92vw);
-        background:var(--card); color:var(--fg); border-right:1px solid var(--border);
-        box-shadow: 8px 0 24px rgba(0,0,0,0.12);
-        transform:translateX(-100%); transition:transform .22s ease; z-index:61;
+        position:fixed; top:0; right:0; height:100%; width:min(360px, 92vw);
+        background:var(--card); color:var(--fg); border-left:1px solid var(--border);
+        box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+        transform:translateX(100%); transition:transform .22s ease; z-index:61;
         display:flex; flex-direction:column; font-family:var(--f-body);
         pointer-events:none;
       }
@@ -122,6 +127,11 @@
             <div class="sp-field"><div class="sp-label">Animation</div><div class="sp-ctl sp-seg" id="spAnimSeg">
               <button data-v="full">Full</button><button data-v="reduced">Reduced</button>
             </div></div>
+          </div>
+
+          <div class="sp-group">
+            <h3>Preview</h3>
+            <div class="sp-field"><div class="sp-label">Mobile device<small>Used by the phone-preview button in the header</small></div><div class="sp-ctl"><select id="spPreviewDevice"></select></div></div>
           </div>
 
           <div class="sp-group">
@@ -227,6 +237,14 @@
     wireSeg("#spLabelsSeg", "labels");
     wireSeg("#spAnimSeg", "anim");
 
+    const previewDeviceSel = q("#spPreviewDevice");
+    previewDeviceSel.innerHTML = T.DEVICES.map((d) => `<option value="${d.id}">${escapeHtml(d.label)} (${d.width}×${d.height})</option>`).join("");
+    previewDeviceSel.addEventListener("change", () => {
+      settings.previewDevice = previewDeviceSel.value;
+      T.save(settings);
+      window.dispatchEvent(new CustomEvent("prompts:preview-device-changed", { detail: settings.previewDevice }));
+    });
+
     const swatchesEl = q("#spAccentSwatches");
     swatchesEl.innerHTML = ACCENTS.map((a) => `<button class="sp-swatch" data-v="${a.id}" style="background:${a.hex}" aria-label="${a.label}" title="${a.label}"></button>`).join("");
     swatchesEl.addEventListener("click", (e) => {
@@ -303,14 +321,23 @@
 
       toggleShowIds.checked = !!settings.toggles.showIds;
       toggleCompact.checked = !!settings.toggles.compact;
+      previewDeviceSel.value = settings.previewDevice;
     }
 
     renderAll();
     loadBuildInfo();
 
-    function open() { pane.classList.add("open"); }
+    function open() {
+      window.dispatchEvent(new CustomEvent("prompts:panel-opening", { detail: { name: PANEL_NAME } }));
+      pane.classList.add("open");
+    }
     function close() { pane.classList.remove("open"); }
     function toggle() { pane.classList.contains("open") ? close() : open(); }
+
+    // Only one of Settings / Claude is ever open — close this one if another is opening.
+    window.addEventListener("prompts:panel-opening", (e) => {
+      if (e.detail.name !== PANEL_NAME && pane.classList.contains("open")) close();
+    });
 
     pane.querySelector(".sp-close").addEventListener("click", close);
     document.addEventListener("keydown", (e) => {
