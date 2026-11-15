@@ -1,4 +1,4 @@
 {
-  "notes": "Have the settings menu pop up on the side like the dev panel.  Have it slide out on the left.\n\nFor both the settings panel and the dev panel, do not fade out the website itself.  I should still be able to interact with the website with this panel open.  Changes to the settings should be live so I can adjust settings in this panel and I see the changes happen, so I can tune the website.  \n\nModify the prompt to include this functionality.",
-  "updated": "2026-11-15T04:19:49.892Z"
+  "notes": "",
+  "updated": null
 }

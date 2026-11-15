@@ -3,5 +3,10 @@
     "version": "0.1.0",
     "date": "2026-11-15",
     "notes": "Initial release: search + tag filter, Settings page (theming controls), and the Claude dev panel."
+  },
+  {
+    "version": "0.2.0",
+    "date": "2026-11-15",
+    "notes": "Settings moved from a separate page into a non-blocking left-side panel (live-tunable alongside the Claude panel, which moved to the right and also no longer dims the page). Added a left category sidebar for browsing prompts."
   }
 ]

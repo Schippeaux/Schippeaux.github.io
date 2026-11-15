@@ -3,35 +3,37 @@
 A searchable library of reusable prompts. Lives at `schippeaux.github.io/prompts/`.
 
 ## Files
-- `index.html` — the public page. Fetches `prompts.json` and renders a searchable, tag-filterable list. Click a card to expand it and reveal a "Copy prompt" button.
+- `index.html` — the public page. A left sidebar categorises prompts (from each entry's `category`); the main column has a search box and tag filter over the currently-selected category. Click a card to expand it and reveal a "Copy prompt" button.
 - `prompts.json` — the data. One object per prompt:
   ```
   {
     "id": "kebab-case-slug",       // unique, used as a stable reference
     "title": "Short descriptive title",
-    "tags": ["lowercase", "tags"],
+    "category": "Websites",        // single primary grouping, shown in the left sidebar
+    "tags": ["lowercase", "tags"], // finer-grained, multi-select filter
     "added": "YYYY-MM-DD",
     "body": "The full prompt text, as a single string with \n for line breaks."
   }
   ```
-- `settings.html` — draft-only Settings page (gear icon, top right of the header). Global typography/size/spacing/look-and-feel controls, presets, a "Copy settings" button, and a type specimen. Not linked from the public nav.
-- `theme.css` / `theme.js` — the shared theming foundation both pages consume. Every colour/font/size/spacing choice is a CSS custom property; `theme.js` reads/writes `localStorage['prompts.settings.v1']` and applies it. `window.PromptsTheme` exposes the font list, presets, and load/save/apply helpers — `settings.js` drives the Settings page controls through it.
-- `claude-panel.js` — the Claude dev panel (small Claude icon next to the gear, on every page). Slides a pane out from the side; shows the current build version, a newest-first list of previous builds (from `builds.json`), and a notes box. Saving notes commits `dev-notes.json` straight to this repo via the GitHub Contents API, using a fine-grained token kept only in this browser's `localStorage` (`prompts.devnotes.token`) — never committed.
-- `dev-notes.json` — the current review notes (plain text in a JSON wrapper). Read it directly when asked to "read the notes and build the next version."
-- `version.json` — `{ version, date }` for the current build. Shown in the Settings header, the footer, and the Claude panel.
+- `theme.css` / `theme.js` — the shared theming foundation every page consumes. Every colour/font/size/spacing choice is a CSS custom property; `theme.js` reads/writes `localStorage['prompts.settings.v1']` and applies it live. `window.PromptsTheme` exposes the font list, presets, and load/save/apply helpers.
+- `settings-panel.js` — the Settings panel (gear icon, top right of the header, on every page). Slides in from the **left**. Typography/size/spacing/look-and-feel controls, presets, "Copy settings", a type specimen, and draft toggles — same controls that used to live on a separate `settings.html` page, now a panel instead. Not part of the public nav.
+- `claude-panel.js` — the Claude dev panel (small Claude icon next to the gear, on every page). Slides in from the **right**. Shows the current build version, a newest-first list of previous builds (from `builds.json`), and a notes box. Saving notes commits `dev-notes.json` straight to this repo via the GitHub Contents API, using a fine-grained token kept only in this browser's `localStorage` (`prompts.devnotes.token`) — never committed.
+- Neither panel dims or blocks the rest of the page — both can be open while the site underneath stays fully interactive, so Settings changes apply live and can be tuned while watching the result. Close a panel with its own × button, its icon again, or Esc — not by clicking elsewhere on the page.
+- `dev-notes.json` — the current review notes (plain text in a JSON wrapper). Read it directly when asked to "read the notes and build the next version." Cleared back to `""` once its notes have been acted on.
+- `version.json` — `{ version, date }` for the current build. Shown in the Settings panel, the footer, and the Claude panel.
 - `builds.json` — append-only log, oldest first: `{ version, date, notes }` per release.
-- `Build History/` — archived copies of previous `index.html` builds (`index_v<version>_<date>.html`), with asset paths rewritten to work from that subfolder. Empty until there's a second release.
+- `Build History/` — archived copies of previous `index.html` builds (`index_v<version>_<date>.html`), with asset paths rewritten to work from that subfolder.
 
 ## Adding a new prompt
 
 There's no in-browser editor for prompts — add one by asking Claude in chat
-(paste the prompt, or describe what to add/change); Claude commits the
-updated `prompts.json`. Order in the file doesn't matter — the site
-sorts/filters client-side.
+(paste the prompt, or describe what to add/change, and which category it
+belongs under); Claude commits the updated `prompts.json`. Order in the file
+doesn't matter — the site sorts/filters client-side.
 
 ## Releasing a new build
 
-1. Make the change (to `index.html`, `settings.html`, `theme.css`/`theme.js`, etc).
+1. Make the change (to `index.html`, the panel scripts, `theme.css`/`theme.js`, etc).
 2. Before overwriting `index.html`, copy the *current* one into `Build History/index_v<old-version>_<old-date>.html` and fix its relative asset paths to climb up one level (`../theme.css`, `../prompts.json`, …).
 3. Bump the version in `version.json` and append an entry to `builds.json`.
 4. `git add prompts && git commit -m "prompts: vX.Y.Z — <summary>" && git push`.

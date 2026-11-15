@@ -17,6 +17,43 @@
 </script>
 <link rel="stylesheet" href="theme.css">
 <style>
+  body{ max-width: none; } /* the layout row below manages its own width */
+  .shell{ max-width: var(--wrap-w); margin: 0 auto; }
+
+  .layout{ display:flex; gap: 28px; align-items:flex-start; }
+  .category-nav{
+    flex: 0 0 150px;
+    position: sticky;
+    top: 28px;
+  }
+  .category-nav h2{
+    font-family: var(--f-ui);
+    font-size: 11px;
+    color: var(--fg-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+  }
+  .category-nav ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; }
+  .cat-btn{
+    display:flex; justify-content:space-between; gap:8px;
+    width:100%; text-align:left;
+    font-family: var(--f-ui);
+    font-size: 13px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    border: none;
+    background: none;
+    color: var(--fg-dim);
+    cursor: pointer;
+  }
+  .cat-btn .n{ font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); }
+  .cat-btn:hover{ background: var(--bg); color: var(--fg); }
+  .cat-btn[aria-pressed="true"]{ background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .cat-btn[aria-pressed="true"] .n{ color: var(--accent); }
+
+  .main-col{ flex: 1 1 auto; min-width: 0; }
+
   .toolbar{ display:flex; gap:8px; margin-bottom: calc(18px * var(--k-space)); flex-wrap: wrap; }
   .search{
     flex: 1 1 220px;
@@ -111,9 +148,17 @@
     font-size: 13px;
     padding: 40px 0;
   }
+
+  @media (max-width: 640px){
+    .layout{ flex-direction: column; }
+    .category-nav{ position:static; flex-basis:auto; width:100%; }
+    .category-nav ul{ flex-direction:row; flex-wrap:wrap; }
+    .cat-btn{ width:auto; }
+  }
 </style>
 </head>
 <body>
+<div class="shell">
 
 <div class="page-header">
   <div class="titles">
@@ -121,7 +166,7 @@
     <p>A searchable library of prompts worth reusing.</p>
   </div>
   <div class="header-controls">
-    <button class="icon-btn" title="Settings" id="gearIconBtn" onclick="location.href='settings.html'">
+    <button class="icon-btn" title="Settings" id="gearIconBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
     </button>
     <button class="icon-btn" title="Claude dev panel" id="claudeIconBtn">
@@ -131,35 +176,46 @@
   </div>
 </div>
 
-<div class="toolbar">
-  <input class="search" id="search" type="text" placeholder="Search prompts…" autocomplete="off">
+<div class="layout">
+  <aside class="category-nav">
+    <h2>Category</h2>
+    <ul id="categoryList"><li>Loading…</li></ul>
+  </aside>
+
+  <div class="main-col">
+    <div class="toolbar">
+      <input class="search" id="search" type="text" placeholder="Search prompts…" autocomplete="off">
+    </div>
+    <div class="tags" id="tags"></div>
+    <div class="count" id="count"></div>
+    <div class="list" id="list"></div>
+    <div class="empty" id="empty" hidden>No prompts match that search.</div>
+  </div>
 </div>
-
-<div class="tags" id="tags"></div>
-
-<div class="count" id="count"></div>
-
-<div class="list" id="list"></div>
-<div class="empty" id="empty" hidden>No prompts match that search.</div>
 
 <div class="site-footer">
   <a href="https://github.com/schippeaux/schippeaux.github.io" target="_blank" rel="noopener">github.com/schippeaux</a>
   <span class="version-badge" id="footVersion"></span>
 </div>
 
+</div>
 <script src="theme.js"></script>
 <script>
 (async function(){
   const T = window.PromptsTheme;
-  const settingsNow = T.load();
 
   const listEl = document.getElementById('list');
   const emptyEl = document.getElementById('empty');
   const tagsEl = document.getElementById('tags');
   const countEl = document.getElementById('count');
   const searchEl = document.getElementById('search');
+  const categoryListEl = document.getElementById('categoryList');
 
-  if (settingsNow.toggles.compact) listEl.classList.add('compact');
+  function applyTogglesToDom(){
+    listEl.classList.toggle('compact', !!T.load().toggles.compact);
+  }
+  applyTogglesToDom();
+  window.addEventListener('prompts:toggles-changed', () => { applyTogglesToDom(); render(); });
 
   fetch('version.json', { cache: 'no-store' }).then(r => r.json()).then(v => {
     document.getElementById('footVersion').textContent = `Draft build v${v.version} · ${v.date}`;
@@ -176,6 +232,7 @@
 
   const activeTags = new Set();
   let query = '';
+  let activeCategory = 'All';
 
   const allTags = [...new Set(prompts.flatMap(p => p.tags || []))].sort();
   tagsEl.innerHTML = allTags.map(t =>
@@ -187,6 +244,26 @@
     const tag = btn.dataset.tag;
     if (activeTags.has(tag)) { activeTags.delete(tag); btn.setAttribute('aria-pressed', 'false'); }
     else { activeTags.add(tag); btn.setAttribute('aria-pressed', 'true'); }
+    render();
+  });
+
+  function renderCategories(){
+    const counts = new Map();
+    prompts.forEach(p => {
+      const c = p.category || 'Uncategorised';
+      counts.set(c, (counts.get(c) || 0) + 1);
+    });
+    const cats = ['All', ...[...counts.keys()].sort()];
+    categoryListEl.innerHTML = cats.map(c => {
+      const n = c === 'All' ? prompts.length : counts.get(c);
+      return `<li><button class="cat-btn" data-cat="${escapeAttr(c)}" aria-pressed="${c === activeCategory}">${escapeHtml(c)}<span class="n">${n}</span></button></li>`;
+    }).join('');
+  }
+  categoryListEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cat-btn');
+    if (!btn) return;
+    activeCategory = btn.dataset.cat;
+    categoryListEl.querySelectorAll('.cat-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === activeCategory)));
     render();
   });
 
@@ -214,6 +291,7 @@
   function escapeAttr(s){ return escapeHtml(s); }
 
   function matches(p){
+    if (activeCategory !== 'All' && (p.category || 'Uncategorised') !== activeCategory) return false;
     if (activeTags.size && !(p.tags || []).some(t => activeTags.has(t))) return false;
     if (!query) return true;
     const hay = (p.title + ' ' + (p.tags||[]).join(' ') + ' ' + p.body).toLowerCase();
@@ -230,7 +308,7 @@
     listEl.innerHTML = filtered.map(p => `
       <div class="card" data-id="${escapeAttr(p.id)}">
         <h2>${escapeHtml(p.title)}</h2>
-        <div class="meta">${escapeHtml(p.added || '')}${showIds ? ' · ' + escapeHtml(p.id) : ''}</div>
+        <div class="meta">${escapeHtml(p.category || 'Uncategorised')} · ${escapeHtml(p.added || '')}${showIds ? ' · ' + escapeHtml(p.id) : ''}</div>
         <p class="snippet">${escapeHtml(p.body)}</p>
         <div class="cardtags">${(p.tags||[]).map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
         <div class="actions">
@@ -240,9 +318,11 @@
     `).join('');
   }
 
+  renderCategories();
   render();
 })();
 </script>
+<script src="settings-panel.js"></script>
 <script src="claude-panel.js"></script>
 
 </body></html>

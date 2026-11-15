@@ -6,6 +6,11 @@
    the GitHub Contents API, using a token kept only in this
    browser's localStorage — never committed anywhere.
 
+   Slides in from the RIGHT. No dimming backdrop and nothing
+   blocks clicks on the rest of the page — the site stays fully
+   interactive while this is open. Close via the × button, the
+   Claude icon again, or Esc.
+
    Include this script on every page that has a
    <button id="claudeIconBtn"> in its header.
    ============================================================ */
@@ -23,16 +28,16 @@
 
   function injectStyles() {
     const css = `
-      .cp-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.25); opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:60; }
-      .cp-overlay.open{ opacity:1; pointer-events:auto; }
       .cp-pane{
         position:fixed; top:0; right:0; height:100%; width:min(380px, 92vw);
         background:var(--card); color:var(--fg); border-left:1px solid var(--border);
+        box-shadow: -8px 0 24px rgba(0,0,0,0.12);
         transform:translateX(100%); transition:transform .22s ease; z-index:61;
         display:flex; flex-direction:column; font-family:var(--f-body);
+        pointer-events:none;
       }
-      .cp-pane.open{ transform:translateX(0); }
-      .cp-head{ padding:16px 18px 10px; border-bottom:1px solid var(--border); }
+      .cp-pane.open{ transform:translateX(0); pointer-events:auto; }
+      .cp-head{ padding:16px 18px 10px; border-bottom:1px solid var(--border); position:relative; }
       .cp-head h2{ margin:0 0 4px; font-family:var(--f-head); font-weight:var(--w-head); font-size:16px; }
       .cp-body{ padding:16px 18px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:18px; }
       .cp-section h3{ margin:0 0 8px; font-size:12px; font-family:var(--f-ui); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.06em; }
@@ -48,8 +53,6 @@
       .cp-builds li{ font-size:12px; display:flex; justify-content:space-between; gap:8px; border-bottom:1px dashed var(--border); padding-bottom:5px; }
       .cp-builds a{ color:var(--accent); text-decoration:none; }
       .cp-close{ position:absolute; top:12px; right:14px; background:none; border:none; font-size:18px; color:var(--fg-faint); cursor:pointer; line-height:1; }
-      .cp-pane{ position:fixed; }
-      .cp-head{ position:relative; }
     `;
     const style = document.createElement("style");
     style.textContent = css;
@@ -63,14 +66,10 @@
   function b64EncodeUnicode(str) {
     return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode("0x" + p1)));
   }
-  function b64DecodeUnicode(str) {
-    return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0")).join(""));
-  }
 
   function build() {
     injectStyles();
 
-    const overlay = h(`<div class="cp-overlay"></div>`);
     const pane = h(`
       <aside class="cp-pane" role="dialog" aria-label="Claude dev panel">
         <div class="cp-head">
@@ -97,39 +96,30 @@
       </aside>
     `);
 
-    document.body.appendChild(overlay);
     document.body.appendChild(pane);
 
+    let loaded = false;
     function open() {
-      overlay.classList.add("open");
       pane.classList.add("open");
-      loadVersion();
-      loadBuilds();
-      loadNotes();
+      if (!loaded) { loadVersion(); loadBuilds(); loadNotes(); loaded = true; }
       renderTokenArea();
     }
-    function close() {
-      overlay.classList.remove("open");
-      pane.classList.remove("open");
-    }
-    overlay.addEventListener("click", close);
+    function close() { pane.classList.remove("open"); }
+    function toggle() { pane.classList.contains("open") ? close() : open(); }
+
     pane.querySelector(".cp-close").addEventListener("click", close);
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && pane.classList.contains("open")) close();
     });
 
     const btn = document.getElementById("claudeIconBtn");
-    if (btn) btn.addEventListener("click", open);
+    if (btn) btn.addEventListener("click", toggle);
 
     function loadVersion() {
       fetch("version.json", { cache: "no-store" })
         .then((r) => r.json())
-        .then((v) => {
-          pane.querySelector("#cpVersionBadge").textContent = `Draft build v${v.version} · ${v.date}`;
-        })
-        .catch(() => {
-          pane.querySelector("#cpVersionBadge").textContent = "Draft build — version unknown";
-        });
+        .then((v) => { pane.querySelector("#cpVersionBadge").textContent = `Draft build v${v.version} · ${v.date}`; })
+        .catch(() => { pane.querySelector("#cpVersionBadge").textContent = "Draft build — version unknown"; });
     }
 
     function loadBuilds() {
@@ -142,9 +132,7 @@
           el.innerHTML = sorted.map((b, i) => {
             const isLatest = i === 0;
             const archiveHref = `Build History/index_v${b.version}_${b.date}.html`;
-            const link = isLatest
-              ? `<span>current</span>`
-              : `<a href="${escapeHtml(archiveHref)}">view</a>`;
+            const link = isLatest ? `<span>current</span>` : `<a href="${escapeHtml(archiveHref)}">view</a>`;
             return `<li><span><strong>v${escapeHtml(b.version)}</strong> · ${escapeHtml(b.date)} — ${escapeHtml(b.notes || "")}</span>${link}</li>`;
           }).join("");
         })
