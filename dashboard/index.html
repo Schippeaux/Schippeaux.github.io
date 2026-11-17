@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Life Dashboard</title>
+<style>
+  :root {
+    --paper: #faf7f2;
+    --ink: #2b2a27;
+    --muted: #7a756b;
+    --rule: #e6e0d4;
+    --card: #ffffff;
+    --accent: #8a6a3b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: Georgia, "Iowan Old Style", serif; font-weight: 400; margin: 0; }
+  h1 { font-size: 2.4rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.35rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .card p { margin: 6px 0; color: var(--muted); font-size: 0.95rem; }
+  .status {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+  }
+  .status.Active { color: #2f6b45; border-color: #bcdcc6; background: #eef7f1; }
+  .status.Planning { color: #7a5a14; border-color: #ecd9a8; background: #fbf5e4; }
+  .status.Waiting { color: #5a4a7a; border-color: #d6cbe8; background: #f5f1fa; }
+  .status.Idea { color: var(--muted); }
+  .status.Dormant { color: #9a9288; }
+  ul { margin: 6px 0 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .next-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+  .group-title { font-family: Georgia, serif; font-size: 1.05rem; color: var(--accent); margin: 28px 0 10px; }
+  .msg { color: var(--muted); padding: 40px 0; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Life Dashboard</h1>
+    <div class="meta" id="meta">Loading…</div>
+  </header>
+
+  <div id="app" class="msg">Loading…</div>
+
+  <footer>Read-only. Updated by hand from the markdown version.</footer>
+</main>
+
+<script>
+(async function () {
+  const app = document.getElementById('app');
+  const meta = document.getElementById('meta');
+
+  function el(tag, attrs, children) {
+    const node = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === 'class') node.className = attrs[k];
+      else node.setAttribute(k, attrs[k]);
+    }
+    (children || []).forEach(c => node.append(c instanceof Node ? c : document.createTextNode(String(c))));
+    return node;
+  }
+
+  function statusChip(status) {
+    return el('span', { class: 'status ' + status }, [status]);
+  }
+
+  let data;
+  try {
+    const res = await fetch('data.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    data = await res.json();
+  } catch (err) {
+    app.className = 'msg';
+    app.textContent = 'Could not load data.json (' + err.message + ').';
+    meta.textContent = '';
+    return;
+  }
+
+  meta.textContent = 'Updated ' + data.updated + ' · ' + data.owner;
+  app.className = '';
+  app.textContent = '';
+
+  // Next 30 days
+  app.append(el('h2', null, ['Next 30 days']));
+  app.append(el('table', null, [
+    el('thead', null, [el('tr', null, [el('th', null, ['Date']), el('th', null, ['What']), el('th', null, ['Project'])])]),
+    el('tbody', null, data.next30.map(r =>
+      el('tr', null, [el('td', null, [r.date]), el('td', null, [r.what]), el('td', null, [r.project])])
+    ))
+  ]));
+
+  // Focus
+  app.append(el('h2', null, ['Focus this week']));
+  app.append(el('ul', null, data.focus.map(f => el('li', null, [f]))));
+
+  // Projects grouped
+  const groups = [];
+  data.projects.forEach(p => { if (!groups.includes(p.group)) groups.push(p.group); });
+
+  app.append(el('h2', null, ['Projects']));
+  groups.forEach(g => {
+    app.append(el('div', { class: 'group-title' }, [g]));
+    const cards = data.projects.filter(p => p.group === g).map(p => {
+      const kids = [
+        el('h3', null, [p.name]),
+        el('div', null, [statusChip(p.status)]),
+      ];
+      if (p.summary) kids.push(el('p', null, [p.summary]));
+      if (p.next && p.next.length) {
+        kids.push(el('div', { class: 'next-label' }, ['Next']));
+        kids.push(el('ul', null, p.next.map(n => el('li', null, [n]))));
+      }
+      if (p.notes && p.notes.length) {
+        kids.push(el('div', { class: 'next-label' }, ['Notes']));
+        kids.push(el('ul', null, p.notes.map(n => el('li', null, [n]))));
+      }
+      return el('div', { class: 'card' }, kids);
+    });
+    app.append(el('div', { class: 'grid' }, cards));
+  });
+
+  // Ideas
+  if (data.ideas && data.ideas.length) {
+    app.append(el('h2', null, ['Ideas and longer-term']));
+    app.append(el('ul', null, data.ideas.map(i => el('li', null, [i]))));
+  }
+})();
+</script>
+</body>
+</html>

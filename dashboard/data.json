@@ -1,0 +1,255 @@
+{
+  "owner": "Ciarán",
+  "updated": "2026-11-17",
+  "next30": [
+    { "date": "Late Nov", "what": "Return to Australia and restart Weco work (confirm dates)", "project": "Work" },
+    { "date": "9 Dec 2026", "what": "Settlement, 9/548-550 William Street, Mount Lawley", "project": "Apartment" }
+  ],
+  "focus": [
+    "Settlement prep for William Street (finance, inspections, insurance)",
+    "Start the apartment fit-out design (design is planned during settlement)",
+    "Resubmit ABWA reinstatement with a current PI certificate",
+    "Pick one next step for Music Lab and one for Revit Graphics Studio"
+  ],
+  "projects": [
+    {
+      "id": "dashboard",
+      "name": "My Life Dashboard",
+      "group": "Tech and hosting",
+      "status": "Active",
+      "summary": "This page. Overview of every project, updated by hand.",
+      "next": ["Turn this into a live page (in progress)"],
+      "notes": []
+    },
+    {
+      "id": "music-lab",
+      "name": "Music Lab",
+      "group": "Creative",
+      "status": "Planning",
+      "summary": "Solo performance rig: synth, electronic drums and bass run through Ableton, controlled from a Push 1.",
+      "next": [
+        "Build the prototype Live Set (one scene per environment)",
+        "Practise hands-only rudiments (L and R) with a saved MIDI pattern set",
+        "Decide on Live 12 or 13 upgrade"
+      ],
+      "notes": [
+        "Hardware: Arturia MiniFreak, Sensory Percussion kit (planned), MacBook Air M4 with Live 11 Suite",
+        "Plan: prototype with simulated MIDI drums first, buy the kit once the environments work",
+        "Research site: schippeaux.github.io/rig/"
+      ]
+    },
+    {
+      "id": "sensory-kit",
+      "name": "Sensory Percussion kit (low-volume)",
+      "group": "Creative",
+      "status": "Planning",
+      "summary": "A compact low-volume kit: snare plus 2-3 small mesh-head toms, with rimshots for variety.",
+      "next": ["Decide the final voice count", "Buy only after the prototype is working"],
+      "notes": ["Leaning toward 12-13\" snare and 8-12\" toms"]
+    },
+    {
+      "id": "flippy",
+      "name": "Flippy",
+      "group": "Creative",
+      "status": "Active",
+      "summary": "Spanish learning app. Verb Conjugation Explorer uses fixed real-world scenarios per verb.",
+      "next": ["Continue the Verb Conjugation Explorer"],
+      "notes": ["Live site: Flippy_2"]
+    },
+    {
+      "id": "photography",
+      "name": "Photography website",
+      "group": "Creative",
+      "status": "Active",
+      "summary": "Photos organised by travel-location category, with text per category.",
+      "next": ["Write category text", "Build the \"publish to Insta\" button"],
+      "notes": ["Hosted at schippeaux.github.io/photography/", "Insta button posts up to 10 photos as a carousel"]
+    },
+    {
+      "id": "novel",
+      "name": "Novel: near-future political thriller",
+      "group": "Creative",
+      "status": "Dormant",
+      "summary": "Parallel between South American extraction and AI's effect on sovereignty. Human story first, theory second.",
+      "next": ["Decide on a writing cadence"],
+      "notes": []
+    },
+    {
+      "id": "substance-over-style",
+      "name": "Substance over Style (YouTube concept)",
+      "group": "Creative",
+      "status": "Idea",
+      "summary": "Maps public controversies to their cruxes, separating empirical from values disputes without verdicts.",
+      "next": [],
+      "notes": ["Brand line: \"Find the crux. Reveal the foundations. Build on solid ground.\""]
+    },
+    {
+      "id": "songwriting",
+      "name": "Original songwriting",
+      "group": "Creative",
+      "status": "Idea",
+      "summary": "Indie or hard rock songs. Considering starting from lyrics or poetry.",
+      "next": [],
+      "notes": []
+    },
+    {
+      "id": "apt-purchase",
+      "name": "Apartment purchase: 9/548-550 William Street",
+      "group": "Home",
+      "status": "Active",
+      "summary": "Under contract at $470,000 (Mount Lawley). Surplus cash kept in a mortgage offset account. Perth is a 2-3 year base.",
+      "next": ["Settlement checklist and finance", "Building and pest inspection follow-ups", "Insurance in place before settlement"],
+      "notes": ["Settlement due 9 Dec 2026"]
+    },
+    {
+      "id": "apt-fitout",
+      "name": "Apartment fit-out design",
+      "group": "Home",
+      "status": "Active",
+      "summary": "Designing it personally during the settlement period and managing the trades. Doubles as a portfolio piece.",
+      "next": ["Measure the unit and confirm the layout", "Decide on the built-in fold-out work-from-home desk", "Get trade quotes"],
+      "notes": []
+    },
+    {
+      "id": "apt-furniture",
+      "name": "Apartment furniture",
+      "group": "Home",
+      "status": "Planning",
+      "summary": "Couch on one wall, fold-out WFH desk built into the fitout. Drum kit not feasible in this unit.",
+      "next": ["Measure walls and list furniture needs", "Decide what gets built in and what gets bought"],
+      "notes": ["Fallback for music: guitar or a small digital pad"]
+    },
+    {
+      "id": "car",
+      "name": "Buy a car",
+      "group": "Home",
+      "status": "Planning",
+      "summary": "Fuel-efficient van for a small parking space, possibly a DIY campervan with a swivel-seat layout and 300Ah lithium battery.",
+      "next": ["Confirm whether this means the van", "Shortlist models and check prices"],
+      "notes": ["VW Transporter is the main candidate", "Wants light unsealed-road capability"]
+    },
+    {
+      "id": "digital-cleanup",
+      "name": "Digital cleanup",
+      "group": "Home",
+      "status": "Idea",
+      "summary": "Passwords, accounts, subscriptions, and a new email setup.",
+      "next": ["Password manager audit", "Subscription list (cancel or keep)", "Set up new email and forward the old one", "Photo library consolidation (check status)"],
+      "notes": ["Photo library is about 215GB across OneDrive, Mac Photos, an external HDD and Google Drive"]
+    },
+    {
+      "id": "stanley",
+      "name": "46 Stanley Street, Scarborough",
+      "group": "Work",
+      "status": "Active",
+      "summary": "Second-storey addition for Tim's house, treated as a portfolio piece. In design development.",
+      "next": ["Email the planner", "Revise the north setback to 1.0m", "Develop the northern facade"],
+      "notes": ["Pre-lodgement meeting done May 2026, no hard objections", "Council suggests 1.5m north setback, Ciarán argues 1.0m", "South boundary clear"]
+    },
+    {
+      "id": "weco",
+      "name": "Weco (main work)",
+      "group": "Work",
+      "status": "Active",
+      "summary": "Moving from contract (3 days/week) to permanent staff.",
+      "next": ["Sign the permanent offer"],
+      "notes": ["Negotiating salary and a 9-days-a-fortnight arrangement"]
+    },
+    {
+      "id": "alkimos",
+      "name": "Alkimos SLSC",
+      "group": "Work",
+      "status": "Active",
+      "summary": "City of Wanneroo surf club project, via Weco.",
+      "next": ["Clear 13 drawing changes and 5 report items"],
+      "notes": []
+    },
+    {
+      "id": "sutherlands",
+      "name": "Sutherlands Park",
+      "group": "Work",
+      "status": "Active",
+      "summary": "Boulevard cladding, perforated metal screens and gates, wall air terminals (via Weco).",
+      "next": ["Settle boulevard cladding panelisation", "Design the perforated metal screen", "Confirm wall air terminal positions and colours"],
+      "notes": []
+    },
+    {
+      "id": "abwa",
+      "name": "ABWA reinstatement",
+      "group": "Work",
+      "status": "Waiting",
+      "summary": "Reinstating to the Practising Division. Stalled because the PI certificate of currency expired just before submission.",
+      "next": ["Get a new PI certificate", "Resubmit"],
+      "notes": ["Registration number 3623", "Fee $175"]
+    },
+    {
+      "id": "job-apps",
+      "name": "Job applications",
+      "group": "Work",
+      "status": "Waiting",
+      "summary": "Applied for BIM Library Manager at Built Living. Target direction: modular housing, DfMA, design-to-manufacture.",
+      "next": [],
+      "notes": ["Also assessed a Senior Computational Designer role, which needs deeper Python/C# skills"]
+    },
+    {
+      "id": "revit-graphics",
+      "name": "Revit Graphics Studio (product)",
+      "group": "Work",
+      "status": "Active",
+      "summary": "Formerly Revit Material Library. Polyhaven CC0 textures into Revit via a Dynamo Python node.",
+      "next": ["Hatch .pat library", "_Template material", "Dynamo script"],
+      "notes": ["Downloader v4 running", "Shading palette agreed: 42 colours, warm-neutral", "Business model: $300-500 upfront plus $150-200/yr subscription"]
+    },
+    {
+      "id": "revit-templates",
+      "name": "Revit Template Features List",
+      "group": "Work",
+      "status": "Active",
+      "summary": "Persistent roadmap for family and view template standards.",
+      "next": [],
+      "notes": ["Filled regions in solid white plus feature colour", "Plan view templates with warm sepia tones and a line-weight hierarchy"]
+    },
+    {
+      "id": "casework",
+      "name": "Casework / fit-out business (idea)",
+      "group": "Work",
+      "status": "Idea",
+      "summary": "Smart, space-saving CNC-milled casework and joinery for interiors and campervans.",
+      "next": [],
+      "notes": ["Test projects: apartment fit-out and cat stairs", "Long term: own a CNC machine, rent a workshop"]
+    },
+    {
+      "id": "snaggo",
+      "name": "Snaggo (defects-list app for architects)",
+      "group": "Tech and hosting",
+      "status": "Active",
+      "summary": "Room-by-room defect lists with photos and dictation.",
+      "next": ["Finish the app", "Add it to the splash page once ready"],
+      "notes": []
+    },
+    {
+      "id": "github-pages",
+      "name": "GitHub Pages (schippeaux.github.io)",
+      "group": "Tech and hosting",
+      "status": "Active",
+      "summary": "One monorepo with a folder per site, deployed by plain git push to main.",
+      "next": ["Build the splash page", "Write a hosting reference doc for future sites"],
+      "notes": ["Splash page styled as a phone home-screen icon grid"]
+    },
+    {
+      "id": "gym",
+      "name": "Gym routine",
+      "group": "Health and routine",
+      "status": "Active",
+      "summary": "4 days/week since 29 Sep 2026, lunch-break sessions. Goals: lean, strong core and back, some chest, muscular arms.",
+      "next": ["Review progress after 8 weeks"],
+      "notes": ["Tracking in Hevy, all four routines entered"]
+    }
+  ],
+  "ideas": [
+    "Residential builder in WA (ABWA Set 2 pathway, about 6-9 years from entry-level site work)",
+    "Baugruppen-style collective housing with friends",
+    "Modular housing design toolkit (with Taib and Andrei)",
+    "Almahue residential project (Buenos Aires, on hold)"
+  ]
+}
