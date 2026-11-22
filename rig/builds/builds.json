@@ -76,5 +76,11 @@
     "date": "2026-11-12",
     "notes": "New Grooves page: nine full-kit study grooves with scores, players and MIDI files",
     "path": "builds/0.7.0/index.html"
+  },
+  {
+    "version": "0.8.0",
+    "date": "2026-11-22",
+    "notes": "New Lighting page: LEDs behind each mesh head, wired USB-MIDI into the existing hub, scenes drive programs; deferred gear items and open decision added",
+    "path": "builds/0.8.0/index.html"
   }
 ]

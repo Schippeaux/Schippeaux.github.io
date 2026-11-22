@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hook-up — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="hookup">
+<main class="pg">
+<div class="hero"><h1>Hook-up</h1>
+<p class="thesis">How everything plugs in. The EVANS Portal is at the centre for audio and sensors; a powered USB hub now gathers every MIDI controller before the laptop.</p>
+</div>
+<div class="row">
+<div class="b12">
+<figure>
+<svg class="sv" viewBox="0 0 900 720" role="img" aria-label="Wiring diagram: drums, bass, synth and MIDI controllers feed the EVANS Portal and a powered USB hub, both into the laptop, out to speakers and headphones. Drum, bass, synth and controller boxes link to their pages">
+<defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+</defs>
+<!-- Drums top row -->
+<a href="percussion.html" aria-label="Percussion page">
+<rect class="bx" x="20" y="20" width="110" height="45"/><text x="75" y="38" text-anchor="middle" font-weight="600" font-size="12">Kick pedal</text><text class="q" x="75" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="140" y="20" width="110" height="45"/><text x="195" y="38" text-anchor="middle" font-weight="600" font-size="12">Snare</text><text class="q" x="195" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="260" y="20" width="110" height="45"/><text x="315" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → hi-hat</text><text class="q" x="315" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="380" y="20" width="90" height="45"/><text x="425" y="38" text-anchor="middle" font-weight="600" font-size="11">Tom → ride</text><text class="q" x="425" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="480" y="20" width="90" height="45"/><text x="525" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 1</text><text class="q" x="525" y="55" text-anchor="middle" font-size="10">sensor</text>
+<rect class="bx" x="580" y="20" width="90" height="45"/><text x="625" y="38" text-anchor="middle" font-weight="600" font-size="12">Tom 2</text><text class="q" x="625" y="55" text-anchor="middle" font-size="10">sensor</text>
+<!-- HH pedal, moved clear of the hi-hat tom's sensor line at x=315 -->
+<rect class="bxd" x="200" y="80" width="100" height="35"/><text class="q" x="250" y="99" text-anchor="middle" font-size="10" font-weight="600">Hi-hat pedal</text><text class="q" x="250" y="112" text-anchor="middle" font-size="9">routing TBC</text>
+</a>
+<!-- sensor cables to Portal -->
+<g class="thin" style="color:var(--line)">
+<line x1="75" y1="65" x2="75" y2="170"/><line x1="195" y1="65" x2="195" y2="170"/>
+<line x1="315" y1="65" x2="315" y2="170"/><line x1="425" y1="65" x2="425" y2="170"/>
+<line x1="525" y1="65" x2="505" y2="170"/><line x1="625" y1="65" x2="575" y2="170"/>
+</g>
+<line class="lnq" x1="250" y1="115" x2="250" y2="170" marker-end="url(#arr)"/>
+<!-- Portal -->
+<rect class="hi" x="40" y="170" width="540" height="80"/>
+<text x="310" y="196" text-anchor="middle" font-weight="700" font-size="14">EVANS Portal</text>
+<text class="q" x="310" y="214" text-anchor="middle" font-size="10">7 sensor in · combo A/B (inst/line, +48V) · line C/D</text>
+<text class="q" x="310" y="230" text-anchor="middle" font-size="10">main out L/R · aux 5–8 · phones · ADAT · MIDI DIN · USB-C</text>
+<!-- Bass chain, shifted right clear of Tom 2 -->
+<a href="bass.html" aria-label="Bass page">
+<rect class="bx" x="700" y="20" width="170" height="45"/><text x="785" y="38" text-anchor="middle" font-weight="600" font-size="12">Bass guitar</text><text class="q" x="785" y="55" text-anchor="middle" font-size="10">passive</text>
+<rect class="bx" x="700" y="85" width="80" height="40"/><text x="740" y="101" text-anchor="middle" font-size="11">Compressor</text>
+<rect class="bx" x="790" y="85" width="80" height="40"/><text x="830" y="101" text-anchor="middle" font-size="11">SansAmp</text>
+</a>
+<g class="ln" style="color:var(--line)">
+<path d="M785 65L785 72L740 72L740 85" marker-end="url(#arr)"/>
+<path d="M780 105L790 105" marker-end="url(#arr)"/>
+<path d="M830 125L830 155L555 155L555 170" marker-end="url(#arr)"/>
+</g>
+<text class="q" x="600" y="152" font-size="9">input A (inst)</text>
+<!-- Synth -->
+<a href="synth.html" aria-label="Synth page">
+<rect class="bx" x="700" y="180" width="170" height="50"/><text x="785" y="200" text-anchor="middle" font-weight="600" font-size="12">MiniFreak</text><text class="q" x="785" y="218" text-anchor="middle" font-size="10">audio + USB-MIDI</text>
+</a>
+<g class="ln" style="color:var(--line)"><path d="M700 200L580 200" marker-end="url(#arr)"/></g>
+<text class="q" x="640" y="195" font-size="9">C/D line</text>
+<!-- MIDI controllers feeding the hub -->
+<a href="midi.html" aria-label="MIDI Controllers page">
+<rect class="bx" x="20" y="260" width="120" height="35"/><text x="80" y="278" text-anchor="middle" font-weight="600" font-size="11">Push 1</text><text class="q" x="80" y="291" text-anchor="middle" font-size="9">clips, scenes</text>
+<rect class="bx" x="20" y="305" width="120" height="35"/><text x="80" y="323" text-anchor="middle" font-size="11">Loop controller</text><text class="q" x="80" y="336" text-anchor="middle" font-size="9">foot MIDI</text>
+<rect class="bx" x="20" y="350" width="120" height="35"/><text x="80" y="368" text-anchor="middle" font-size="11">FX knobs</text><text class="q" x="80" y="381" text-anchor="middle" font-size="9">deferred modular controller</text>
+</a>
+<g class="usb">
+<path d="M140 277L170 277" marker-end="url(#arr)"/>
+<path d="M140 322L170 322" marker-end="url(#arr)"/>
+<path d="M140 367L170 367" marker-end="url(#arr)"/>
+</g>
+<!-- Powered USB hub: Portal, Push 1, Loop controller, FX knobs and MiniFreak USB-MIDI all plug in; one USB-C out to the laptop -->
+<rect class="hi" x="170" y="255" width="360" height="130"/>
+<text x="350" y="310" text-anchor="middle" font-weight="700" font-size="13">Powered USB hub</text>
+<text class="q" x="350" y="328" text-anchor="middle" font-size="9">needs its own test under load — see open questions</text>
+<line class="usb" x1="310" y1="250" x2="310" y2="255" marker-end="url(#arr)"/>
+<text class="q" x="318" y="247" font-size="9">USB-C</text>
+<path class="usb" d="M785 230L785 245L530 245L530 255" style="stroke-dasharray:6 4" marker-end="url(#arr)"/>
+<text class="q" x="640" y="240" font-size="9">USB-MIDI</text>
+<!-- One USB-C from the hub to the laptop -->
+<line class="usb" x1="350" y1="385" x2="350" y2="400" marker-end="url(#arr)"/>
+<text class="q" x="358" y="396" font-size="9">USB-C</text>
+<!-- Laptop -->
+<rect class="hi" x="140" y="400" width="620" height="70"/>
+<text x="450" y="425" text-anchor="middle" font-weight="700" font-size="14">Laptop</text>
+<text class="q" x="450" y="445" text-anchor="middle" font-size="11">Sensory Percussion 2 → MIDI/CC → Ableton Live (+ Max for Live) → Jam Origin MIDI Bass</text>
+<!-- Outputs, routed around the hub and the laptop rather than through them -->
+<g class="ln" style="color:var(--line)">
+<path d="M40 235L15 235L15 522L260 522" marker-end="url(#arr)"/>
+<path d="M40 220L8 220L8 590L260 590" marker-end="url(#arr)"/>
+</g>
+<rect class="bx" x="260" y="500" width="180" height="45"/><text x="350" y="518" text-anchor="middle" font-weight="600" font-size="12">Speakers</text><text class="q" x="350" y="535" text-anchor="middle" font-size="10">Portal main out L/R</text>
+<rect class="bx" x="260" y="568" width="180" height="45"/><text x="350" y="586" text-anchor="middle" font-weight="600" font-size="12">Headphones</text><text class="q" x="350" y="603" text-anchor="middle" font-size="10">Portal phones (3.5mm + ¼")</text>
+<!-- Fallback interface -->
+<rect class="bxd" x="520" y="500" width="200" height="50"/><text class="q" x="620" y="522" text-anchor="middle" font-size="11">Separate audio interface</text><text class="q" x="620" y="538" text-anchor="middle" font-size="9">fallback if Portal can't serve as sole I/O</text>
+<!-- Legend -->
+<g transform="translate(40 660)">
+<line class="ln" x1="0" y1="8" x2="30" y2="8" style="color:var(--line)"/><text x="36" y="12" font-size="10">Audio</text>
+<line class="usb" x1="100" y1="8" x2="130" y2="8"/><text x="136" y="12" font-size="10">USB / MIDI</text>
+<line class="thin" x1="210" y1="8" x2="240" y2="8" style="color:var(--line)"/><text x="246" y="12" font-size="10">Sensor cable</text>
+<line class="lnq" x1="330" y1="8" x2="360" y2="8"/><text x="366" y="12" font-size="10">Unconfirmed</text>
+<rect class="bxd" x="440" y="0" width="16" height="16"/><text x="462" y="12" font-size="10">Fallback / optional</text>
+</g>
+</svg>
+<figcaption>Wiring diagram. Drums, bass chain, synth and MIDI controllers are clickable through to their own pages. The Portal handles sensor inputs and audio I/O; a powered USB hub gathers every MIDI device — Portal, Push 1, loop controller, FX knobs and the MiniFreak's USB-MIDI — before a single USB-C run to the laptop.</figcaption>
+</figure>
+</div></div>
+
+<div class="row"><h2>Open questions</h2>
+<div class="b7">
+<ul>
+<li><strong>Portal as sole interface?</strong> Bass into input A (inst), MiniFreak into C/D, speakers on Main Out, headphones on phones. If it works, no separate audio interface is needed.</li>
+<li><strong>Hi-hat pedal:</strong> the Portal has 7 sensor inputs (3.5 mm TRS) plus combo inputs A/B, but a hi-hat pedal/controller connection is not documented.</li>
+<li><strong>USB hub under load:</strong> needs testing with everything plugged in at once — Portal, Push 1, loop controller, FX knobs and the MiniFreak's USB-MIDI all sharing one hub and one USB-C run to the laptop. Bus power and enumeration order are both unverified.</li>
+<li><strong>Push 1 power:</strong> Push 1 needs its own power supply — it cannot be bus-powered off the hub alongside everything else.</li>
+</ul>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

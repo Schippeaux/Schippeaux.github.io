@@ -20,6 +20,7 @@
     {id:'bass',t:'Bass',z:0,parent:'hookup'},
     {id:'percussion',t:'Percussion',z:0,parent:'hookup'},
     {id:'midi',t:'MIDI Controllers',z:0,parent:'hookup'},
+    {id:'lighting',t:'Lighting',z:0,parent:'hookup'},
     {id:'routing',t:'Routing',z:1},
     {id:'looping',t:'Looping',z:1,parent:'routing'},
     {id:'clock',t:'Clock',z:1,parent:'routing'},

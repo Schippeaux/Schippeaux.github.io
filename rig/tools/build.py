@@ -6,8 +6,8 @@ import practice as practice_mod
 import grooves as grooves_mod
 
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # rig/
-VERSION = "0.7.0"
-DATE = "2026-11-12"
+VERSION = "0.8.0"
+DATE = "2026-11-22"
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">'
 
@@ -125,6 +125,7 @@ def percussion():
 </tbody>
 </table>
 <p class="sm">Since the sensor reads position and dynamics rather than resonance, diameter affects stick feel, not what can be triggered. Shallower shells (100–130 mm) save more space than dropping a diameter and change playability less.</p>
+<p class="sm">Planned, deferred: LEDs behind each mesh head, diffused into a glow and driven by the same playing signals — see <a href="lighting.html">Lighting</a>.</p>
 </div></div>'''
 
 
@@ -198,6 +199,44 @@ def midi():
 <p>Loop lengths of 4, 8 and 16 bars are still an open design question — see <a href="looping.html">Looping</a>. The two shapes under consideration both want pads, not a footswitch: either three dedicated length buttons, or one record button plus a length selector. Push's pads are the natural home, with the modular FX-knob controller (once it arrives) as the other hand-reach option.</p>
 ''' + detail("The deferred modular controller", '''<p>An Intech Grid or Monogram-style device: a grid of knobs/pads whose assignment follows the selected track in Live, rather than being hard-wired to one effect. Deferred until the core rig (drums, bass, synth, foot transport) is in and the effects worth dedicating knobs to are known.</p>
 <p>Natural jobs once it arrives: the loop-length selector above, and direct hands-on access to whichever Expression mapping (<a href="expression.html">Expression</a>) is live in a given scene — filter cutoff, reverb send, randomisation amount — without diving into Live's screen.</p>''') + '''
+</div></div>'''
+
+
+def lighting():
+    return hero("Lighting", "LEDs behind each mesh head, diffused into a glow and driven off the same signals already feeding the synth — one more device on the existing hub, not a separate system.") + '''
+<div class="row"><h2>Behind the mesh</h2>
+<div class="b8">
+<p>A single LED behind a mesh head gives a hot spot, not a glow. The plan is a small ring of addressable RGB LEDs (WS2812B / NeoPixel) inside each shell, facing the underside of the head, with a diffuser between them and the mesh — tracing paper, a disc of frosted acrylic, or a layer of white fabric — to spread the light into an even wash. Addressable means every head can be its own segment of one LED string, each independently colourable, rather than needing a separate controller per drum.</p>
+</div></div>
+
+<div class="row"><h2>One controller, wired into the hub</h2>
+<div class="b8">
+<p>A single microcontroller drives every strip — a Teensy or an Arduino Pro Micro, both of which present as a real class-compliant USB-MIDI device with no extra drivers, running the <a href="https://fastled.io/">FastLED</a> library to push the pixels. It plugs into the same powered USB hub as everything else on <a href="hookup.html">Hook-up</a> — lighting is just another device on that hub, not a parallel system with its own cabling.</p>
+''' + detail("Why wired MIDI, not WiFi/OSC", '''<p>OSC over WiFi would carry richer payloads than MIDI's 7-bit range — full RGB and a scene index in one packet rather than a note plus a couple of CCs. But a live set is the wrong place to add a wireless dependency when a USB cable into the hub already does the job. MIDI's 7-bit resolution is plenty for brightness and hue; a wired connection is the one that won't drop out mid-song.</p>''') + '''
+</div></div>
+
+<div class="row"><h2>Scenes drive programs</h2>
+<div class="b8">
+<p class="lg">Lighting is treated as another mapped destination in the same signal bus the <a href="chemistry.html">Chemistry</a> routing and <a href="expression.html">Expression</a> mappings already use — velocity and energy that move a filter cutoff or a reverb send can just as easily move a brightness or a hue.</p>
+<p>A handful of MIDI notes select the running program on the microcontroller — idle breathing glow, a flash per hit scaled by velocity, a position-based chase, a colour wash per scene. A couple of CCs carry continuous brightness/hue, fed from the same signals already driving the synth. A small Max for Live device watches for Live scene launches and fires the matching program-select note automatically, so the lighting always tracks whichever environment is playing without a separate manual switch.</p>
+</div></div>
+
+<div class="row"><h2>What it needs</h2>
+<div class="b7">
+<table>
+<thead><tr><th>Part</th><th>Role</th><th>Approx. cost</th></tr></thead>
+<tbody>
+<tr><td>Teensy or Arduino Pro Micro</td><td>USB-MIDI brain, runs FastLED</td><td>$15–25</td></tr>
+<tr><td>WS2812B / NeoPixel strip or rings</td><td>Addressable LEDs, one segment per head</td><td>$20–30</td></tr>
+<tr><td>Diffuser material</td><td>Tracing paper / frosted acrylic / white fabric</td><td>negligible</td></tr>
+<tr><td>Separate 5V supply</td><td>Once total LED count outgrows USB bus power</td><td>$10–15</td></tr>
+</tbody>
+</table>
+<p class="sm">See <a href="gear.html">Gear List</a> for these as deferred line items. All up, a modest weekend electronics project — not a reason to delay buying the drum kit, and not something that needs to happen before the core rig phases.</p>
+</div>
+<div class="b4 p9">
+<p class="sm">Deferred by design: this is polish on top of a working kit, not a dependency of one. It belongs after the core phases (drums, foot control, bass) are in and the playing habit is established, not before.</p>
+</div>
 </div></div>'''
 
 
@@ -823,6 +862,9 @@ GEAR = [
     {"item":"Hardware step sequencer",     "role":"Synth",    "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Only if MiniFreak + Live runs out"},
     {"item":"Separate audio interface",    "role":"Audio I/O","phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Fallback if Portal can't handle all I/O"},
     {"item":"Modular MIDI controller",     "role":"Control",  "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"Intech Grid / Monogram; follows selected track"},
+    {"item":"Teensy or Arduino Pro Micro", "role":"Lighting", "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"~$15–25; class-compliant USB-MIDI, runs FastLED, plugs into the existing powered hub — see Lighting"},
+    {"item":"WS2812B / NeoPixel strip or rings", "role":"Lighting", "phase":0, "status":"Deferred","cost":0, "cables":"", "notes":"~$20–30; one segment per mesh head, plus a diffuser (tracing paper or frosted acrylic) behind each head"},
+    {"item":"Separate 5V LED power supply", "role":"Lighting", "phase":0, "status":"Deferred","cost":0,   "cables":"", "notes":"~$10–15; only needed once total LED count outgrows the hub's USB power"},
 ]
 
 
@@ -1140,6 +1182,7 @@ def decisions():
 <li><input type="checkbox" id="d12"><label for="d12">Exactly when tempo locks: the first loop's end, a manual tap, or a dedicated button — Clock currently assumes first loop end</label></li>
 <li><input type="checkbox" id="d13"><label for="d13">Loop-length control: three length buttons, or one record button plus a length selector</label></li>
 <li><input type="checkbox" id="d14"><label for="d14">USB hub load test with everything plugged in at once; Push 1 needs its own power supply, not bus power from the hub</label></li>
+<li><input type="checkbox" id="d15"><label for="d15">Lighting: confirm wired USB-MIDI over WiFi/OSC holds up once the LED rings and diffusers are actually built</label></li>
 </ul>
 </div></div>'''
 
@@ -1590,6 +1633,7 @@ PAGES = {
     'synth': ('Synth', synth),
     'hookup': ('Hook-up', hookup),
     'midi': ('MIDI Controllers', midi),
+    'lighting': ('Lighting', lighting),
     'arrangement': ('Arrangement', arrangement),
     'routing': ('Routing', routing),
     'looping': ('Looping', looping),
@@ -1670,7 +1714,8 @@ def build():
         {"version": "0.5.1", "date": "2026-11-11", "notes": "New Set Template page: one Ableton set, one scene per environment, signal adapter for the SP2", "path": "builds/0.5.1/index.html"},
         {"version": "0.6.0", "date": "2026-11-12", "notes": "New Practice page: beginner rudiment ladder in text notation, three playable patterns with tempo and swing, downloadable .mid files", "path": "builds/0.6.0/index.html"},
         {"version": "0.6.1", "date": "2026-11-12", "notes": "Practice: all 19 patterns playable and downloadable as MIDI (plus a zip), click sounds with a five-way sound menu, left and right hands pitched apart", "path": "builds/0.6.1/index.html"},
-        {"version": VERSION, "date": DATE, "notes": "New Grooves page: nine full-kit study grooves with scores, players and MIDI files", "path": f"builds/{VERSION}/index.html"},
+        {"version": "0.7.0", "date": "2026-11-12", "notes": "New Grooves page: nine full-kit study grooves with scores, players and MIDI files", "path": "builds/0.7.0/index.html"},
+        {"version": VERSION, "date": DATE, "notes": "New Lighting page: LEDs behind each mesh head, wired USB-MIDI into the existing hub, scenes drive programs; deferred gear items and open decision added", "path": f"builds/{VERSION}/index.html"},
     ]
     with open(os.path.join(builds_dir, 'builds.json'), 'w') as f:
         json.dump(manifest, f, indent=2)
