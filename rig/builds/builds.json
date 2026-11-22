@@ -82,5 +82,11 @@
     "date": "2026-11-22",
     "notes": "New Lighting page: LEDs behind each mesh head, wired USB-MIDI into the existing hub, scenes drive programs; deferred gear items and open decision added",
     "path": "builds/0.8.0/index.html"
+  },
+  {
+    "version": "0.9.0",
+    "date": "2026-11-22",
+    "notes": "Arrangement kit diagram: enlarged kick, tighter cluster, six electronic trigger bars arced around snare/tom 1/floor tom (loop, undo/clear, reset, next scene, instrument cycle, fill/transition) via a separate trigger-to-MIDI box",
+    "path": "builds/0.9.0/index.html"
   }
 ]

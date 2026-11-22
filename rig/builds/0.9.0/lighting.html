@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lighting — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="lighting">
+<main class="pg">
+<div class="hero"><h1>Lighting</h1>
+<p class="thesis">LEDs behind each mesh head, diffused into a glow and driven off the same signals already feeding the synth — one more device on the existing hub, not a separate system.</p>
+</div>
+<div class="row"><h2>Behind the mesh</h2>
+<div class="b8">
+<p>A single LED behind a mesh head gives a hot spot, not a glow. The plan is a small ring of addressable RGB LEDs (WS2812B / NeoPixel) inside each shell, facing the underside of the head, with a diffuser between them and the mesh — tracing paper, a disc of frosted acrylic, or a layer of white fabric — to spread the light into an even wash. Addressable means every head can be its own segment of one LED string, each independently colourable, rather than needing a separate controller per drum.</p>
+</div></div>
+
+<div class="row"><h2>One controller, wired into the hub</h2>
+<div class="b8">
+<p>A single microcontroller drives every strip — a Teensy or an Arduino Pro Micro, both of which present as a real class-compliant USB-MIDI device with no extra drivers, running the <a href="https://fastled.io/">FastLED</a> library to push the pixels. It plugs into the same powered USB hub as everything else on <a href="hookup.html">Hook-up</a> — lighting is just another device on that hub, not a parallel system with its own cabling.</p>
+<details>
+<summary>Why wired MIDI, not WiFi/OSC</summary>
+<div class="dbody"><p>OSC over WiFi would carry richer payloads than MIDI's 7-bit range — full RGB and a scene index in one packet rather than a note plus a couple of CCs. But a live set is the wrong place to add a wireless dependency when a USB cable into the hub already does the job. MIDI's 7-bit resolution is plenty for brightness and hue; a wired connection is the one that won't drop out mid-song.</p></div>
+</details>
+</div></div>
+
+<div class="row"><h2>Scenes drive programs</h2>
+<div class="b8">
+<p class="lg">Lighting is treated as another mapped destination in the same signal bus the <a href="chemistry.html">Chemistry</a> routing and <a href="expression.html">Expression</a> mappings already use — velocity and energy that move a filter cutoff or a reverb send can just as easily move a brightness or a hue.</p>
+<p>A handful of MIDI notes select the running program on the microcontroller — idle breathing glow, a flash per hit scaled by velocity, a position-based chase, a colour wash per scene. A couple of CCs carry continuous brightness/hue, fed from the same signals already driving the synth. A small Max for Live device watches for Live scene launches and fires the matching program-select note automatically, so the lighting always tracks whichever environment is playing without a separate manual switch.</p>
+</div></div>
+
+<div class="row"><h2>What it needs</h2>
+<div class="b7">
+<table>
+<thead><tr><th>Part</th><th>Role</th><th>Approx. cost</th></tr></thead>
+<tbody>
+<tr><td>Teensy or Arduino Pro Micro</td><td>USB-MIDI brain, runs FastLED</td><td>$15–25</td></tr>
+<tr><td>WS2812B / NeoPixel strip or rings</td><td>Addressable LEDs, one segment per head</td><td>$20–30</td></tr>
+<tr><td>Diffuser material</td><td>Tracing paper / frosted acrylic / white fabric</td><td>negligible</td></tr>
+<tr><td>Separate 5V supply</td><td>Once total LED count outgrows USB bus power</td><td>$10–15</td></tr>
+</tbody>
+</table>
+<p class="sm">See <a href="gear.html">Gear List</a> for these as deferred line items. All up, a modest weekend electronics project — not a reason to delay buying the drum kit, and not something that needs to happen before the core rig phases.</p>
+</div>
+<div class="b4 p9">
+<p class="sm">Deferred by design: this is polish on top of a working kit, not a dependency of one. It belongs after the core phases (drums, foot control, bass) are in and the playing habit is established, not before.</p>
+</div>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

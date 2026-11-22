@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bass — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="bass">
+<main class="pg">
+<div class="hero"><h1>Bass</h1>
+<p class="thesis">The true third voice — not accompaniment but a musical starting point. Get a groove on, loop it, hand it to the synth, and let it evolve.</p>
+</div>
+<div class="row"><h2>Where the bass fits in</h2>
+<div class="b12">
+<div class="creature">
+<h3>The understudy<span>gets a groove going, then the synth takes it and runs</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+You pick up the bass and noodle until something locks in — a line, a riff, a groove. You loop it. Then you tell Ableton to convert it into MIDI, and on the next turnaround, the synth picks up the line. But it does not play it the same way. It adds notes, in key, generatively — a little fill, a passing tone, a syncopated ghost. It shifts notes or leaves them out. It has learned the general groove and is playing with it musically. You can go back to the bass and play alongside this new version, or you can leave it and pick up the sticks.
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul><li><strong>Bass-to-MIDI in real time</strong> using <a href="https://www.jamorigin.com">Jam Origin MIDI Bass</a> — a VST/AU plugin that converts monophonic bass audio to MIDI with low latency.</li><li><strong>Handoff:</strong> on a turnaround (or a trigger), route the MIDI loop to the MiniFreak track. Crossfade the audio bass loop out and the synth voice in.</li><li><strong>Generative variation:</strong> Live's Scale MIDI effect keeps added notes in key. A Max for Live note-chance device drops, shifts or adds notes at probability thresholds.</li><li><strong>Groove learning</strong> — the same principle as the Mimic character: a model of the rhythmic shape biases what gets added and where.</li></ul></div>
+</details>
+</div>
+</div></div>
+
+<div class="row"><h2>Signal chain</h2>
+<div class="b8">
+<p class="lg">Bass → compressor → SansAmp Bass Driver DI → Portal input A (inst/Hi-Z) → Live.</p>
+<p>Character goes in the analogue chain before the interface, where it is zero-latency and under a hand or foot. The <strong>SansAmp</strong> provides amp-style saturation and a DI in one analogue box. A <strong>compressor</strong> (MXR Bass Compressor or similar) before it evens dynamics and keeps loop levels consistent.</p>
+<details>
+<summary>DI and digital alternatives</summary>
+<div class="dbody"><p><strong>No DI box needed</strong> if the interface has a Hi-Z input — the Portal's input A has an inst/line switch. Reserve Live's effects on the bass track for things that are looped or modulated live.</p>
+<p><strong>Digital alternatives</strong> are good now (Neural DSP Darkglass is the bass benchmark). Plugin latency ~3–8 ms at 64–128 samples. The argument for pedals is tactility, not sound quality.</p></div>
+</details>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

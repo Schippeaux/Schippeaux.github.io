@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chemistry — Rig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700;125,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="chemistry">
+<main class="pg">
+<div class="hero"><h1>Chemistry</h1>
+<p class="thesis">The synth sounds are not patches — they are characters, each with its own feel, living in the environment the drums create.</p>
+</div>
+<div class="row">
+<div class="b8">
+<p class="lg">Each character has two halves: what it feels like to play with, and how to build it. Click the build section to expand it. Their voices are all MiniFreak presets — one synth holds several at once, or one character per scene.</p>
+</div></div>
+
+<div class="row">
+<div class="b12">
+<div class="creature">
+<h3>The turnaround<span>form-aware — knows where it is in the bar count</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+The environment counts along with you. In 4/4 it knows a four- or eight-bar phrase is coming to its turnaround and, as you approach it, the characters brace — a pad holds its breath, a pluck leans in. On the downbeat of the new phrase something happens: the key shifts under you, or everything drops out for a bar and comes back changed, or a new character wakes up.
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul><li>Live's transport is the form clock: a Max for Live device reads <code>live.set</code> current bar and counts within an 8-bar phrase.</li><li>Bars 7–8 raise a "turnaround" signal mapped to tension parameters: pad filter down, delay feedback up, arp rate halving.</li><li>On bar 1: weighted chance picks an event — <em>transpose</em>, <em>silence</em> (mute one bar), or <em>wake</em> (launch the next clip).</li><li>Chance weights modulated by playing: high density favours <em>wake</em>, low favours <em>silence</em>.</li></ul></div>
+</details>
+</div>
+</div></div>
+
+<div class="row">
+<div class="b12">
+<div class="creature">
+<h3>The surface<span>position-pitched — the head is a keyboard</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+The drumhead is no longer one note. Centre is low and dark, moving outward the note climbs and the tone opens. A roll that drifts from the middle to the rim becomes a rising, brightening phrase. The pad under the sticks becomes a melodic instrument you play by where, not just when.
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul><li>Blended zones (Centre ↔ Edge): Timbre outputs a continuous 0–1 position per hit.</li><li>Max for Live quantises the CC into a scale (5–8 steps) and rewrites the note pitch.</li><li>Unquantised CC maps to filter cutoff so brightness tracks position.</li><li>Start with one tom as the surface; expand once the scale feels right.</li></ul></div>
+</details>
+</div>
+</div></div>
+
+<div class="row">
+<div class="b12">
+<div class="creature">
+<h3>The mimic<span>listens, learns the groove, carries it on — and decays without attention</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+You lay down a rhythm and the mimic starts to shadow it — first exactly, then in its own way, keeping the shape but choosing variations. Stop and it keeps going. But leave it too long and it gets thinner. Hits go missing, the timing loosens, the pitch drifts. It is still your idea, but it is forgetting it. Come back in and it brightens. It is a character you have to keep feeding.
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul><li><strong>Capture:</strong> Max for Live records incoming drum MIDI into a rolling buffer (last 2–4 bars), storing beat position, velocity, zone and micro-timing.</li><li><strong>Model:</strong> per-step hit probabilities and a velocity profile (first-order Markov chain, weighted by recency).</li><li><strong>Life meter:</strong> 0–1, rises with each real hit (fast attack), decays exponentially when none arrive.</li><li><strong>Decay behaviours</strong> driven by (1 − life): probability drops, timing jitters, pitch drifts, tone degrades. At life ≈ 0, silence.</li></ul></div>
+</details>
+</div>
+</div></div>
+
+<div class="row">
+<div class="b12">
+<div class="creature">
+<h3>The understudy<span>bass-to-synth handoff — the groove transfers and mutates</span></h3>
+<div class="feel"><span class="k">What it feels like</span>
+The bass groove you looped hands off to the synth and it starts to make it its own. It adds notes, leaves some out, finds syncopated bits you did not play. The groove you laid down is still there underneath, but the synth is riffing on it, learning the general feel and playing with it musically.
+</div>
+<details>
+<summary>How to build it<span class="dtag">Ableton + Max for Live</span></summary>
+<div class="dbody"><ul><li>Bass audio → Jam Origin MIDI Bass (real-time) → MIDI recorded alongside the audio loop.</li><li>On turnaround, MIDI routes to MiniFreak; audio crossfades out.</li><li>Scale MIDI effect keeps additions in key. Note-chance device drops/shifts/adds at probability thresholds.</li><li>Same groove-learning principle as the mimic: the longer it plays, the further it drifts.</li></ul></div>
+</details>
+</div>
+</div></div>
+
+<div class="row"><h2>Voice routing</h2>
+<div class="b8">
+<p class="lg">Each character can be set to listen to any other character's output — its notes, its dynamics, its life signal. When two characters listen to each other, they start forming feedback loops.</p>
+<figure>
+<svg class="sv net" viewBox="0 0 440 280" role="img" aria-label="Voice routing diagram: four characters connected by directional arrows">
+<defs><marker id="ra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<g class="node" transform="translate(100 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Turnaround</text></g>
+<g class="node" transform="translate(340 60)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Surface</text></g>
+<g class="node" transform="translate(100 220)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Mimic</text></g>
+<g class="node" transform="translate(340 220)"><circle r="30" style="fill:var(--panel)"/><text text-anchor="middle" y="4" font-size="11" font-weight="600">Understudy</text></g>
+<g style="color:var(--accent)">
+<path class="edge strong" d="M135 60L305 60" marker-end="url(#ra)"/>
+<path class="edge strong" d="M305 65L135 65" marker-end="url(#ra)"/>
+<path class="edge strong" d="M100 95L100 185" marker-end="url(#ra)"/>
+<path class="edge strong" d="M340 185L340 95" marker-end="url(#ra)"/>
+<path class="edge" d="M130 85L310 195" marker-end="url(#ra)" style="stroke:var(--ink-3)"/>
+<path class="edge" d="M310 200L130 90" marker-end="url(#ra)" style="stroke:var(--ink-3)"/>
+</g>
+<text x="220" y="50" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">notes, velocity</text>
+<text x="220" y="78" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">rhythm echo</text>
+<text x="60" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">life signal</text>
+<text x="385" y="145" text-anchor="middle" font-size="9" style="fill:var(--ink-3)">groove data</text>
+</svg>
+<figcaption>Routing matrix: accent arrows are active connections, grey are potential. Any character can listen to any other.</figcaption>
+</figure>
+</div></div>
+
+<div class="row">
+<div class="b12">
+<details>
+<summary>Routing architecture<span class="dtag">Max for Live</span></summary>
+<div class="dbody">
+<ul>
+<li><strong>Routing matrix:</strong> a Max for Live device or a simple send/receive bus where each character's output signals (notes fired, velocity profile, life meter, density) are published, and each character subscribes to whichever others it wants to hear.</li>
+<li><strong>Response rules:</strong> when character A hears character B fire a note, it might echo it (transposed), answer it (a complementary rhythm), or go quiet (make space). These rules go both ways — B also reacts to A.</li>
+<li><strong>Locking in:</strong> two characters listening and responding to each other will eventually converge — their patterns interlock and a repeating figure emerges from what started as generative drift. This is the payoff: emergent structure from simple rules.</li>
+<li><strong>Spiralling out:</strong> or they do not converge. The feedback amplifies differences instead of smoothing them — density escalates, timing scatters, the texture grows chaotic. A life-meter decay or a turnaround event can reset the spiral, or you can let it ride and play into the chaos.</li>
+<li><strong>Manual routing:</strong> switching which voices listen to which could be a performance gesture — a knob or a Push pad that rewires the connections mid-set, changing which characters are in conversation.</li>
+</ul></div>
+</details>
+</div></div>
+
+<div class="row"><h2>Where this leads</h2>
+<div class="b8">
+<p>The characters are not just listening to the drummer — they are listening to each other. One Max for Live device per character, with a shared bus of a few signals (life, turnaround, density, position), is enough architecture. The music makes itself.</p>
+</div></div>
+</main>
+<script src="version.js"></script>
+<script src="shared.js"></script>
+</body></html>

@@ -88,6 +88,8 @@ figcaption{font-size:.78rem;color:var(--ink-3);margin-top:.6rem}
 .sv .thin{fill:none;stroke:var(--line);stroke-width:1}
 .sv .usb{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:6 4}
 .sv .lnq{fill:none;stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
+.sv .trig{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round}
+.sv .trigDot{fill:var(--accent)}
 .sv a{cursor:pointer}
 .sv a .bx,.sv a .bxd,.sv a .hi{transition:stroke .15s,fill-opacity .15s}
 .sv a:hover .bx{stroke:var(--accent)}

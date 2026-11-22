@@ -82,50 +82,90 @@
 <div class="row"><h2>Kit layout</h2>
 <div class="b8">
 <figure>
-<svg class="sv" viewBox="0 0 600 440" role="img" aria-label="Drum kit plan: snare centre, tom as hi-hat on the left, tom as ride on the right, two further toms top-left and top-right, kick pedal and hi-hat pedal at the feet">
-<!-- outer toms -->
-<circle class="bx" cx="190" cy="140" r="52"/>
-<text x="190" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 1</text>
-<text class="q" x="190" y="152" text-anchor="middle" font-size="11">top-left</text>
+<svg class="sv" viewBox="0 0 1000 800" role="img" aria-label="Drum kit plan: snare centre, tom as hi-hat on the left, tom as ride on the right, two further toms top-left and top-right, an enlarged kick pedal and hi-hat pedal at the feet, plus six electronic trigger bars arced around the snare, tom 1 and the floor tom">
+<!-- outer toms, pulled in closer to the snare -->
+<circle class="bx" cx="410" cy="300" r="42"/>
+<text x="410" y="297" text-anchor="middle" font-weight="600" font-size="14">Tom 1</text>
+<text class="q" x="410" y="313" text-anchor="middle" font-size="11">top-left</text>
 
-<circle class="bx" cx="410" cy="140" r="52"/>
-<text x="410" y="135" text-anchor="middle" font-weight="600" font-size="13">Tom 2</text>
-<text class="q" x="410" y="152" text-anchor="middle" font-size="11">top-right</text>
+<circle class="bx" cx="530" cy="300" r="42"/>
+<text x="530" y="297" text-anchor="middle" font-weight="600" font-size="14">Tom 2</text>
+<text class="q" x="530" y="313" text-anchor="middle" font-size="11">top-right</text>
 
 <!-- inner toms standing in for hi-hat / ride -->
-<circle class="bx hi" cx="170" cy="250" r="48"/>
-<text x="170" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
-<text x="170" y="261" text-anchor="middle" font-weight="600" font-size="12">hi-hat</text>
-<text class="q" x="170" y="278" text-anchor="middle" font-size="10">left</text>
+<circle class="bx hi" cx="350" cy="440" r="44"/>
+<text x="350" y="434" text-anchor="middle" font-weight="600" font-size="13">Tom →</text>
+<text x="350" y="450" text-anchor="middle" font-weight="600" font-size="13">hi-hat</text>
+<text class="q" x="350" y="466" text-anchor="middle" font-size="10">left</text>
 
-<circle class="bx hi" cx="430" cy="250" r="48"/>
-<text x="430" y="245" text-anchor="middle" font-weight="600" font-size="12">Tom →</text>
-<text x="430" y="261" text-anchor="middle" font-weight="600" font-size="12">ride</text>
-<text class="q" x="430" y="278" text-anchor="middle" font-size="10">right</text>
+<circle class="bx hi" cx="590" cy="440" r="48"/>
+<text x="590" y="432" text-anchor="middle" font-weight="600" font-size="13">Tom →</text>
+<text x="590" y="448" text-anchor="middle" font-weight="600" font-size="13">ride</text>
+<text class="q" x="590" y="464" text-anchor="middle" font-size="10">right, programmable</text>
 
 <!-- snare, centre -->
-<circle class="bx" cx="300" cy="260" r="54"/>
-<text x="300" y="255" text-anchor="middle" font-weight="700" font-size="14">Snare</text>
-<text class="q" x="300" y="273" text-anchor="middle" font-size="11">centre</text>
+<circle class="bx" cx="470" cy="440" r="58"/>
+<text x="470" y="435" text-anchor="middle" font-weight="700" font-size="15">Snare</text>
+<text class="q" x="470" y="454" text-anchor="middle" font-size="11">centre</text>
 
-<!-- pedals at the feet -->
-<rect class="bx" x="235" y="350" width="60" height="34" rx="4"/>
-<text x="265" y="369" text-anchor="middle" font-size="10" font-weight="600">Hi-hat</text>
-<text class="q" x="265" y="381" text-anchor="middle" font-size="9">pedal</text>
+<!-- kick, enlarged into its own circle rather than a small pad -->
+<circle class="bx" cx="470" cy="615" r="68"/>
+<text x="470" y="610" text-anchor="middle" font-weight="700" font-size="17">Kick</text>
+<text class="q" x="470" y="630" text-anchor="middle" font-size="11">pedal, own SP2 sensor</text>
 
-<rect class="bx" x="305" y="350" width="60" height="34" rx="4"/>
-<text x="335" y="369" text-anchor="middle" font-size="10" font-weight="600">Kick</text>
-<text class="q" x="335" y="381" text-anchor="middle" font-size="9">pedal</text>
+<!-- hi-hat pedal, off to the side of the kick -->
+<rect class="bx" x="560" y="650" width="72" height="32" rx="4"/>
+<text x="596" y="669" text-anchor="middle" font-size="11" font-weight="600">Hi-hat</text>
+<text class="q" x="596" y="681" text-anchor="middle" font-size="9">pedal</text>
 
 <!-- seat -->
-<circle class="bxd" cx="300" cy="410" r="20"/>
-<text class="q" x="300" y="414" text-anchor="middle" font-size="9">seat</text>
+<circle class="bxd" cx="470" cy="715" r="22"/>
+<text class="q" x="470" y="719" text-anchor="middle" font-size="9">seat</text>
+
+<!-- ===== Electronic trigger bars: one fixed arc (same radius + span), rotated per position ===== -->
+<!-- Snare cluster: Loop / Undo-Clear / Reset -->
+<path class="trig" d="M 405.3 408.4 A 72 72 0 0 1 427.7 381.8"/>
+<circle class="trigDot" cx="405.3" cy="408.4" r="6"/><circle class="trigDot" cx="427.7" cy="381.8" r="6"/>
+<line class="lnq" x1="415" y1="361" x2="414.8" y2="389"/>
+<text x="415" y="357" text-anchor="middle" font-weight="600" font-size="13">Loop</text>
+
+<path class="trig" d="M 452.6 370.1 A 72 72 0 0 1 487.4 370.1"/>
+<circle class="trigDot" cx="452.6" cy="370.1" r="6"/><circle class="trigDot" cx="487.4" cy="370.1" r="6"/>
+<line class="lnq" x1="470" y1="351" x2="470" y2="364"/>
+<text x="470" y="347" text-anchor="middle" font-weight="600" font-size="13">Undo / Clear</text>
+
+<path class="trig" d="M 512.3 381.8 A 72 72 0 0 1 534.7 408.4"/>
+<circle class="trigDot" cx="512.3" cy="381.8" r="6"/><circle class="trigDot" cx="534.7" cy="408.4" r="6"/>
+<line class="lnq" x1="525" y1="361" x2="525.2" y2="389"/>
+<text x="525" y="357" text-anchor="middle" font-weight="600" font-size="13">Reset</text>
+
+<!-- Tom 1 cluster: Next Scene / Instrument Cycle -->
+<path class="trig" d="M 338.4 292.5 A 72 72 0 0 1 350.3 259.7"/>
+<circle class="trigDot" cx="338.4" cy="292.5" r="6"/><circle class="trigDot" cx="350.3" cy="259.7" r="6"/>
+<line class="lnq" x1="255" y1="268" x2="342.3" y2="275.4"/>
+<text x="248" y="272" text-anchor="end" font-weight="600" font-size="13">Next Scene</text>
+
+<path class="trig" d="M 369.7 240.3 A 72 72 0 0 1 402.5 228.4"/>
+<circle class="trigDot" cx="369.7" cy="240.3" r="6"/><circle class="trigDot" cx="402.5" cy="228.4" r="6"/>
+<line class="lnq" x1="255" y1="215" x2="385.4" y2="232.3"/>
+<text x="248" y="219" text-anchor="end" font-weight="600" font-size="13">Instrument Cycle</text>
+
+<!-- Floor tom cluster: Fill / Transition -->
+<path class="trig" d="M 655.8 410.7 A 72 72 0 0 1 661.8 445"/>
+<circle class="trigDot" cx="655.8" cy="410.7" r="6"/><circle class="trigDot" cx="661.8" cy="445" r="6"/>
+<line class="lnq" x1="670" y1="427" x2="700" y2="427"/>
+<text x="710" y="431" text-anchor="start" font-weight="600" font-size="13">Fill / Transition</text>
+
+<!-- Spare 7th trigger slot -->
+<rect class="bxd" x="850" y="730" width="120" height="34" rx="6"/>
+<text class="q" x="910" y="751" text-anchor="middle" font-size="11">Spare (7th)</text>
 </svg>
-<figcaption>Five struck surfaces plus two foot pedals, all reading through SP2 sensors. No separate kick drum or hi-hat cymbal — a tom stands in for each, and the pedals are dedicated triggers/controllers rather than a full acoustic hi-hat stand.</figcaption>
+<figcaption>Five struck mesh surfaces through SP2 sensors, plus an enlarged kick pedal (also its own SP2 sensor) and a hi-hat pedal. Six of a separate 7-input trigger-to-MIDI box's electronic trigger bars are arced around the snare (loop, undo/clear, reset), tom 1 (next scene, instrument cycle) and the floor tom (fill/transition) — one input spare.</figcaption>
 </figure>
 </div>
 <div class="b4 p9">
 <p class="sm">Reusing toms as hi-hat and ride keeps the footprint small: five mesh-head drums instead of a full kit, arranged in the arc a seated player can reach without standing. See <a href="percussion.html">Percussion</a> for the zone-training detail and <a href="gear.html?phase=5">Gear → Phase 5</a> for sensor counts and cost.</p>
+<p class="sm">The trigger bars are a separate hand/foot-hit path, not SP2 sensors — they go into their own trigger-to-MIDI box (7 inputs) alongside the Portal, not through one of its 7 sensor jacks, which only take Sunhouse's own sensor types.</p>
 </div>
 </div>
 </main>
