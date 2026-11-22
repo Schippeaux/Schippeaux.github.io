@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>46 Stanley Street — Fit-Out Schedule</title>
+<style>
+  /* Same look as the New Home schedule: warm beige ground, numbered tab bar,
+     card grid / list. Organised by fixture (Lighting, Plumbing, Finishes…)
+     rather than by room — every item carries a level + room tag instead. */
+  :root{
+    --ink:#2B2620;
+    --ink-70: rgba(43,38,32,.68);
+    --ink-45: rgba(43,38,32,.42);
+    --ink-15: rgba(43,38,32,.12);
+    --ketchup:#BD533B;
+    --avocado:#8C8740;
+    --bg:#EFEDEA;
+    --surface:#FEFEFE;
+    --panel:#E4E0D8;
+    --line:var(--ink-15);
+    --accent:var(--ketchup);
+    --accent-2:var(--avocado);
+    --f-display:'Lora', Georgia, 'Times New Roman', serif;
+    --f-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono:'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --wrap-w:1180px;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--panel); color:var(--ink);
+    font-family:var(--f-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:20; background:var(--bg);
+  }
+  a{color:inherit}
+  button, select, input{font:inherit}
+  .wrap{
+    max-width:var(--wrap-w); margin:0 auto;
+    padding-left:max(20px, env(safe-area-inset-left,0px)); padding-right:max(20px, env(safe-area-inset-right,0px));
+  }
+
+  /* ---- Header ---- */
+  header.top{
+    background:var(--bg); border-bottom:1px solid var(--line);
+    padding-block: calc(18px + env(safe-area-inset-top,0px)) 20px;
+  }
+  header.top .wrap{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap}
+  .brand-eyebrow{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 6px;
+  }
+  h1{font-family:var(--f-display); font-weight:700; font-size:clamp(28px,4vw,42px); margin:0; text-wrap:balance}
+  .sub{font-family:var(--f-display); font-style:italic; font-size:16px; color:var(--ink-70); margin:6px 0 0}
+  .totals{font-family:var(--font-mono); font-size:12px; color:var(--ink-70); text-align:right; line-height:1.7; white-space:nowrap}
+  .totals b{font-family:var(--f-display); font-size:20px; color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums; display:block}
+  .totals .est{font-size:13px; font-weight:500; color:var(--ink-45)}
+  .totals .usd{display:block; color:var(--ink-45)}
+
+  /* ---- Tabs ---- */
+  nav.tabs{position:sticky; top:env(safe-area-inset-top,0px); z-index:10; background:var(--surface); border-bottom:1px solid var(--line)}
+  nav.tabs .wrap{display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin}
+  .tab{
+    font-family:var(--f-body); font-weight:600; font-size:13px; letter-spacing:.04em;
+    background:none; border:none; color:var(--ink-70); cursor:pointer; white-space:nowrap;
+    padding:14px 14px 11px; border-bottom:2px solid transparent;
+  }
+  .tab .n{font-family:var(--font-mono); font-weight:500; font-size:10px; color:var(--ink-45); margin-right:7px}
+  .tab .c{font-family:var(--font-mono); font-weight:400; font-size:10px; color:var(--ink-45); margin-left:6px}
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent)}
+  .tab[aria-selected="true"] .n{color:var(--accent)}
+
+  /* ---- Toolbar ---- */
+  .toolbar{display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding-top:18px}
+  .sync-status{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; color:var(--ink-45); margin-right:auto; text-align:left}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:3px; overflow:hidden; max-width:100%; overflow-x:auto}
+  .seg button{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap;
+    background:var(--surface); border:none; color:var(--ink-70); cursor:pointer; padding:8px 12px;
+  }
+  .seg button + button{border-left:1px solid var(--line)}
+  .seg button:hover{color:var(--ink)}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:var(--surface)}
+  .tbtn, .filter-select{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--surface); border:1px solid var(--line); border-radius:3px; color:var(--ink-70);
+    padding:8px 12px; cursor:pointer;
+  }
+  .tbtn:hover, .filter-select:hover{color:var(--ink); border-color:var(--ink-45)}
+  .tbtn.primary{background:var(--ink); color:var(--surface); border-color:var(--ink)}
+  .tbtn.primary:hover{background:var(--accent); border-color:var(--accent)}
+
+  /* ---- Category panel ---- */
+  main{padding-block:0 60px}
+  #cat{padding-top:26px}
+  .cat-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap}
+  .cat-head h2{font-family:var(--f-display); font-weight:600; font-size:26px; margin:0}
+  .cat-stat{font-family:var(--font-mono); font-size:12px; color:var(--ink-45)}
+
+  details.group{margin:30px 0 0}
+  details.group:first-of-type{margin-top:0}
+  summary.group-label{
+    font-weight:600; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-2);
+    border-left:2px solid var(--accent-2); padding-left:9px; margin:0;
+    cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px;
+  }
+  summary.group-label::-webkit-details-marker{display:none}
+  summary.group-label:hover{color:var(--ink)}
+  summary.group-label .toggle{flex:none; width:14px; text-align:center; font-family:var(--font-mono); font-size:14px; font-weight:500; line-height:1; letter-spacing:0}
+  summary.group-label .toggle::before{content:"+"}
+  details[open] > summary.group-label .toggle::before{content:"\2212"}
+  summary.group-label .gc{font-family:var(--font-mono); font-weight:400; letter-spacing:.04em; color:var(--ink-45)}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:16px; margin-top:14px}
+  .empty{border:1.5px dashed var(--ink-45); border-radius:3px; padding:44px 24px; text-align:center; color:var(--ink-45); font-size:13.5px}
+
+  /* ---- Cards ---- */
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:3px;
+    overflow:hidden; display:flex; flex-direction:column; min-width:0; position:relative; cursor:pointer;
+  }
+  .card:hover{border-color:var(--ink-45)}
+  .card:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .card .shot{aspect-ratio:4/3; background:var(--panel); display:flex; align-items:center; justify-content:center; position:relative}
+  .card .shot img{width:100%; height:100%; object-fit:contain; padding:10px; display:block}
+  .tag{
+    position:absolute; top:10px; left:10px; font-family:var(--font-mono); font-size:10px; letter-spacing:.06em;
+    background:var(--accent); color:#fff; padding:3px 7px; border-radius:2px; max-width:calc(100% - 50px);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .card .body{padding:13px 14px 12px; display:flex; flex-direction:column; gap:7px; flex:1}
+  .card .name{font-family:var(--f-display); font-weight:600; font-size:15.5px; line-height:1.3; color:var(--ink)}
+  .card:hover .name{color:var(--accent)}
+  .card .material{font-size:11.5px; color:var(--ink-70); line-height:1.4}
+  .card .spec{font-family:var(--font-mono); font-size:11px; color:var(--ink-45); border-top:1px solid var(--line); margin-top:auto; padding-top:9px}
+  .card .foot{display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:2px}
+  .price{font-weight:700; font-size:15.5px; font-variant-numeric:tabular-nums}
+  .view{font-weight:600; font-size:11px; letter-spacing:.03em; color:var(--accent); text-decoration:none; white-space:nowrap; position:relative; z-index:2}
+  .view:hover{text-decoration:underline}
+  .card .statrow{padding:0 14px 12px}
+  .card.placeholder{border:1.5px dashed var(--ink-45); background:transparent}
+  .card.placeholder:hover{border-color:var(--ink)}
+  .card.placeholder .shot{
+    background:transparent; aspect-ratio:auto; flex:1; min-height:92px;
+    flex-direction:column; gap:3px; color:var(--ink-45); padding:14px 30px 8px 12px;
+  }
+  .card.placeholder .pname{font-family:var(--f-display); font-weight:600; font-size:14.5px; color:var(--ink); text-align:center; line-height:1.3}
+  .card.placeholder .pnote{font-size:11px; color:var(--accent-2); text-align:center}
+  .card.placeholder .pest{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-70); font-variant-numeric:tabular-nums; margin-top:2px}
+  .card.done > :not(.x){opacity:.5}
+  .card.done .name, .card.done .pname{text-decoration:line-through}
+
+  .x{
+    position:absolute; top:6px; right:6px; z-index:3; width:24px; height:24px; display:flex; align-items:center; justify-content:center;
+    border:none; background:rgba(255,255,255,.85); border-radius:50%; color:var(--ink-45); cursor:pointer; font-size:12px; line-height:1;
+  }
+  .x:hover{color:#C0392B; background:#fff}
+
+  /* ---- Status control ---- */
+  .stat{position:relative; z-index:2; display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase}
+  .stat::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--dot,var(--ink-45)); flex:none}
+  .stat select{
+    -webkit-appearance:none; appearance:none; border:none; background:transparent; color:var(--ink-70);
+    font:inherit; letter-spacing:inherit; text-transform:inherit; cursor:pointer; padding:3px 14px 3px 0;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink-45) 50%),linear-gradient(135deg,var(--ink-45) 50%,transparent 50%);
+    background-position:calc(100% - 6px) 55%, calc(100% - 2px) 55%; background-size:4px 4px; background-repeat:no-repeat;
+  }
+  .stat select:hover{color:var(--ink)}
+  .stat[data-s="Undecided"]{--dot:rgba(43,38,32,.3)}
+  .stat[data-s="Shortlisted"]{--dot:#D1A02F}
+  .stat[data-s="Specified"]{--dot:var(--avocado)}
+  .stat[data-s="Quoted"]{--dot:#5B7B8C}
+  .stat[data-s="Ordered"]{--dot:var(--ketchup)}
+  .stat[data-s="Installed"]{--dot:var(--ink)}
+
+  /* ---- List view ---- */
+  #cat.list-view .grid{grid-template-columns:1fr; gap:10px}
+  #cat.list-view .card{flex-direction:row; align-items:stretch; padding-right:40px}
+  #cat.list-view .card .shot{aspect-ratio:auto; width:110px; flex:0 0 110px}
+  #cat.list-view .card .body{padding:10px 16px; gap:4px}
+  #cat.list-view .card .spec{border-top:none; margin-top:0; padding-top:0}
+  #cat.list-view .card .statrow{align-self:center; padding:0 6px 0 0; flex:none}
+  #cat.list-view .card.placeholder .shot{flex-direction:row; align-items:center; justify-content:space-between; width:auto; flex:1; min-height:0; padding:14px 18px; gap:16px}
+  #cat.list-view .card.placeholder .pname{text-align:left; flex:1}
+  #cat.list-view .card.placeholder .pnote, #cat.list-view .card.placeholder .pest{white-space:nowrap}
+  #cat.list-view .x{top:50%; transform:translateY(-50%)}
+
+  /* ---- Dialogs ---- */
+  dialog{border:none; padding:0; background:transparent; color:var(--ink); max-width:none; max-height:calc(100vh - 48px)}
+  dialog::backdrop{background:rgba(43,38,32,.55)}
+  #detail{width:min(880px, calc(100vw - 32px))}
+  #item-form{width:min(500px, calc(100vw - 32px))}
+  .d-wrap{position:relative; background:var(--surface); border-radius:4px; overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.3)}
+  .d-close{
+    position:absolute; top:10px; right:10px; z-index:1; width:34px; height:34px; border-radius:50%;
+    border:none; background:rgba(255,255,255,.9); color:var(--ink); font-size:22px; line-height:1; cursor:pointer;
+  }
+  .d-close:hover{background:#fff; color:var(--accent)}
+  #detail-body{display:grid; grid-template-columns:1.1fr 1fr; max-height:calc(100vh - 48px)}
+  #detail-body.noimg{grid-template-columns:1fr}
+  .d-shot{background:var(--panel); display:flex; align-items:center; justify-content:center; min-height:300px}
+  .d-shot img{display:block; width:100%; height:100%; max-height:520px; object-fit:contain; padding:16px}
+  .d-info{padding:26px 26px 24px; display:flex; flex-direction:column; gap:12px; align-items:flex-start; overflow-y:auto}
+  .d-tag{font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; background:var(--accent); color:#fff; padding:3px 7px; border-radius:2px}
+  .d-name{font-family:var(--f-display); font-weight:600; font-size:24px; line-height:1.25; margin:0; padding-right:30px}
+  .d-rows{margin:0; display:grid; grid-template-columns:auto 1fr; gap:7px 14px; font-size:13px; line-height:1.45}
+  .d-rows dt{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-45); padding-top:2px}
+  .d-rows dd{margin:0; color:var(--ink-70)}
+  .d-price{font-family:var(--f-display); font-weight:700; font-size:22px; font-variant-numeric:tabular-nums; margin-top:4px}
+  .d-price.tbc{font-weight:500; color:var(--ink-45); font-size:15px}
+  .d-actions{margin-top:auto; display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding-top:6px}
+  .d-link{display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:600; font-size:13px; letter-spacing:.02em; padding:10px 16px; border-radius:3px}
+  .d-link:hover{background:#a8462f}
+  .form{padding:26px 26px 24px; display:flex; flex-direction:column; gap:12px; max-height:calc(100vh - 100px); overflow-y:auto}
+  .form h3{font-family:var(--f-display); font-size:19px; margin:0 0 4px; font-weight:600}
+  .field{display:flex; flex-direction:column; gap:5px; font-size:12.5px; font-weight:600; color:var(--ink-70)}
+  .field input, .field select{padding:8px 9px; border:1px solid var(--line); border-radius:3px; background:var(--bg); color:var(--ink); width:100%; font-weight:400}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .form .tbtn{align-self:flex-start}
+  @media (max-width:600px){
+    #detail-body{grid-template-columns:1fr}
+    .d-shot{min-height:0}
+    .d-shot img{max-height:300px}
+    .d-info{padding:18px 18px 20px}
+    .d-name{font-size:21px}
+    .two{grid-template-columns:1fr}
+  }
+
+  details.how{margin-top:44px; border-top:1px solid var(--line); padding-top:18px}
+  details.how summary{cursor:pointer; font-weight:600; font-size:12.5px; letter-spacing:.04em; color:var(--ink-70); list-style:none}
+  details.how summary::-webkit-details-marker{display:none}
+  details.how summary::before{content:"— "}
+  details.how p{font-size:13px; color:var(--ink-70); line-height:1.6; max-width:64ch; margin:10px 0 0}
+  .removed-list{list-style:none; margin:10px 0 0; padding:0; font-size:12.5px; color:var(--ink-70)}
+  .removed-list li{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:6px 0; border-bottom:1px solid var(--line)}
+  .removed-list button{font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; border:1px solid var(--line); background:var(--surface); border-radius:3px; padding:4px 9px; cursor:pointer; color:var(--ink-70)}
+  .site-foot{padding:6px 0 40px}
+  .site-foot .wrap{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-45); border-top:1px solid var(--line); padding-top:14px}
+
+  @media (max-width:600px){
+    .wrap{padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+    header.top{padding-block:calc(14px + env(safe-area-inset-top,0px)) 14px}
+    header.top .wrap{flex-direction:column; align-items:stretch; gap:12px}
+    h1{font-size:30px}
+    .sub{font-size:14.5px; margin-top:2px}
+    .totals{text-align:left; display:flex; flex-wrap:wrap; align-items:baseline; column-gap:14px; border-top:1px solid var(--line); padding-top:10px; line-height:1.5}
+    .totals br{display:none}
+    .totals b{order:-1; flex-basis:100%; font-size:22px}
+    .totals .usd{flex-basis:100%}
+    .tab{padding:13px 11px 10px}
+    .toolbar{padding-top:14px}
+    #cat{padding-top:16px}
+    .cat-head h2{font-size:22px}
+    details.group{margin-top:22px}
+    .grid{grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; align-items:start; margin-top:10px}
+    .card .body{padding:10px 10px 10px; gap:5px}
+    .card .name{font-size:14px}
+    .card .spec{font-size:10px; padding-top:7px}
+    .card .statrow{padding:0 10px 10px}
+    .card.placeholder .shot{min-height:96px; padding:12px 24px 8px 10px; align-items:flex-start}
+    .card.placeholder .pname, .card.placeholder .pnote{text-align:left}
+    #cat.list-view .grid{gap:8px}
+    #cat.list-view .card .shot{width:84px; flex-basis:84px}
+    #cat.list-view .card.placeholder .shot{padding:11px 14px; gap:10px; align-items:center}
+    #cat.list-view .card.placeholder .pnote{display:none}
+    #cat.list-view .card{flex-wrap:wrap}
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <p class="brand-eyebrow">Fit-Out Schedule</p>
+      <h1>46 Stanley Street</h1>
+      <p class="sub">Fixtures, finishes &amp; equipment, by type</p>
+    </div>
+    <div class="totals">
+      <span id="spec-count"></span><br>
+      <span id="order-count"></span>
+      <b id="running-total"></b>
+      <span class="usd" id="usd-line"></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Categories">
+  <div class="wrap" id="tab-row"></div>
+</nav>
+
+<main class="wrap">
+  <div class="toolbar">
+    <span class="sync-status" id="sync-status" aria-live="polite"></span>
+    <div class="seg" id="level-seg" role="group" aria-label="Level"></div>
+    <select class="filter-select" id="status-filter" aria-label="Status filter"></select>
+    <button type="button" class="tbtn primary" id="add-btn">+ Add item</button>
+    <button type="button" class="tbtn" id="collapse-all">Collapse all</button>
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" id="view-grid" aria-pressed="true">Grid</button>
+      <button type="button" id="view-list" aria-pressed="false">List</button>
+    </div>
+  </div>
+
+  <div id="cat"></div>
+
+  <details class="how">
+    <summary>How this list works</summary>
+    <p>
+      The schedule is organised by fixture type, not by room — every item carries a level and room tag, and you can
+      filter by level or status above. Dashed cards are placeholders with a rough planning allowance (AUD, mid-range,
+      not a quote). Add a link, photo or price to an item (open it, then Edit) and it becomes a full product card.
+      Status runs Undecided → Shortlisted → Specified → Quoted → Ordered → Installed. Prices in US$ are shown as
+      listed and are not converted into the AUD total.
+    </p>
+  </details>
+  <details class="how" id="removed-wrap" hidden>
+    <summary>Removed items</summary>
+    <ul class="removed-list" id="removed-list"></ul>
+  </details>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">v0.1 · 22 Nov 2026 · Second-storey addition, Scarborough WA</div>
+</footer>
+
+<dialog id="detail" aria-label="Item details">
+  <div class="d-wrap">
+    <button type="button" class="d-close" id="detail-close" aria-label="Close">×</button>
+    <div id="detail-body"></div>
+  </div>
+</dialog>
+
+<dialog id="item-form" aria-label="Item">
+  <div class="d-wrap">
+    <button type="button" class="d-close" id="form-close" aria-label="Close">×</button>
+    <form id="form" class="form">
+      <h3 id="form-title">Add an item</h3>
+      <label class="field" id="f-cat-wrap">Category <select id="f-cat" required></select></label>
+      <label class="field" id="f-group-wrap">Group <select id="f-group" required></select></label>
+      <label class="field" id="f-newgroup-wrap">New group name <input type="text" id="f-newgroup" placeholder="e.g. Feature lighting"></label>
+      <div class="two">
+        <label class="field">Level <select id="f-level"></select></label>
+        <label class="field">Room <input type="text" id="f-room" list="rooms" placeholder="e.g. Studio"></label>
+      </div>
+      <datalist id="rooms"></datalist>
+      <label class="field">Name <input type="text" id="f-name" required></label>
+      <label class="field">Brand <input type="text" id="f-brand" placeholder="optional"></label>
+      <label class="field">Material / colour <input type="text" id="f-material" placeholder="optional"></label>
+      <label class="field">Dimensions <input type="text" id="f-dims" placeholder="optional"></label>
+      <div class="two">
+        <label class="field">Confirmed price <input type="number" id="f-price" min="0" step="0.01" placeholder="optional"></label>
+        <label class="field">Currency <select id="f-currency"><option>AUD</option><option>USD</option></select></label>
+      </div>
+      <label class="field">Estimate (AUD, until confirmed) <input type="number" id="f-est" min="0" step="1" placeholder="optional"></label>
+      <label class="field">Product URL <input type="url" id="f-url" placeholder="optional"></label>
+      <label class="field">Image URL <input type="url" id="f-img" placeholder="optional — or a path like lights/photo.jpg"></label>
+      <label class="field">Note <input type="text" id="f-note" placeholder="optional"></label>
+      <button type="submit" class="tbtn primary" id="f-submit">Save</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+
+  var REPO = "Schippeaux/Schippeaux.github.io";
+  var PATH = "46-stanley-schedule/state.json";
+  var BRANCH = "main";
+  var TOKEN_KEY = "github-token";          // shared with every page on the site (entered on the home page)
+  var LS = {
+    state:"46stanley:state", base:"46stanley:sync-base", collapsed:"46stanley:collapsed",
+    view:"46stanley:view", level:"46stanley:level", status:"46stanley:status-filter"
+  };
+
+  var LEVELS = [
+    {id:"G", label:"Ground"}, {id:"F", label:"First"}, {id:"X", label:"External"},
+    {id:"A", label:"Whole house"}, {id:"T", label:"TBC"}
+  ];
+  var STATUSES = ["Undecided","Shortlisted","Specified","Quoted","Ordered","Installed"];
+
+  function P(name, level, room, est){ return {name:name, level:level, room:room, est:est}; }
+
+  // ---------------------------------------------------------------
+  // Catalogue. Category -> group -> items.
+  // Placeholders: P(name, level, room, estimate AUD). Estimates are rough
+  // planning allowances only. Sourced products are plain objects with
+  // price/url/img etc.; placeholders become sourced cards when edited.
+  // ---------------------------------------------------------------
+  var CATS = [
+    { id:"lighting", code:"01", label:"Lighting", groups:[
+      { name:"Ceiling & ambient", items:[
+        P("Downlights – living / dining","G","Living / dining",600),
+        P("Downlights – kitchen","G","Kitchen",350),
+        P("Downlights – bedrooms","F","Bed 1–3",700),
+        P("Downlights – studio","F","Studio",350),
+        P("Hall & landing lights","F","Landing",250)
+      ]},
+      { name:"Pendants & feature", items:[
+        P("Dining pendant","G","Dining",450),
+        P("Kitchen bench pendants","G","Kitchen",600),
+        P("Stair feature / wall lights","F","Stair",500),
+        P("LED strip – stair & studio","F","Stair / studio",250)
+      ]},
+      { name:"Wall lights", items:[
+        { name:"Tove Round Shade Glass Wall Sconce", level:"T", room:"TBC",
+          brand:"Lucia Living", material:"Orange double-nested glass shade, black metal arm & backplate",
+          dims:"Ø21.5 × H15.6 cm (8.5\" × 6.1\")", price:175, currency:"USD",
+          url:"https://lucialiving.com/products/tove-modern-round-shade-coloured-glass-wall-sconce?variant=46806456172696",
+          img:"lights/tove-wall-sconce.jpg",
+          note:"Orange shown (also green, pink) · integrated 10 W LED per product page · was US$199, excl. shipping/duty · US-spec — confirm a 230 V, RCM-compliant version before ordering" },
+        { name:"Sanae Colourful Glass Shade Wall Sconce", level:"T", room:"TBC",
+          brand:"Lucia Living", material:"Double-layer mushroom glass shade, metal · Orange shown",
+          dims:"D16 × W21.5 × H15.6 cm", price:166, currency:"USD",
+          url:"https://lucialiving.com/products/sanae-modern-colorful-glass-shade-wall-sconce",
+          img:"lights/sanae-wall-sconce.jpg",
+          note:"Also in green, blush, burgundy · G9 3 W LED, bulb not included · was US$199, excl. shipping/duty · US-spec — confirm a 230 V, RCM-compliant version before ordering" },
+        P("Bathroom vanity lights","F","Bathroom",300)
+      ]},
+      { name:"Lamps", items:[
+        { name:"Sanae Double-Dome Glass Table Lamp", level:"T", room:"TBC",
+          brand:"Lucia Living", material:"Two-layer coloured glass dome · Orange shown",
+          dims:"Ø21.5 × H41 cm (8.5\" × 16\")", price:173, currency:"USD",
+          url:"https://lucialiving.com/products/sanae-modern-retro-double-dome-colored-glass-table-lamp",
+          img:"lights/sanae-table-lamp.jpg",
+          note:"Also in blush, burgundy, gray green (US$153) · 3 W LED, E26 (US) base, bulb not included · was US$199, excl. shipping/duty · US-spec — needs a 230 V / AU-plug version" }
+      ]},
+      { name:"External", items:[
+        P("Entry / porch light","X","Front entry",150),
+        P("Studio laneway entry light","X","Laneway",200),
+        P("Sensor floodlight","X","Rear",180),
+        P("Path / garden lights","X","Garden",300)
+      ]},
+      { name:"Controls", items:[
+        P("Dimmers & lighting control","A","Throughout",600)
+      ]}
+    ]},
+
+    { id:"plumbing", code:"02", label:"Plumbing", groups:[
+      { name:"Kitchen", items:[
+        P("Kitchen sink","G","Kitchen",700),
+        P("Sink mixer","G","Kitchen",400)
+      ]},
+      { name:"Bathroom – first floor", items:[
+        P("Basin","F","Bathroom",450),
+        P("Basin mixer","F","Bathroom",250),
+        P("Toilet suite","F","Bathroom",600),
+        P("Shower mixer","F","Bathroom",250),
+        P("Shower rail / head","F","Bathroom",450),
+        P("Shower screen","F","Bathroom",900),
+        P("Bath (if included)","F","Bathroom",1200)
+      ]},
+      { name:"Bathroom – ground floor", items:[
+        P("Basin (ground)","G","Bathroom",450),
+        P("Basin mixer (ground)","G","Bathroom",250),
+        P("Toilet suite (ground)","G","Bathroom",600),
+        P("Shower mixer (ground)","G","Bathroom",250),
+        P("Shower rail / head (ground)","G","Bathroom",450),
+        P("Shower screen (ground)","G","Bathroom",900)
+      ]},
+      { name:"Laundry", items:[
+        P("Laundry tub / trough","G","Laundry",450),
+        P("Laundry mixer","G","Laundry",180),
+        P("Washing machine taps","G","Laundry",60)
+      ]},
+      { name:"Hot water & outdoors", items:[
+        P("Hot water system","A","Throughout",3000),
+        P("Garden taps","X","Garden",120)
+      ]}
+    ]},
+
+    { id:"finishes", code:"03", label:"Finishes", groups:[
+      { name:"Flooring", items:[
+        P("Living / kitchen flooring","G","Living / kitchen",4500),
+        P("Bedroom flooring","F","Bed 1–3",3000),
+        P("Studio flooring","F","Studio",1200),
+        P("Stair treads & risers","F","Stair",2500),
+        P("Bathroom floor tile","F","Bathroom",900),
+        P("Bathroom / laundry floor tile (ground)","G","Bathroom / laundry",1100),
+        P("Entry threshold finish","G","Entry",600)
+      ]},
+      { name:"Wall finishes", items:[
+        P("Bathroom wall tiles","F","Bathroom",1400),
+        P("Bathroom wall tiles (ground)","G","Bathroom",1200),
+        P("Kitchen splashback","G","Kitchen",900),
+        P("Feature wall (timber / panel / wallpaper)","T","TBC",1000)
+      ]},
+      { name:"Ceilings", items:[
+        P("Ceiling finish & cornice","A","Throughout",1500)
+      ]},
+      { name:"Paint", items:[
+        P("Internal walls","A","Throughout",3500),
+        P("Ceilings (flat white)","A","Throughout",1500),
+        P("Doors, skirtings & trim","A","Throughout",2000),
+        P("Wet-area ceilings","A","Bath / laundry",400),
+        P("External paint","X","Whole exterior",5000)
+      ]},
+      { name:"Benchtops", items:[
+        P("Kitchen benchtop","G","Kitchen",3500),
+        P("Vanity top","F","Bathroom",600),
+        P("Vanity top (ground)","G","Bathroom",600),
+        P("Laundry benchtop","G","Laundry",500)
+      ]},
+      { name:"Casework", items:[
+        P("Kitchen cabinetry","G","Kitchen",12000),
+        P("Wardrobes","F","Bed 1–3",6000),
+        P("Studio joinery / storage","F","Studio",3500),
+        P("Vanity unit","F","Bathroom",1500),
+        P("Laundry cabinetry","G","Laundry",2500),
+        P("Built-in shelving / media unit","G","Living",3000),
+        P("Stair storage / joinery","F","Stair",1500)
+      ]},
+      { name:"Other finishes", items:[
+        P("Skirtings & architraves","A","Throughout",1800),
+        P("Stair balustrade finish","F","Stair",1800)
+      ]}
+    ]},
+
+    { id:"doors-windows", code:"04", label:"Doors & Windows", groups:[
+      { name:"External doors", items:[
+        P("Front door","G","Entry",2200),
+        P("Rear sliding / stacker door","G","Living",3500),
+        P("Studio entry door","F","Studio",2200)
+      ]},
+      { name:"Windows", items:[
+        P("First-floor windows (glazing spec)","F","Bed 1–3",9000),
+        P("Studio windows","F","Studio",3000),
+        P("Ground-floor window replacements","G","Throughout",5000)
+      ]},
+      { name:"Internal doors", items:[
+        P("Bedroom doors","F","Bed 1–3",1500),
+        P("Studio door","F","Studio",700),
+        P("Bathroom doors","A","Bathrooms",800),
+        P("Cavity sliders","T","TBC",1800)
+      ]},
+      { name:"Screens & security", items:[
+        P("Flyscreens / security screens","A","Throughout",2500)
+      ]}
+    ]},
+
+    { id:"hardware", code:"05", label:"Hardware", groups:[
+      { name:"Door hardware", items:[
+        P("Passage handles","A","Throughout",600),
+        P("Privacy sets (bath / bedroom)","A","Throughout",500),
+        P("External lock sets","X","Entry / studio",900),
+        P("Door stops","A","Throughout",150)
+      ]},
+      { name:"Cabinet hardware", items:[
+        P("Kitchen handles / pulls","G","Kitchen",500),
+        P("Wardrobe handles / pulls","F","Bed 1–3",350),
+        P("Vanity & laundry pulls","A","Bath / laundry",250),
+        P("Soft-close hinges & drawer runners","A","Throughout",1200)
+      ]},
+      { name:"Other", items:[
+        P("Window locks / stays","A","Throughout",400),
+        P("Robe rails & hooks","F","Bed 1–3",250)
+      ]}
+    ]},
+
+    { id:"appliances", code:"06", label:"Appliances", groups:[
+      { name:"Cooking", items:[
+        P("Oven","G","Kitchen",1800),
+        P("Cooktop","G","Kitchen",1400),
+        P("Rangehood","G","Kitchen",1000),
+        P("Microwave","G","Kitchen",300)
+      ]},
+      { name:"Fridge & dishwasher", items:[
+        P("Fridge / freezer","G","Kitchen",2400),
+        P("Dishwasher","G","Kitchen",1100)
+      ]},
+      { name:"Laundry", items:[
+        P("Washing machine","G","Laundry",1100),
+        P("Dryer","G","Laundry",1000)
+      ]}
+    ]},
+
+    { id:"electrical", code:"07", label:"Electrical & Data", groups:[
+      { name:"Power & switching", items:[
+        P("Switchboard upgrade / RCDs","A","Meter box",2500),
+        P("GPOs & switch plates (style)","A","Throughout",1200),
+        P("USB / feature power outlets","A","Throughout",300)
+      ]},
+      { name:"Safety", items:[
+        P("Interconnected smoke alarms","A","Throughout",500)
+      ]},
+      { name:"Fans & ventilation", items:[
+        P("Ceiling fans","F","Bed 1–3 / studio",1400),
+        P("Bathroom exhaust fans","A","Bathrooms",600)
+      ]},
+      { name:"Data & AV", items:[
+        P("Data / TV points","A","Throughout",900),
+        P("Wi-Fi access points / data cabinet","A","Throughout",700),
+        P("Studio power & patch points (dedicated circuits)","F","Studio",1200),
+        P("Video doorbell / intercom","X","Front entry",350)
+      ]}
+    ]},
+
+    { id:"hvac-energy", code:"08", label:"HVAC & Energy", groups:[
+      { name:"Heating & cooling", items:[
+        P("Split system – living","G","Living",2200),
+        P("Split systems – bedrooms","F","Bed 1–3",5400),
+        P("Split system – studio","F","Studio",2200)
+      ]},
+      { name:"Solar & storage", items:[
+        P("Solar PV","X","Roof",7000),
+        P("Battery (optional)","X","Side / rear",9000),
+        P("EV charger (optional)","X","Parking",1800)
+      ]}
+    ]},
+
+    { id:"bath-accessories", code:"09", label:"Bath Accessories", groups:[
+      { name:"Mirrors", items:[
+        P("Mirror – first-floor bathroom","F","Bathroom",350),
+        P("Mirror – ground bathroom","G","Bathroom",300)
+      ]},
+      { name:"Rails & holders", items:[
+        P("Towel rails / heated rail","F","Bathroom",350),
+        P("Toilet roll holders","A","Bathrooms",120),
+        P("Robe hooks","A","Bathrooms",100)
+      ]},
+      { name:"Shower", items:[
+        P("Shower niche / shelf","A","Bathrooms",250)
+      ]}
+    ]},
+
+    { id:"external", code:"10", label:"External & Structure", groups:[
+      { name:"Roof & rainwater", items:[
+        P("Roofing (first-floor roof)","X","Roof",14000),
+        P("Gutters, downpipes & fascia","X","Roof",3500)
+      ]},
+      { name:"Cladding", items:[
+        P("Weatherboard cladding","X","First floor",9000),
+        P("Existing brick repair / make-good","X","Ground floor",2000)
+      ]},
+      { name:"Balustrade & access", items:[
+        P("Balustrade & handrails","X","Stair / balcony",4000)
+      ]},
+      { name:"Site", items:[
+        P("Fencing & gates","X","Boundary",3500),
+        P("Paving / driveway make-good","X","Site",4000),
+        P("Letterbox & house numbers","X","Front fence",250),
+        P("Clothesline","X","Rear",300)
+      ]}
+    ]},
+
+    { id:"furnishings", code:"11", label:"Window Furnishings", groups:[
+      { name:"Blinds & curtains", items:[
+        P("Bedroom blockout blinds","F","Bed 1–3",1800),
+        P("Living curtains / sheers","G","Living",1500),
+        P("Studio window furnishings","F","Studio",700),
+        P("Tracks, rods & fittings","A","Throughout",600)
+      ]}
+    ]}
+  ];
+
+  // ---------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------
+  function $(id){ return document.getElementById(id); }
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function lsSet(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){} }
+  function lsJson(k, dflt){ try { var v = JSON.parse(lsGet(k)); return v == null ? dflt : v; } catch(e){ return dflt; } }
+
+  var fmtA  = new Intl.NumberFormat("en-AU", {style:"currency", currency:"AUD", maximumFractionDigits:0});
+  var fmtAc = new Intl.NumberFormat("en-AU", {style:"currency", currency:"AUD"});
+  var fmtU  = new Intl.NumberFormat("en-US", {style:"currency", currency:"USD", maximumFractionDigits:2});
+  function money(p, cur){
+    if (cur === "USD") return "US" + fmtU.format(p).replace(/\.00$/, "");
+    return (p % 1 ? fmtAc : fmtA).format(p);
+  }
+  function levelLabel(id){ for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].id === id) return LEVELS[i].label; return id || ""; }
+  function keyOf(cat, group, name){ return cat + "|" + group + "|" + name.toLowerCase(); }
+  function tagText(it){
+    var l = levelLabel(it.level), r = it.room;
+    if (it.level === "T" && (!r || r === "TBC")) return "Location TBC";
+    return r && r !== "TBC" ? l + " · " + r : l;
+  }
+  function isSourced(it){
+    return it.price != null || !!(it.url || it.img || it.brand || it.material || it.dims);
+  }
+  function catById(id){ for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i]; return null; }
+
+  // ---------------------------------------------------------------
+  // State: status / removed / edits (built-in items) / custom (added items)
+  // ---------------------------------------------------------------
+  function emptyState(){ return {status:{}, removed:{}, edits:{}, custom:{}}; }
+  function normState(s){
+    s = s || {};
+    return {status:s.status || {}, removed:s.removed || {}, edits:s.edits || {}, custom:s.custom || {}};
+  }
+  var state = normState(lsJson(LS.state, null));
+  var syncBase = lsJson(LS.base, null);
+  var collapsed = lsJson(LS.collapsed, {});
+  var activeCat = null;
+
+  function persistState(){ lsSet(LS.state, JSON.stringify(state)); }
+  function persistBase(){ lsSet(LS.base, JSON.stringify(syncBase)); }
+  function saveState(){ persistState(); queueSync(); }
+
+  // Entries: every non-removed item, built-in and custom
+  function entries(){
+    var out = [];
+    CATS.forEach(function(cat){
+      cat.groups.forEach(function(g){
+        g.items.forEach(function(it){
+          var key = keyOf(cat.id, g.name, it.name);
+          if (state.removed[key]) return;
+          out.push({cat:cat.id, group:g.name, key:key, item:Object.assign({}, it, state.edits[key] || {}), custom:false});
+        });
+      });
+    });
+    Object.keys(state.custom).forEach(function(id){
+      var c = state.custom[id], key = "custom|" + id;
+      if (state.removed[key] || !catById(c.cat)) return;
+      out.push({cat:c.cat, group:c.group, key:key, id:id, item:c, custom:true});
+    });
+    return out;
+  }
+  function statusOf(e){
+    var s = state.status[e.key];
+    return STATUSES.indexOf(s) >= 0 ? s : (isSourced(e.item) ? "Shortlisted" : "Undecided");
+  }
+  function setStatus(e, val){
+    var dflt = isSourced(e.item) ? "Shortlisted" : "Undecided";
+    if (val === dflt) delete state.status[e.key]; else state.status[e.key] = val;
+    saveState();
+  }
+
+  // ---------------------------------------------------------------
+  // Sync (state.json in this repo, via the GitHub contents API)
+  // 3-way merge against the last confirmed GitHub copy, so a change made
+  // on one device is never lost when another device pushes first.
+  // ---------------------------------------------------------------
+  function token(){ return (lsGet(TOKEN_KEY) || "").trim(); }
+  function setSync(t){ $("sync-status").textContent = t; }
+  function utf8ToB64(s){ return btoa(unescape(encodeURIComponent(s))); }
+  function b64ToUtf8(s){ return decodeURIComponent(escape(atob(s.replace(/\n/g, "")))); }
+
+  function flatten(s){
+    var f = {};
+    Object.keys(s.status).forEach(function(k){ f["s|" + k] = s.status[k]; });
+    Object.keys(s.removed).forEach(function(k){ f["r|" + k] = JSON.stringify(s.removed[k]); });
+    Object.keys(s.edits).forEach(function(k){ f["e|" + k] = JSON.stringify(s.edits[k]); });
+    Object.keys(s.custom).forEach(function(k){ f["c|" + k] = JSON.stringify(s.custom[k]); });
+    return f;
+  }
+  function unflatten(f){
+    var s = emptyState();
+    Object.keys(f).sort().forEach(function(k){
+      var v = f[k]; if (v === undefined) return;
+      var t = k.charAt(0), n = k.slice(2);
+      if (t === "s") s.status[n] = v;
+      else if (t === "r") s.removed[n] = JSON.parse(v);
+      else if (t === "e") s.edits[n] = JSON.parse(v);
+      else if (t === "c") s.custom[n] = JSON.parse(v);
+    });
+    return s;
+  }
+  function mergeFlat(base, local, remote){
+    var out = {}, keys = {};
+    [base, local, remote].forEach(function(o){ Object.keys(o).forEach(function(k){ keys[k] = 1; }); });
+    Object.keys(keys).forEach(function(k){
+      var v = local[k] !== base[k] ? local[k] : remote[k];   // a local change since last sync wins
+      if (v !== undefined) out[k] = v;
+    });
+    return out;
+  }
+  function eqFlat(a, b){
+    var ka = Object.keys(a), kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    for (var i = 0; i < ka.length; i++) if (a[ka[i]] !== b[ka[i]]) return false;
+    return true;
+  }
+  function ghHeaders(json){
+    var h = {"Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"};
+    if (token()) h["Authorization"] = "Bearer " + token();
+    if (json) h["Content-Type"] = "application/json";
+    return h;
+  }
+  function ghUrl(){ return "https://api.github.com/repos/" + REPO + "/contents/" + PATH; }
+  function fetchRemote(){
+    return fetch(ghUrl() + "?ref=" + BRANCH + "&_=" + Date.now(), {headers:ghHeaders(false), cache:"no-store"}).then(function(r){
+      if (r.status === 404) return {sha:null, state:emptyState()};
+      if (!r.ok) { var e = new Error("GET " + r.status); e.status = r.status; throw e; }
+      return r.json().then(function(j){
+        var s; try { s = normState(JSON.parse(b64ToUtf8(j.content))); } catch(e){ s = emptyState(); }
+        return {sha:j.sha, state:s};
+      });
+    });
+  }
+  function putRemote(s, sha){
+    var body = {message:"Update schedule state", content:utf8ToB64(JSON.stringify(s, null, 2) + "\n"), branch:BRANCH};
+    if (sha) body.sha = sha;
+    return fetch(ghUrl(), {method:"PUT", headers:ghHeaders(true), body:JSON.stringify(body)}).then(function(r){
+      if (!r.ok) { var e = new Error("PUT " + r.status); e.status = r.status; throw e; }
+    });
+  }
+
+  var syncing = false, again = false, syncTimer = null;
+  function queueSync(){
+    if (!token()) { setSync("Saved in this browser only · add a GitHub token on the home page to sync"); return; }
+    setSync("Unsynced changes…");
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function(){ syncNow(0); }, 1500);
+  }
+  function syncNow(attempt){
+    if (syncing) { again = true; return Promise.resolve(); }
+    syncing = true; setSync("Syncing…");
+    return fetchRemote().then(function(r){
+      var rf = flatten(r.state), lf = flatten(state), bf = syncBase ? flatten(normState(syncBase)) : {};
+      var mf = mergeFlat(bf, lf, rf), ms = unflatten(mf);
+      var changed = !eqFlat(mf, lf);
+      state = ms; persistState();
+      syncBase = r.state; persistBase();            // base only ever holds confirmed GitHub content
+      if (changed) refreshAll();
+      if (eqFlat(mf, rf)) { setSync(token() ? "Synced ✓" : "Saved in this browser only · add a GitHub token on the home page to sync"); return; }
+      if (!token()) { setSync("Saved in this browser only · add a GitHub token on the home page to sync"); return; }
+      return putRemote(ms, r.sha).then(function(){ syncBase = ms; persistBase(); setSync("Synced ✓"); });
+    }).catch(function(e){
+      if ((e.status === 409 || e.status === 422) && attempt < 3) { syncing = false; return syncNow(attempt + 1); }
+      if (e.status === 401) setSync("GitHub token rejected — saved in this browser only");
+      else if (e.status === 403 || e.status === 404) setSync("Token can't write to this repo — saved in this browser only");
+      else setSync("Offline — saved in this browser, will retry");
+    }).then(function(){
+      syncing = false;
+      if (again) { again = false; queueSync(); }
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Filters / view prefs
+  // ---------------------------------------------------------------
+  var fLevel = lsGet(LS.level) || "all";
+  var fStatus = lsGet(LS.status) || "all";
+  var view = lsGet(LS.view) === "list" ? "list" : "grid";
+
+  function passes(e){
+    if (fLevel !== "all" && e.item.level !== fLevel) return false;
+    if (fStatus !== "all" && statusOf(e) !== fStatus) return false;
+    return true;
+  }
+
+  // ---------------------------------------------------------------
+  // Rendering
+  // ---------------------------------------------------------------
+  function groupsFor(catId, list){
+    var order = [], map = {};
+    catById(catId).groups.forEach(function(g){ order.push(g.name); map[g.name] = []; });
+    list.forEach(function(e){
+      if (e.cat !== catId) return;
+      if (!map[e.group]) { map[e.group] = []; order.push(e.group); }
+      map[e.group].push(e);
+    });
+    return order.map(function(n){ return {name:n, entries:map[n]}; });
+  }
+
+  function renderTabs(all){
+    var row = $("tab-row");
+    row.textContent = "";
+    CATS.forEach(function(cat){
+      var mine = all.filter(function(e){ return e.cat === cat.id; });
+      var done = mine.filter(function(e){ return STATUSES.indexOf(statusOf(e)) >= 2; }).length;
+      var b = el("button", "tab"); b.type = "button"; b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", cat.id === activeCat ? "true" : "false");
+      b.appendChild(el("span", "n", cat.code));
+      b.appendChild(document.createTextNode(cat.label));
+      b.appendChild(el("span", "c", "(" + done + "/" + mine.length + ")"));
+      b.addEventListener("click", function(){ location.hash = cat.id; });
+      row.appendChild(b);
+    });
+  }
+
+  function renderTotals(all){
+    var n = all.length, spec = 0, ord = 0, conf = 0, est = 0, usd = 0;
+    all.forEach(function(e){
+      var i = STATUSES.indexOf(statusOf(e)), it = e.item;
+      if (i >= 2) spec++;
+      if (i >= 4) ord++;
+      if (it.price != null) { if (it.currency === "USD") usd += it.price; else conf += it.price; }
+      else if (it.est != null) est += it.est;
+    });
+    $("spec-count").textContent = spec + " of " + n + " specified";
+    $("order-count").textContent = ord + " of " + n + " ordered";
+    var tot = $("running-total");
+    tot.textContent = fmtA.format(conf) + " ";
+    tot.appendChild(el("span", "est", "+ ~" + fmtA.format(est) + " est."));
+    $("usd-line").textContent = usd ? "+ " + money(usd, "USD") + " of US$ items (not converted)" : "";
+  }
+
+  function statusControl(e){
+    var wrap = el("label", "stat"); wrap.dataset.s = statusOf(e);
+    var sel = el("select"); sel.setAttribute("aria-label", "Status: " + e.item.name);
+    STATUSES.forEach(function(s){ var o = el("option", null, s); o.value = s; sel.appendChild(o); });
+    sel.value = statusOf(e);
+    ["click","keydown","pointerdown"].forEach(function(t){ sel.addEventListener(t, function(ev){ ev.stopPropagation(); }); });
+    wrap.addEventListener("click", function(ev){ ev.stopPropagation(); });
+    sel.addEventListener("change", function(){
+      setStatus(e, sel.value);
+      refreshAll();
+    });
+    wrap.appendChild(sel);
+    return wrap;
+  }
+
+  function buildCard(e){
+    var it = e.item, sourced = isSourced(it), st = statusOf(e);
+    var card = el("div", "card" + (sourced ? "" : " placeholder") + (STATUSES.indexOf(st) >= 5 ? " done" : ""));
+    card.tabIndex = 0; card.setAttribute("role", "button"); card.setAttribute("aria-label", it.name);
+
+    if (sourced) {
+      var shot = el("div", "shot");
+      if (it.img) { var im = el("img"); im.src = it.img; im.alt = it.name; im.loading = "lazy"; shot.appendChild(im); }
+      shot.appendChild(el("span", "tag", tagText(it)));
+      card.appendChild(shot);
+      var body = el("div", "body");
+      body.appendChild(el("div", "name", it.name));
+      var mat = [it.brand, it.material].filter(Boolean).join(" · ");
+      if (mat) body.appendChild(el("div", "material", mat));
+      if (it.dims) body.appendChild(el("div", "spec", it.dims));
+      var foot = el("div", "foot");
+      if (it.price != null) foot.appendChild(el("span", "price", money(it.price, it.currency)));
+      else foot.appendChild(el("span", "price", it.est != null ? "~" + money(it.est) + " est." : "Price TBC"));
+      if (it.url) {
+        var a = el("a", "view", "View ↗"); a.href = it.url; a.target = "_blank"; a.rel = "noopener";
+        a.addEventListener("click", function(ev){ ev.stopPropagation(); });
+        foot.appendChild(a);
+      }
+      body.appendChild(foot);
+      card.appendChild(body);
+    } else {
+      var ph = el("div", "shot");
+      ph.appendChild(el("div", "pname", it.name));
+      ph.appendChild(el("div", "pnote", tagText(it)));
+      if (it.est != null) ph.appendChild(el("div", "pest", "~" + money(it.est) + " est."));
+      card.appendChild(ph);
+    }
+    var sr = el("div", "statrow");
+    sr.appendChild(statusControl(e));
+    card.appendChild(sr);
+
+    var x = el("button", "x", "✕"); x.type = "button"; x.setAttribute("aria-label", "Remove " + it.name);
+    x.addEventListener("click", function(ev){ ev.stopPropagation(); removeEntry(e); });
+    card.appendChild(x);
+
+    card.addEventListener("click", function(){ openDetail(e); });
+    card.addEventListener("keydown", function(ev){
+      if (ev.target === card && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); openDetail(e); }
+    });
+    return card;
+  }
+
+  function renderCat(all){
+    var cat = catById(activeCat), host = $("cat");
+    host.textContent = "";
+    host.className = view === "list" ? "list-view" : "";
+    var mine = all.filter(function(e){ return e.cat === cat.id; });
+    var done = mine.filter(function(e){ return STATUSES.indexOf(statusOf(e)) >= 2; }).length;
+    var head = el("div", "cat-head");
+    head.appendChild(el("h2", null, cat.label));
+    head.appendChild(el("span", "cat-stat", done + " of " + mine.length + " specified"));
+    host.appendChild(head);
+
+    var shown = 0;
+    groupsFor(cat.id, all).forEach(function(g){
+      var list = g.entries.filter(passes);
+      if (!list.length) return;
+      shown += list.length;
+      var ck = cat.id + "|" + g.name;
+      var d = el("details", "group"); d.open = !collapsed[ck];
+      var s = el("summary", "group-label");
+      s.appendChild(el("span", "toggle"));
+      s.appendChild(el("span", null, g.name));
+      s.appendChild(el("span", "gc", "(" + list.length + ")"));
+      d.appendChild(s);
+      var grid = el("div", "grid");
+      list.forEach(function(e){ grid.appendChild(buildCard(e)); });
+      d.appendChild(grid);
+      d.addEventListener("toggle", function(){
+        if (d.open) delete collapsed[ck]; else collapsed[ck] = 1;
+        lsSet(LS.collapsed, JSON.stringify(collapsed));
+        updateCollapseBtn();
+      });
+      host.appendChild(d);
+    });
+    if (!shown) host.appendChild(el("div", "empty", "Nothing matches the current filters in this category."));
+    updateCollapseBtn();
+  }
+
+  function renderRemoved(){
+    var keys = Object.keys(state.removed), wrap = $("removed-wrap"), ul = $("removed-list");
+    wrap.hidden = !keys.length;
+    ul.textContent = "";
+    keys.forEach(function(k){
+      var info = state.removed[k] || {};
+      var li = el("li");
+      li.appendChild(el("span", null, (info.name || k) + (info.cat ? "  —  " + info.cat : "")));
+      var b = el("button", null, "Restore"); b.type = "button";
+      b.addEventListener("click", function(){ delete state.removed[k]; saveState(); refreshAll(); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+  }
+
+  function refreshAll(){
+    var all = entries();
+    renderTabs(all);
+    renderTotals(all);
+    renderCat(all);
+    renderRemoved();
+  }
+
+  function updateCollapseBtn(){
+    var groups = document.querySelectorAll("#cat details.group"), open = 0;
+    groups.forEach(function(d){ if (d.open) open++; });
+    $("collapse-all").textContent = open ? "Collapse all" : "Expand all";
+    $("collapse-all").hidden = !groups.length;
+  }
+
+  function removeEntry(e){
+    var cat = catById(e.cat);
+    state.removed[e.key] = {name:e.item.name, cat:cat ? cat.label : "", group:e.group};
+    saveState(); refreshAll();
+  }
+
+  // ---------------------------------------------------------------
+  // Detail dialog
+  // ---------------------------------------------------------------
+  function openDetail(e){
+    var it = e.item, body = $("detail-body");
+    body.textContent = "";
+    body.className = it.img ? "" : "noimg";
+    if (it.img) {
+      var shot = el("div", "d-shot"), im = el("img"); im.src = it.img; im.alt = it.name; shot.appendChild(im);
+      body.appendChild(shot);
+    }
+    var info = el("div", "d-info");
+    info.appendChild(el("span", "d-tag", tagText(it)));
+    info.appendChild(el("h3", "d-name", it.name));
+    var dl = el("dl", "d-rows");
+    function row(k, v){ if (!v) return; dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, v)); }
+    var cat = catById(e.cat);
+    row("Category", cat.label + " › " + e.group);
+    row("Brand", it.brand); row("Material", it.material); row("Size", it.dims); row("Note", it.note);
+    info.appendChild(dl);
+
+    var statWrap = el("div");
+    statWrap.appendChild(statusControl(e));
+    info.appendChild(statWrap);
+
+    if (it.price != null) info.appendChild(el("div", "d-price", money(it.price, it.currency)));
+    else info.appendChild(el("div", "d-price tbc", it.est != null ? "~" + money(it.est) + " estimate" : "Price TBC"));
+
+    var act = el("div", "d-actions");
+    if (it.url) { var a = el("a", "d-link", "View product ↗"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; act.appendChild(a); }
+    var eb = el("button", "tbtn", "Edit"); eb.type = "button";
+    eb.addEventListener("click", function(){ $("detail").close(); openForm(e); });
+    var rb = el("button", "tbtn", "Remove"); rb.type = "button";
+    rb.addEventListener("click", function(){ $("detail").close(); removeEntry(e); });
+    act.appendChild(eb); act.appendChild(rb);
+    info.appendChild(act);
+    body.appendChild(info);
+    $("detail").showModal();
+  }
+
+  // ---------------------------------------------------------------
+  // Add / edit dialog
+  // ---------------------------------------------------------------
+  var editing = null;
+
+  function fillGroups(catId, selected){
+    var sel = $("f-group"); sel.textContent = "";
+    var names = groupsFor(catId, entries()).map(function(g){ return g.name; });
+    names.forEach(function(n){ var o = el("option", null, n); o.value = n; sel.appendChild(o); });
+    var o = el("option", null, "+ New group…"); o.value = "__new"; sel.appendChild(o);
+    sel.value = selected && names.indexOf(selected) >= 0 ? selected : names[0];
+    $("f-newgroup-wrap").hidden = sel.value !== "__new";
+  }
+
+  function openForm(e){
+    editing = e || null;
+    var f = e ? e.item : {};
+    $("form-title").textContent = e ? "Edit item" : "Add an item";
+    $("f-submit").textContent = e ? "Save changes" : "Add to schedule";
+
+    var cs = $("f-cat"); cs.textContent = "";
+    CATS.forEach(function(c){ var o = el("option", null, c.label); o.value = c.id; cs.appendChild(o); });
+    cs.value = e ? e.cat : activeCat;
+    $("f-cat-wrap").hidden = !!e; $("f-group-wrap").hidden = !!e;
+    $("f-newgroup-wrap").hidden = true;
+    if (!e) fillGroups(cs.value, null);
+
+    var ls = $("f-level"); ls.textContent = "";
+    LEVELS.forEach(function(l){ var o = el("option", null, l.label); o.value = l.id; ls.appendChild(o); });
+    ls.value = f.level || (fLevel !== "all" ? fLevel : "T");
+
+    $("f-room").value = f.room || "";
+    $("f-name").value = f.name || "";
+    $("f-brand").value = f.brand || "";
+    $("f-material").value = f.material || "";
+    $("f-dims").value = f.dims || "";
+    $("f-price").value = f.price != null ? f.price : "";
+    $("f-currency").value = f.currency || "AUD";
+    $("f-est").value = f.est != null ? f.est : "";
+    $("f-url").value = f.url || "";
+    $("f-img").value = f.img || "";
+    $("f-note").value = f.note || "";
+
+    var rooms = {};
+    entries().forEach(function(x){ if (x.item.room) rooms[x.item.room] = 1; });
+    var dl = $("rooms"); dl.textContent = "";
+    Object.keys(rooms).sort().forEach(function(r){ var o = el("option"); o.value = r; dl.appendChild(o); });
+
+    $("item-form").showModal();
+  }
+
+  function val(id){ var v = $(id).value.trim(); return v === "" ? null : v; }
+  function num(id){ var v = $(id).value; return v === "" ? null : Number(v); }
+
+  function onSubmit(ev){
+    ev.preventDefault();
+    var fields = {
+      level:$("f-level").value, room:val("f-room"), name:val("f-name"),
+      brand:val("f-brand"), material:val("f-material"), dims:val("f-dims"),
+      price:num("f-price"), currency:$("f-currency").value, est:num("f-est"),
+      url:val("f-url"), img:val("f-img"), note:val("f-note")
+    };
+    if (editing) {
+      if (editing.custom) {
+        var c = state.custom[editing.id];
+        state.custom[editing.id] = Object.assign({cat:c.cat, group:c.group}, fields);
+      } else {
+        state.edits[editing.key] = fields;
+      }
+      activeCat = editing.cat;
+    } else {
+      var catId = $("f-cat").value, g = $("f-group").value;
+      if (g === "__new") g = val("f-newgroup") || "Other";
+      var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      state.custom[id] = Object.assign({cat:catId, group:g}, fields);
+      activeCat = catId;
+      if (location.hash !== "#" + catId) location.hash = catId;
+    }
+    saveState();
+    $("item-form").close();
+    refreshAll();
+  }
+
+  // ---------------------------------------------------------------
+  // Toolbar + routing
+  // ---------------------------------------------------------------
+  function buildToolbar(){
+    var seg = $("level-seg"); seg.textContent = "";
+    [{id:"all", label:"All levels"}].concat(LEVELS).forEach(function(l){
+      var b = el("button", null, l.label); b.type = "button";
+      b.setAttribute("aria-pressed", l.id === fLevel ? "true" : "false");
+      b.addEventListener("click", function(){
+        fLevel = l.id; lsSet(LS.level, fLevel);
+        seg.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        refreshAll();
+      });
+      seg.appendChild(b);
+    });
+    var sf = $("status-filter"); sf.textContent = "";
+    ["all"].concat(STATUSES).forEach(function(s){
+      var o = el("option", null, s === "all" ? "All statuses" : s); o.value = s; sf.appendChild(o);
+    });
+    sf.value = fStatus;
+    sf.addEventListener("change", function(){ fStatus = sf.value; lsSet(LS.status, fStatus); refreshAll(); });
+
+    function setView(v){
+      view = v; lsSet(LS.view, v);
+      $("view-grid").setAttribute("aria-pressed", v === "grid" ? "true" : "false");
+      $("view-list").setAttribute("aria-pressed", v === "list" ? "true" : "false");
+      $("cat").className = v === "list" ? "list-view" : "";
+    }
+    $("view-grid").addEventListener("click", function(){ setView("grid"); });
+    $("view-list").addEventListener("click", function(){ setView("list"); });
+    setView(view);
+
+    $("collapse-all").addEventListener("click", function(){
+      var groups = document.querySelectorAll("#cat details.group"), anyOpen = false;
+      groups.forEach(function(d){ if (d.open) anyOpen = true; });
+      groups.forEach(function(d){ d.open = !anyOpen; });
+    });
+    $("add-btn").addEventListener("click", function(){ openForm(null); });
+    $("form").addEventListener("submit", onSubmit);
+    $("f-cat").addEventListener("change", function(){ fillGroups($("f-cat").value, null); });
+    $("f-group").addEventListener("change", function(){ $("f-newgroup-wrap").hidden = $("f-group").value !== "__new"; });
+    $("form-close").addEventListener("click", function(){ $("item-form").close(); });
+    $("detail-close").addEventListener("click", function(){ $("detail").close(); });
+    ["detail", "item-form"].forEach(function(id){
+      $(id).addEventListener("click", function(ev){ if (ev.target === $(id)) $(id).close(); });
+    });
+    $("detail").addEventListener("close", refreshAll);
+  }
+
+  function route(){
+    var h = location.hash.replace("#", "");
+    activeCat = catById(h) ? h : (activeCat || CATS[0].id);
+    refreshAll();
+    var t = document.querySelector('.tab[aria-selected="true"]');
+    if (t && t.scrollIntoView) t.scrollIntoView({block:"nearest", inline:"center"});
+  }
+
+  buildToolbar();
+  window.addEventListener("hashchange", route);
+  route();
+
+  // Cross-device sync: pull on load and whenever the tab comes back to the front
+  if (token()) setSync("Syncing…"); else setSync("Saved in this browser only · add a GitHub token on the home page to sync");
+  syncNow(0);
+  var lastPull = Date.now();
+  document.addEventListener("visibilitychange", function(){
+    if (document.visibilityState === "visible" && Date.now() - lastPull > 20000) { lastPull = Date.now(); syncNow(0); }
+  });
+})();
+</script>
