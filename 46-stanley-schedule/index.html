@@ -1605,6 +1605,12 @@
       T("Scope matrix with the builder: who does what", "crit", ["-","Builder,Architect","Builder,Architect"],
         "A one-page table listing every document and decision, with an owner and a sign-off for each: engineering, energy, working drawings, specification, selections, shop drawings, building surveyor liaison, site inspections and variations.\n\nWhen a builder offers to work alongside the architect's documentation, the split between the two is often unclear. The matrix removes that ambiguity, and it is what a PI insurer will want to see.",
         {out:"Signed scope matrix"}),
+      T("Paid pre-construction agreement with the builder", "crit", ["-","Builder,Owner","Builder,Owner"],
+        "Early cost checks, constructability input, programme advice and design management take the builder's time. A short paid agreement covers them, with a fixed fee or capped hours, the deliverables, and what happens if the project does not proceed. It also keeps the early advice from being treated as a free tender.\n\nPayments are kept small and tied to deliverables, because a preparation-of-plans agreement is not covered by home indemnity insurance.",
+        {out:"Signed pre-construction agreement", dep:"Chosen pathway"}),
+      T("Builder's design professional indemnity cover", "crit", ["-","Builder,Owner","Builder,Owner"],
+        "Where the builder's team provides design (an in-house architect, and the engineer, energy assessor and hydraulic or electrical designers the builder appoints), those designers need professional indemnity insurance. Certificates of currency are requested, covering the services and the limit, and the builder's own policy is checked for design work.\n\nThis is separate from home indemnity insurance, which does not cover design.",
+        {out:"Certificates of currency for the builder and each appointed consultant"}),
       T("Written client–architect agreement", "crit", AO,
         "Even for family work, the agreement records the services (DA only, documentation, contract administration), fee or no fee, limits of liability, who owns the drawings, and permission to use the project in a portfolio. It protects the relationship as well as the insurance position.",
         {out:"Signed agreement"}),
@@ -1633,6 +1639,9 @@
       T("Feature survey and measure-up of the existing house", "pre crit", "Architect",
         "The base for everything: boundaries, floor levels, ceiling heights, roof, walls, and neighbours' windows for overlooking. The existing-conditions model is built from it. Height compliance, overlooking and structure all depend on it being right.",
         {out:"Survey and existing-conditions model"}),
+      T("Dilapidation and existing-conditions baseline (house, neighbours, cracking)", "pre crit", ["Owner,Architect","Builder,Owner","Builder,Owner"],
+        "A dated photographic and written record of the existing house, including the northern wall crack, plus condition reports on the adjoining properties, made before any opening-up. Crack gauges or monitoring points can be added where movement is suspected.\n\nThe record protects both sides. It lets the builder show what already existed, and it lets the owner show what the works changed. It is attached to the builder's contract, with the engineer's letter, so liability for pre-existing structural defects is clear.",
+        {out:"Baseline report attached to the contract", dep:"Structural opinion on cracking"}),
       T("Hazardous materials check (asbestos, lead paint)", "pre crit", "Owner,Hygienist",
         "Houses of this era commonly have asbestos in eaves, wet areas or flooring. Testing happens before any opening-up or roof removal. The result changes demolition scope and cost, and builders price it in or decline the job.",
         {out:"Hazardous materials report"})
@@ -1648,7 +1657,7 @@
         "A builder specialising in timber advised allowing 600–700mm between ceiling and floor for an independent ceiling system and floor. That depth adds to overall building height, which is assessed at DA. Showing it in the DA sections and height calculations now avoids a DA amendment later.",
         {out:"DA sections showing the real build-up"}),
       T("Early cost check from the builder", "pre", "Builder,Owner",
-        "A rough order of cost on the sketch design before lodgement, so the DA is not spent on a scheme that cannot be built to budget.")
+        "A rough order of cost on the sketch design before lodgement, so the DA is not spent on a scheme that cannot be built to budget. Where the builder provides it, it is covered by the paid pre-construction agreement.")
     ]},
     { name:"Performance checks", tasks:[
       T("Early energy sanity-check on the DA design", "pre", ["Architect,Assessor","Builder,Assessor","Builder,Assessor"],
@@ -1702,6 +1711,9 @@
       T("Structural design, calculations and drawings", "crit", "Engineer",
         "Coordinated against the architectural sections: beam and joist depths, posts through the ground floor, and the stair opening. Flush joists and beams (to keep the floor thin) need confirming with the engineer early.",
         {out:"Structural drawings and certification", dep:"Chosen structural system"}),
+      T("Early builder input on programme and long-lead orders", "lead crit", ["-","Builder,Architect","Builder,Architect"],
+        "Frame, trusses, windows, doors and joinery usually drive the programme. The builder advises on lead times, order points and what has to be fixed before ordering, so selections and documentation are timed to them.",
+        {out:"Programme with order dates for long-lead items"}),
       T("Frame, truss or panel supplier engineering and shop drawings", "lead", "Builder",
         "The supplier's connection details and layouts need space in the architectural drawings. Lead times can be long, so the order point is requested from the builder.",
         {n:{A:"Happens after the contract is signed. Space is reserved in the details for supplier connections."}})
@@ -1772,7 +1784,7 @@
     ]},
     { name:"Selections process", tasks:[
       T("Set a selections freeze date", "crit", AO,
-        "A date is picked before documentation is finalised. Anything undecided by then goes into the contract as a provisional allowance, which tends to be priced conservatively and gives the builder discretion."),
+        "A date is picked before documentation is finalised. Anything undecided by then goes into the contract as a provisional allowance, so the allowance rules matter: what each allowance covers, who chooses, and who bears the difference."),
       T("Collect specs, dimensions and lead times", "", "Architect",
         "These are kept in the Schedules tab. Any item whose dimensions or lead time drives the drawings is fixed first."),
       T("Produce the finishes and fixtures schedules for the drawings and specification", "", ["Architect","Builder,Architect","Architect"],
@@ -1808,12 +1820,18 @@
     { name:"Tender or negotiate", tasks:[
       T("Assemble the tender package", "", ["Architect","-","Architect"], "Drawings, specification, schedules, allowances list, and the conditions of tendering."),
       T("Invite and evaluate tenders, or negotiate", "crit", ["Architect,Owner","Builder,Owner","Architect,Owner"], "Like is compared with like: inclusions, allowances, exclusions and programme, not only the total."),
-      T("Resolve open selections into allowances", "", AO, "Every undecided item becomes a provisional sum or prime cost allowance. Keeping that list short limits risk.", {link:"finishes", ll:"Schedules"})
+      T("Resolve open selections into allowances", "", AO, "Every undecided item becomes a provisional sum or prime cost allowance. For each, the contract states what it includes, who selects, and who bears any difference. Keeping that list short limits risk for both sides.", {link:"finishes", ll:"Schedules"})
     ]},
     { name:"Contract", tasks:[
-      T("Choose the contract form", "crit", "Owner,Architect", "WA's Home Building Contracts Act governs residential building work valued between $7,500 and $500,000, so it is checked whether the job sits inside it. Fixed-price is the norm for residential work; cost-plus carries more owner risk."),
+      T("Choose the contract form", "crit", "Owner,Architect", "WA's Home Building Contracts Act governs residential building work valued between $7,500 and $500,000, so it is checked whether the job sits inside it. Fixed-price is the norm for residential work; cost-plus carries more owner risk. The builder is asked which contract form she normally uses (for example a Master Builders or HIA residential form), and any change to it is checked against the scope matrix."),
+      T("Allocate unforeseen conditions and pre-existing defects", "crit", "Owner,Builder,Architect",
+        "Hidden conditions found when the roof or ceilings are opened up (rot, asbestos, undersized members) are a common source of dispute. The builder cannot price what cannot be seen, so the contract states what investigation is done before pricing, which hidden conditions are a provisional sum or a variation, and that existing structural defects are not the builder's liability. The baseline report and engineer's letter are the reference documents.",
+        {dep:"Dilapidation and existing-conditions baseline"}),
+      T("Agree the builder's design-management fee and margin", "", ["-","Builder,Owner","Builder,Owner"],
+        "Where the builder coordinates consultants and carries design responsibility, that work has a cost. It is shown separately, or clearly inside the price, so the owner can compare it with the architect's fee for the same stage.",
+        {dep:"Scope matrix"}),
       T("Builder provides home indemnity insurance before payment or start", "crit", "Builder,Owner", "For residential work over $20,000 the builder must take out home indemnity insurance in the owner's name before accepting payment or starting. The certificate is requested and checked."),
-      T("Preparation-of-plans agreements: caution", "", ["-","Builder,Owner","Builder,Owner"], "A preparation-of-plans agreement with a builder is not covered by home indemnity insurance. If the builder becomes insolvent while only preparing plans, a deposit paid under it is unprotected, so payments are kept small and tied to deliverables."),
+      T("Preparation-of-plans agreements: caution", "", ["-","Builder,Owner","Builder,Owner"], "A preparation-of-plans agreement with a builder is not covered by home indemnity insurance. A deposit paid under it is unprotected if the contractor cannot complete, as with any contractor, so payments are kept small and tied to deliverables."),
       T("Define the contract administrator role", "crit", ["Architect,Owner","Owner","Architect,Owner"], "Someone has to give instructions, assess progress claims and approve variations. If that is the architect, the superintendent's liability comes with it, so PI cover needs to reflect it."),
       T("Programme and payment schedule", "", "Builder,Owner", "It includes the order points for long-lead items and the stages that trigger payments and lender drawdowns.")
     ]}
@@ -1831,6 +1849,8 @@
     { name:"Other approvals & pre-start", tasks:[
       T("Verge, crossover and street tree protection", "", "Builder", "Any work in the road reserve, skip bins, hoarding and scaffolding on the verge may need local government approval."),
       T("Utility requests: Western Power, Water Corporation", "", "Builder,Electrician", "Needed if supply upgrades or new connections are planned. Starting early matters, as lead times can be long."),
+      T("Site access and logistics: laneway, crane, storage and neighbours", "", "Builder,Owner",
+        "How materials, the frame and a crane get to the site; laneway width and any rights over it; where materials are stored; scaffold positions; working hours; and notice to neighbours. The dilapidation reports for adjoining properties are in hand before work starts."),
       T("Weather protection and site plan for roof-off", "", "Builder", "How the house is kept dry when the roof comes off, and how occupants, neighbours, access and waste are managed."),
       T("Pre-start meeting and inspection hold points", "", "Builder,Architect,Owner", "Agreement on site visits, the RFI process, stage inspections and how variations are requested and priced.")
     ]}
@@ -1850,7 +1870,7 @@
       T("Fixtures, painting and final fit-off", "", "Builder", "Fittings go in last: sanitaryware, tapware, lights, appliances and hardware, then final paint touch-ups. Each is checked against the schedules as it is installed.")
     ]},
     { name:"Administration", tasks:[
-      T("Site visits, RFIs and shop drawing review", "", ["Architect","Owner","Architect"], "Questions are answered in writing and logged. Supplier shop drawings are reviewed against the architectural details."),
+      T("Site visits, RFIs and shop drawing review", "", ["Architect","Owner","Architect"], "Questions are answered in writing and logged. Supplier shop drawings are reviewed against the architectural details, within an agreed turnaround (for example two to three working days) so that review does not hold up a time-critical frame order."),
       T("Progress claims and payments", "", ["Architect,Owner","Builder,Owner","Architect,Owner"], "Each claim is assessed against work done, with no payment ahead of progress."),
       T("Variations", "crit", ["Architect,Owner","Builder,Owner","Architect,Owner"], "Priced and agreed in writing before work proceeds. Most overruns start as verbal agreements."),
       T("Selections follow-through: orders, deliveries and installs", "", AO, "Tracked in the Schedules tab against lead times.", {link:"finishes", ll:"Schedules"}),
@@ -2458,7 +2478,7 @@
 
   var INS = [
     ["Architect (practising)", "Professional indemnity insurance, with a minimum of $1 million in WA. The insurer is told that the architect is documenting and, if relevant, administering the project."],
-    ["Builder", "Home indemnity insurance in the owner's name, contract works insurance, public liability, and their subcontractors' cover."],
+    ["Builder", "Home indemnity insurance in the owner's name, contract works insurance, public liability, and their subcontractors' cover. Where the builder's team provides design (in-house architect, appointed engineer, assessor, hydraulic and electrical designers), professional indemnity cover for that design as well. Home indemnity insurance does not cover design."],
     ["Engineer, assessor, surveyor", "Their own professional indemnity insurance. Certificates of currency are requested for the consultants the builder appoints."],
     ["Owner", "The home insurer is notified before works begin, and the policy is checked for cover during roof removal."]
   ];
