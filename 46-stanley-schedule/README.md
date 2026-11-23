@@ -55,3 +55,5 @@ The Roadmap has no status tracking and nothing is synced to `state.json`.
 - Tasks whose `who` entry is `"-"` for the selected pathway are hidden (and empty workstreams with them).
 - The Scope Matrix tab appears only when Pathway C is selected; `#scope-matrix` redirects to the Roadmap otherwise. Tabs renumber accordingly.
 - Copy is third person ("Architect", "Owner", "Builder"); avoid "you/your".
+
+- **Budget & Fees tab** (`#budget-fees`, `view-budget`): shown for every pathway. Own A/B/C switch, kept in sync with the Roadmap through the `stanley:pathway` event and `46stanley:pathway` in localStorage. Fee amounts are typed per pathway and saved in this browser only (`46stanley:fees`); they are not synced to `state.json`.

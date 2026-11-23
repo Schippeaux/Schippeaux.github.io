@@ -528,6 +528,41 @@
     #view-scope .ph-t h2{font-size:18px}
     #view-scope .ph-body{padding:0 14px 16px}
   }
+
+  /* ================= Budget & Fees ================= */
+  #view-budget .bf-bar{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; justify-content:space-between; margin:6px 0 4px}
+  #view-budget .bf-pw{display:flex; align-items:center; gap:10px}
+  #view-budget .bf-pw .rail-lab{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-45)}
+  #view-budget .bf-tools{display:flex; gap:6px}
+  .bf-card{background:var(--bg); border-left:3px solid var(--accent-2); padding:10px 14px; font-size:13.5px; line-height:1.6; color:var(--ink-70); margin:12px 0 0; border-radius:0 3px 3px 0}
+  .bf-card b{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-2); margin-right:8px; font-weight:600}
+  .bf-buckets{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px}
+  .bf-bucket{border:1px solid var(--line); border-radius:3px; padding:12px 14px; background:var(--bg)}
+  .bf-bucket h4{margin:0 0 4px; font-family:var(--f-display); font-size:16px}
+  .bf-bucket p{margin:0; font-size:13px; line-height:1.55; color:var(--ink-70)}
+  .bf-kv{margin:14px 0 0}
+  .bf-kv dt{font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-45); margin-top:10px}
+  .bf-kv dd{margin:2px 0 0; font-size:14px; line-height:1.6; color:var(--ink-70)}
+  .bf-fees{margin-top:14px}
+  .bf-fh, .bf-fr{display:grid; grid-template-columns:1.3fr .9fr 2fr 150px; gap:6px 16px; align-items:start; padding:12px 0; border-bottom:1px solid var(--line)}
+  .bf-fh{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-45); padding:6px 0}
+  .bf-fr .st{font-weight:600; font-size:14px}
+  .bf-fr .st small{display:block; font-weight:400; font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; color:var(--ink-45); text-transform:uppercase; margin-top:2px}
+  .bf-basis{font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; color:var(--accent-2); font-weight:600}
+  .bf-fr .nt{font-size:13px; line-height:1.55; color:var(--ink-70)}
+  .bf-fr input{width:100%; font:inherit; font-family:var(--font-mono); font-size:13px; padding:7px 8px; border:1px solid var(--line); border-radius:3px; background:var(--bg); color:var(--ink)}
+  .bf-total{display:flex; justify-content:space-between; padding:14px 0 0; font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-70)}
+  .bf-total b{font-size:15px; color:var(--ink)}
+  .bf-fnote{font-size:12px; color:var(--ink-45); margin:8px 0 0}
+  .bf-ct{width:100%; margin-top:12px}
+  .bf-ct .row{display:grid; grid-template-columns:130px 1fr; gap:4px 16px; padding:10px 0; border-bottom:1px solid var(--line); font-size:13.5px; line-height:1.6; color:var(--ink-70)}
+  .bf-ct .row b{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-45); font-weight:500; padding-top:3px}
+  @media (max-width:760px){
+    .bf-buckets{grid-template-columns:1fr}
+    .bf-fh{display:none}
+    .bf-fr{grid-template-columns:1fr; gap:4px; padding:14px 0}
+    .bf-ct .row{grid-template-columns:1fr}
+  }
 </style>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -552,7 +587,8 @@
   <div class="wrap">
     <button type="button" class="mode" id="mode-roadmap" role="tab" aria-selected="false"><span class="n">01</span>Roadmap</button>
     <button type="button" class="mode" id="mode-scope" role="tab" aria-selected="false"><span class="n">02</span>Scope Matrix</button>
-    <button type="button" class="mode" id="mode-schedules" role="tab" aria-selected="true"><span class="n">03</span>Schedules</button>
+    <button type="button" class="mode" id="mode-budget" role="tab" aria-selected="false"><span class="n">03</span>Budget &amp; Fees</button>
+    <button type="button" class="mode" id="mode-schedules" role="tab" aria-selected="true"><span class="n">04</span>Schedules</button>
   </div>
 </nav>
 
@@ -597,6 +633,7 @@
 
 <div id="view-roadmap" class="rm-off"></div>
 <div id="view-scope" class="rm-off"></div>
+<div id="view-budget" class="rm-off"></div>
 
 <footer class="site-foot">
   <div class="wrap">v0.3 · 23 Nov 2026 · Second-storey addition, Scarborough WA</div>
@@ -1946,7 +1983,9 @@
     pw = k;
     try { localStorage.setItem("46stanley:pathway", k); } catch(e){}
     refreshPathway();
+    window.dispatchEvent(new CustomEvent("stanley:pathway", {detail:k}));
   }
+  window.addEventListener("stanley:pathway", function(e){ if (PATHWAYS[e.detail] && e.detail !== pw) { pw = e.detail; refreshPathway(); } });
 
   function selectPhase(n, opts){
     opts = opts || {};
@@ -2172,12 +2211,13 @@
   }
 
   /* ---------- Mode switching (Roadmap | Scope Matrix | Schedules) ---------- */
-  var vS = document.getElementById("view-schedules"), vR = document.getElementById("view-roadmap"), vM = document.getElementById("view-scope");
+  var vS = document.getElementById("view-schedules"), vR = document.getElementById("view-roadmap"), vM = document.getElementById("view-scope"), vB = document.getElementById("view-budget");
   var eyebrow = document.getElementById("eyebrow"), subline = document.getElementById("subline"), totals = document.getElementById("totals");
-  var modeBtns = {roadmap:document.getElementById("mode-roadmap"), scope:document.getElementById("mode-scope"), schedules:document.getElementById("mode-schedules")};
+  var modeBtns = {roadmap:document.getElementById("mode-roadmap"), scope:document.getElementById("mode-scope"), budget:document.getElementById("mode-budget"), schedules:document.getElementById("mode-schedules")};
   var MODE_TEXT = {
     roadmap:{eye:"Roadmap", sub:"From DA to handover: who does what, and when", title:"Roadmap"},
     scope:{eye:"Scope Matrix", sub:"Pathway C: who does what, and who answers for it", title:"Scope Matrix"},
+    budget:{eye:"Budget & Fees", sub:"How money moves in each pathway: budget, fees and contracts", title:"Budget & Fees"},
     schedules:{eye:"Fit-Out Schedule", sub:"Fixtures, finishes & equipment, by type", title:"Fit-Out Schedule"}
   };
   var lastSched = "";
@@ -2187,7 +2227,7 @@
   function updateModeBar(){
     var showScope = pw === "C";
     modeBtns.scope.classList.toggle("rm-off", !showScope);
-    var order = ["roadmap"].concat(showScope ? ["scope"] : [], ["schedules"]);
+    var order = ["roadmap"].concat(showScope ? ["scope"] : [], ["budget", "schedules"]);
     order.forEach(function(k, i){ modeBtns[k].querySelector(".n").textContent = "0" + (i + 1); });
     if (!showScope && mode === "scope") goRoadmap();
   }
@@ -2202,6 +2242,7 @@
     vS.classList.toggle("rm-off", m !== "schedules");
     vR.classList.toggle("rm-off", m !== "roadmap");
     vM.classList.toggle("rm-off", m !== "scope");
+    vB.classList.toggle("rm-off", m !== "budget");
     totals.classList.toggle("rm-off", m !== "schedules");
     eyebrow.textContent = MODE_TEXT[m].eye;
     subline.textContent = MODE_TEXT[m].sub;
@@ -2221,13 +2262,15 @@
       if (pw !== "C") { goRoadmap(); return; }
       setMode("scope"); return;
     }
+    if (hh === "budget-fees") { setMode("budget"); return; }
     if (hh) lastSched = location.hash;
     setMode("schedules");
   }
   modeBtns.roadmap.addEventListener("click", function(){ location.hash = "roadmap/" + cur; });
   modeBtns.scope.addEventListener("click", function(){ location.hash = "scope-matrix"; });
+  modeBtns.budget.addEventListener("click", function(){ location.hash = "budget-fees"; });
   modeBtns.schedules.addEventListener("click", function(){
-    if (lastSched && lastSched.indexOf("#roadmap") !== 0 && lastSched !== "#scope-matrix") location.hash = lastSched;
+    if (lastSched && lastSched.indexOf("#roadmap") !== 0 && lastSched !== "#scope-matrix" && lastSched !== "#budget-fees") location.hash = lastSched;
     else { try { history.replaceState(null, "", location.pathname + location.search); } catch(e){} setMode("schedules"); }
   });
 
@@ -2567,3 +2610,242 @@
   build();
 })();
 </script>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.getElementById("view-budget");
+  if (!root) return;
+  var KEYS = ["A", "B", "C"];
+  var NAMES = {A:"Architect-led", B:"Builder-led", C:"Hybrid"};
+  var pw = "A";
+  try { var sv = localStorage.getItem("46stanley:pathway"); if (NAMES[sv]) pw = sv; } catch(e){}
+
+  function h(tag, cls, text){ var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function pick(o){ return o[pw]; }
+
+  /* ---- four buckets ---- */
+  var BUCKETS = [
+    ["Construction cost", "The builder's price: structure, finishes, services, preliminaries and builder's margin. Provisional and prime cost allowances sit here until selections are made."],
+    ["Consultants", "Engineer, geotechnical, energy assessor, building surveyor, hygienist and any acoustic advice. Under Pathways B and C some of these sit inside the builder's price, and the owner needs to see which."],
+    ["Statutory and utility costs", "DA and permit fees, the construction training levy, and any Western Power or Water Corporation charges for new or upgraded connections."],
+    ["Contingency and owner's costs", "Design and construction contingency, the architect's fees, insurance, temporary accommodation, and furniture and landscaping outside the contract."]
+  ];
+
+  /* ---- how the budget works in each pathway ---- */
+  var FRAME = {
+    A:{ who:"An independent source: a quantity surveyor, or an estimate built on Rawlinsons rates. The builder prices at tender.",
+        first:"At tender, once the documents are complete.",
+        risk:"Documents are priced late. If the tender comes in over budget, redesign happens after the documentation fees are spent.",
+        cont:"Held by the owner, with the architect advising on how much and when it is released.",
+        steps:"Cost checks at DA, end of design development, and before tender, each by the independent estimator." },
+    B:{ who:"The builder, as part of a design-and-construct offer. The owner has no independent number unless one is commissioned.",
+        first:"When the builder's team has developed the design far enough to fix a price, often after a paid design stage.",
+        risk:"The design drifts to suit the price, and the owner has little visibility of what has been dropped. Deposits paid for plans are not covered by home indemnity insurance.",
+        cont:"Mostly inside the builder's price, which makes it less visible and harder to recover.",
+        steps:"A written inclusions and exclusions list at each stage, and one independent check of the price before it is accepted." },
+    C:{ who:"The builder, checked against an independent estimate of the architectural scope.",
+        first:"After the builder's team has developed the design from the approved DA.",
+        risk:"A gap between the architectural set and the builder's scope, so items fall out of both prices. The scope matrix is the control.",
+        cont:"Split: design contingency with the builder's design work, construction contingency with the owner.",
+        steps:"Cost checks at the end of design development and when the architectural set is issued, with the matrix attached to the price." }
+  };
+
+  /* ---- fees by stage. Each pathway: [basis, note] or null when the stage is not part of it ---- */
+  var STAGES = [
+    { id:"da", name:"Pre-DA and DA", sub:"Roadmap phases 0–2",
+      p:{A:["Fixed lump sum","Scope is known. Settled first, since the DA is already well advanced."],
+         B:["Fixed lump sum","The architect still leads the DA, whichever way the project is delivered."],
+         C:["Fixed lump sum","The architect still leads the DA, whichever way the project is delivered."]} },
+    { id:"dd", name:"Design development and selections", sub:"Phases 3–4",
+      p:{A:["Fixed lump sum","State the number of design revision rounds, or this stage stretches."],
+         B:["Hourly, with a cap","Design-intent input and selections the builder's team will not make. The cap prevents open-ended review."],
+         C:["Fixed lump sum","State the revision rounds. Scope depends on what the matrix says the architect produces."]} },
+    { id:"doc", name:"Documentation and certification support", sub:"Phase 5",
+      p:{A:["Fixed lump sum, by deliverable","Full set, specification and schedules, with consultants coordinated into it."],
+         B:["Hourly, with a cap","The builder's in-house architect produces the drawings. The fee covers review against the design intent."],
+         C:["Fixed lump sum, by deliverable","Architectural set and schedules only. Engineering, energy and shop drawings are the builder's."]} },
+    { id:"proc", name:"Procurement", sub:"Phase 6",
+      p:{A:["Fixed lump sum","Tender package, evaluation and contract preparation."],
+         B:null,
+         C:["Hourly, with a cap","Review of the builder's price against the architectural set and the matrix."]} },
+    { id:"ca", name:"Contract administration and site review", sub:"Phases 7–8",
+      p:{A:["Hourly with a cap, or monthly retainer","The least predictable stage. A fixed sum shifts overrun risk to the architect."],
+         B:["Hourly, optional","Occasional site visits to review design intent, if the owner wants them."],
+         C:["Hourly with a cap","Periodic site visits and responses to requests for information, as agreed in the matrix."]} },
+    { id:"hand", name:"Completion and handover", sub:"Phase 9",
+      p:{A:["Fixed or hourly","Practical completion inspection and defects list."],
+         B:["Hourly, optional","A check against the design intent if requested."],
+         C:["Hourly","Practical completion inspection of the architectural work."]} }
+  ];
+
+  /* ---- contracts ---- */
+  var CONTRACT = {
+    A:[["Architect and owner","The Australian Institute of Architects' client-architect agreement is the usual starting point. It allows each stage to be selected, which suits the staged fees above."],
+       ["Owner and builder","A traditional fixed-price contract with a named superintendent, in a form the contract-suite publishers (for example the ABIC suite, or the Master Builders and HIA residential forms) offer for residential work. The Home Building Contracts Act needs to be satisfied."],
+       ["Roles","The architect, as superintendent or contract administrator, gives instructions and assesses payment claims. The PI insurer needs to be told."]],
+    B:[["Architect and owner","A shorter agreement for the DA and the design-intent services, with optional later stages by written variation."],
+       ["Owner and builder","A design-and-construct agreement, often in two parts: a design stage with its own agreement, then the build contract once the price is fixed."],
+       ["Roles","The builder runs the contract. The owner needs a clear route for design approvals, since there is no independent superintendent."]],
+    C:[["Architect and owner","The client-architect agreement with the scope matrix attached, so the stages and the deliverables match what the builder is responsible for."],
+       ["Owner and builder","Either a traditional contract with the matrix as a schedule, or a staged agreement. The matrix needs to be part of the contract, not only a side document."],
+       ["Roles","The contract administrator role is decided up front. It is usually the owner or the builder, with the architect doing design review and site visits."]]
+  };
+
+  var WA = [
+    ["Home Building Contracts Act", "Applies to residential building work valued between $7,500 and $500,000. The contract must be written and contain prescribed information, and it limits deposits. The current requirements need checking before signing."],
+    ["Home indemnity insurance", "The builder takes it out in the owner's name before accepting payment or starting, for residential work over $20,000. It does not cover a preparation-of-plans agreement."],
+    ["Payment timing", "Payments are tied to completed stages or deliverables. A large deposit for plans is the main exposure if a builder fails."],
+    ["Lender requirements", "Lenders commonly ask for a fixed-price contract, the plans and the permit before releasing funds. Their checklist is obtained early."]
+  ];
+
+  var COSTADV = [
+    ["An independent estimate", "A quantity surveyor, or a cost plan built on Rawlinsons rates, gives a number that does not come from the party being paid to build. It is most valuable at the end of design development and before the tender."],
+    ["Framing the architect's figures", "The architect's own cost figures are indicative and said to be so. Under B and C, the builder's number is the one relied on."],
+    ["Contingency", "Held separately from allowances. The amount depends on how much of the existing house is unknown, and the cracking and hidden conditions argue for a larger one."],
+    ["Cost-check points", "At the end of the DA, end of design development, when documents are issued, and at tender or price acceptance. Each checkpoint has a decision attached: proceed, change scope or stop."]
+  ];
+
+  /* ---- storage for fee inputs ---- */
+  var KEY = "46stanley:fees";
+  function loadFees(){ try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ return {}; } }
+  function saveFees(f){ try { localStorage.setItem(KEY, JSON.stringify(f)); } catch(e){} }
+  function money(n){ return "$" + Math.round(n).toLocaleString("en-AU"); }
+
+  function details(title, bodyFn){
+    var d = h("details", "sm-explain");
+    d.appendChild(h("summary", null, title));
+    var b = h("div", "ex-body");
+    bodyFn(b);
+    d.appendChild(b);
+    return d;
+  }
+  function kv(pairs){
+    var dl = h("dl", "bf-kv");
+    pairs.forEach(function(p){ dl.appendChild(h("dt", null, p[0])); dl.appendChild(h("dd", null, p[1])); });
+    return dl;
+  }
+
+  var feeInputs, totalEl;
+  function updateTotal(){
+    var f = loadFees(), t = 0;
+    (f[pw] ? Object.keys(f[pw]) : []).forEach(function(id){
+      var st = STAGES.filter(function(s){ return s.id === id; })[0];
+      if (st && st.p[pw]) { var v = parseFloat(String(f[pw][id]).replace(/[^0-9.]/g, "")); if (!isNaN(v)) t += v; }
+    });
+    totalEl.textContent = money(t);
+  }
+
+  function build(){
+    var open = {};
+    root.querySelectorAll("details").forEach(function(d, i){ open[i] = d.open; });
+
+    root.textContent = "";
+    var wrap = h("div", "wrap");
+    var intro = h("p", "rm-intro");
+    intro.innerHTML = "<b>How money moves in each pathway.</b> The budget has the same four parts in all three pathways. What changes is who gives the cost advice, when the first firm price appears, and how the architect's fee is structured. Select a pathway to see its version.";
+    wrap.appendChild(intro);
+
+    var bar = h("div", "bf-bar");
+    var pwb = h("div", "bf-pw");
+    pwb.appendChild(h("span", "rail-lab", "Pathway · " + NAMES[pw]));
+    var seg = h("div", "seg");
+    KEYS.forEach(function(k){
+      var b = h("button", null, k); b.type = "button"; b.title = "Pathway " + k + ": " + NAMES[k];
+      b.setAttribute("aria-pressed", k === pw ? "true" : "false");
+      b.addEventListener("click", function(){
+        pw = k;
+        try { localStorage.setItem("46stanley:pathway", k); } catch(e){}
+        window.dispatchEvent(new CustomEvent("stanley:pathway", {detail:k}));
+        build();
+      });
+      seg.appendChild(b);
+    });
+    pwb.appendChild(seg);
+    bar.appendChild(pwb);
+    var tools = h("div", "bf-tools");
+    var ex = h("button", "tbtn", "Expand all"); ex.type = "button";
+    ex.addEventListener("click", function(){ root.querySelectorAll("details").forEach(function(d){ d.open = true; }); });
+    var co = h("button", "tbtn", "Collapse all"); co.type = "button";
+    co.addEventListener("click", function(){ root.querySelectorAll("details").forEach(function(d){ d.open = false; }); });
+    tools.appendChild(ex); tools.appendChild(co);
+    bar.appendChild(tools);
+    wrap.appendChild(bar);
+
+    /* 1 framework */
+    wrap.appendChild(details("1 · Budget framework", function(b){
+      b.appendChild(h("p", null, "One total project budget, split into four parts."));
+      var g = h("div", "bf-buckets");
+      BUCKETS.forEach(function(x){ var c = h("div", "bf-bucket"); c.appendChild(h("h4", null, x[0])); c.appendChild(h("p", null, x[1])); g.appendChild(c); });
+      b.appendChild(g);
+      var F = pick(FRAME);
+      var c = h("div", "bf-card"); c.appendChild(h("b", null, "Pathway " + pw)); c.appendChild(document.createTextNode(NAMES[pw] + ": the budget works as follows."));
+      b.appendChild(c);
+      b.appendChild(kv([["Cost advice comes from", F.who], ["First firm price", F.first], ["Biggest budget risk", F.risk], ["Contingency", F.cont], ["Cost checks", F.steps]]));
+    }));
+
+    /* 2 fees */
+    wrap.appendChild(details("2 · Architect's fees by stage", function(b){
+      b.appendChild(h("p", null, "A fixed fee for stages with a known scope, and hourly with a cap where the workload depends on others. Each stage is agreed and invoiced separately, and later stages are added by written variation once the pathway is settled. Amounts are entered below and saved in this browser only."));
+      var fees = h("div", "bf-fees");
+      var hd = h("div", "bf-fh");
+      ["Stage", "Fee basis", "Notes", "Fee (ex GST)"].forEach(function(x){ hd.appendChild(h("span", null, x)); });
+      fees.appendChild(hd);
+      var saved = loadFees(); saved[pw] = saved[pw] || {};
+      STAGES.forEach(function(s){
+        var info = s.p[pw];
+        if (!info) return;
+        var r = h("div", "bf-fr");
+        var st = h("div", "st", s.name); st.appendChild(h("small", null, s.sub)); r.appendChild(st);
+        r.appendChild(h("div", "bf-basis", info[0]));
+        r.appendChild(h("div", "nt", info[1]));
+        var inp = h("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.placeholder = "$"; inp.setAttribute("aria-label", "Fee for " + s.name);
+        inp.value = saved[pw][s.id] || "";
+        inp.addEventListener("input", function(){ var f = loadFees(); f[pw] = f[pw] || {}; f[pw][s.id] = inp.value; saveFees(f); updateTotal(); });
+        r.appendChild(inp);
+        fees.appendChild(r);
+      });
+      var tot = h("div", "bf-total"); tot.appendChild(h("span", null, "Total, Pathway " + pw)); totalEl = h("b", null, "$0"); tot.appendChild(totalEl);
+      fees.appendChild(tot);
+      fees.appendChild(h("p", "bf-fnote", "If the fee is discounted or deferred because this is a portfolio piece, the agreement should say so."));
+      b.appendChild(fees);
+      updateTotal();
+    }));
+
+    /* 3 contracts */
+    wrap.appendChild(details("3 · Contracts for Pathway " + pw, function(b){
+      b.appendChild(h("p", null, "Two layers: the architect's agreement with the owner, and the owner's building contract."));
+      var t = h("div", "bf-ct");
+      CONTRACT[pw].forEach(function(x){ var r = h("div", "row"); r.appendChild(h("b", null, x[0])); r.appendChild(h("span", null, x[1])); t.appendChild(r); });
+      b.appendChild(t);
+      b.appendChild(h("p", "bf-fnote", "Names and editions of standard forms change. The current versions, and any WA-specific form, should be checked before one is chosen."));
+    }));
+
+    /* 4 WA */
+    wrap.appendChild(details("4 · WA requirements that apply to every pathway", function(b){ b.appendChild(kv(WA)); }));
+
+    /* 5 cost advice */
+    wrap.appendChild(details("5 · Cost advice and contingency", function(b){ b.appendChild(kv(COSTADV)); }));
+
+    /* 6 order */
+    wrap.appendChild(details("6 · Suggested order of agreements", function(b){
+      var ol = h("ol");
+      ["Sign a short agreement covering only the work already underway (the DA).",
+       "Once the builder replies, settle the pathway and add the later stages by written variation.",
+       "For B or C, attach the scope matrix to both the architect's agreement and the building contract.",
+       "Have the PI insurer review the services, and a lawyer familiar with WA residential building review the building contract."]
+        .forEach(function(x){ ol.appendChild(h("li", null, x)); });
+      b.appendChild(ol);
+    }));
+
+    wrap.appendChild(h("p", "sm-note", "This is general information, not legal or financial advice. Fee levels, deposit limits and standard-form wording change, so current requirements are confirmed before any agreement is signed."));
+    root.appendChild(wrap);
+
+    root.querySelectorAll("details").forEach(function(d, i){ if (open[i]) d.open = true; });
+  }
+
+  window.addEventListener("stanley:pathway", function(e){ if (e.detail !== pw) { pw = e.detail; build(); } });
+  build();
+})();
+</script>
+
