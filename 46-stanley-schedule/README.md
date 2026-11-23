@@ -47,3 +47,11 @@ and `SOURCES` live in the second `<script>` block at the bottom of `index.html`.
 under pathway A (you lead), B (builder-led) or C (hybrid); `"-"` means not part of that pathway. The selected
 pathway is kept in `localStorage` (`46stanley:pathway`). Tasks can link into a Schedules category via `link:`.
 The Roadmap has no status tracking and nothing is synced to `state.json`.
+
+## Roadmap and Scope Matrix behaviour (v0.4)
+
+- The sticky bar at the top of Roadmap (pathway switch + phases 0-9) is the main navigation; one phase panel shows at a time (`#roadmap/N`).
+- Everything is collapsed by default; Expand all / Collapse all act on the visible view.
+- Tasks whose `who` entry is `"-"` for the selected pathway are hidden (and empty workstreams with them).
+- The Scope Matrix tab appears only when Pathway C is selected; `#scope-matrix` redirects to the Roadmap otherwise. Tabs renumber accordingly.
+- Copy is third person ("Architect", "Owner", "Builder"); avoid "you/your".
