@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>46 Stanley Street — Fit-Out Schedule</title>
+<title>46 Stanley Street — Roadmap &amp; Schedule</title>
 <style>
   /* Same look as the New Home schedule: warm beige ground, numbered tab bar,
      card grid / list. Organised by fixture (Lighting, Plumbing, Finishes…)
@@ -267,6 +267,162 @@
     #cat.list-view .card.placeholder .pnote{display:none}
     #cat.list-view .card{flex-wrap:wrap}
   }
+
+  /* ================= Mode bar (Roadmap | Schedules) ================= */
+  .rm-off{display:none !important}
+  .modebar{background:var(--bg); border-bottom:1px solid var(--line)}
+  .modebar .wrap{display:flex; gap:6px; padding-top:10px}
+  .mode{
+    font-family:var(--f-display); font-weight:600; font-size:17px; color:var(--ink-70); cursor:pointer;
+    background:none; border:none; padding:10px 18px 9px; border-bottom:3px solid transparent; margin-bottom:-1px;
+  }
+  .mode .n{font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:.14em; color:var(--ink-45); margin-right:8px; vertical-align:2px}
+  .mode:hover{color:var(--ink)}
+  .mode[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent)}
+  .mode[aria-selected="true"] .n{color:var(--accent)}
+
+  /* ================= Roadmap ================= */
+  #view-roadmap{padding-bottom:60px}
+  .rm-intro{max-width:70ch; font-size:14.5px; color:var(--ink-70); line-height:1.65; margin:26px 0 22px}
+  .rm-intro b{color:var(--ink)}
+
+  /* pathway cards */
+  .pw-grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px}
+  .pw{
+    text-align:left; font:inherit; color:inherit; cursor:pointer; background:var(--surface);
+    border:1px solid var(--line); border-top:3px solid var(--ink-15); border-radius:3px; padding:16px 16px 14px;
+    display:flex; flex-direction:column; gap:10px; position:relative;
+  }
+  .pw:hover{border-color:var(--ink-45)}
+  .pw[aria-pressed="true"]{border-color:var(--accent); border-top-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset}
+  .pw .k{font-family:var(--font-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-45)}
+  .pw[aria-pressed="true"] .k{color:var(--accent)}
+  .pw h3{font-family:var(--f-display); font-weight:600; font-size:21px; margin:0; line-height:1.2}
+  .pw .tag-line{font-family:var(--f-display); font-style:italic; font-size:14px; color:var(--ink-70); margin:0}
+  .pw dl{margin:2px 0 0; display:grid; grid-template-columns:auto 1fr; gap:7px 12px; font-size:12.5px; align-items:baseline}
+  .pw dt{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-45); white-space:nowrap}
+  .pw dd{margin:0; color:var(--ink-70); line-height:1.4}
+  .dots{letter-spacing:.14em; color:var(--accent); font-size:12px}
+  .dots i{font-style:normal; color:var(--ink-15)}
+  .pw .best{font-size:12.5px; color:var(--ink-70); border-top:1px solid var(--line); padding-top:10px; margin-top:auto; line-height:1.5}
+  .pw .best b{font-weight:600; color:var(--ink)}
+
+  /* before-DA callout */
+  .preda{
+    margin:24px 0 0; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:3px; padding:14px 16px 16px;
+  }
+  .preda h3{font-family:var(--f-display); font-weight:600; font-size:18px; margin:0 0 3px}
+  .preda p{margin:0 0 10px; font-size:13px; color:var(--ink-70)}
+  .preda ul{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:6px}
+  .preda button{
+    font:inherit; font-size:12.5px; color:var(--ink); background:var(--bg); border:1px solid var(--line);
+    border-radius:20px; padding:5px 12px; cursor:pointer; text-align:left;
+  }
+  .preda button:hover{border-color:var(--accent); color:var(--accent)}
+
+  /* sticky rail */
+  .rail{position:sticky; top:env(safe-area-inset-top,0px); z-index:10; background:var(--surface); border-bottom:1px solid var(--line); margin:30px calc(-1 * max(20px, env(safe-area-inset-left,0px))) 0}
+  .rail-in{max-width:var(--wrap-w); margin:0 auto; padding:10px max(20px, env(safe-area-inset-left,0px)) 10px; display:flex; gap:18px; align-items:flex-end; overflow-x:auto; scrollbar-width:thin}
+  .rail-pw{flex:none; display:flex; flex-direction:column; gap:4px}
+  .rail-lab{font-family:var(--font-mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-45)}
+  .band{flex:none; display:flex; flex-direction:column; gap:4px}
+  .band .chips{display:flex; gap:3px}
+  .chip{
+    font-family:var(--font-mono); font-size:11px; font-weight:500; min-width:30px; height:30px; padding:0 8px;
+    background:var(--bg); border:1px solid var(--line); border-radius:3px; cursor:pointer; color:var(--ink-70);
+  }
+  .chip:hover{border-color:var(--accent); color:var(--accent)}
+  .chip.cur{background:var(--ink); color:var(--surface); border-color:var(--ink)}
+  .rail-tools{flex:none; margin-left:auto; display:flex; gap:6px}
+
+  /* phases */
+  .phases{margin-top:18px; display:flex; flex-direction:column; gap:12px}
+  details.rm-phase{background:var(--surface); border:1px solid var(--line); border-radius:3px; scroll-margin-top:92px}
+  details.rm-phase[open]{border-color:var(--ink-45)}
+  details.rm-phase > summary{
+    list-style:none; cursor:pointer; display:grid; grid-template-columns:auto 1fr auto; gap:6px 16px; align-items:center; padding:16px 18px;
+  }
+  details.rm-phase > summary::-webkit-details-marker{display:none}
+  .ph-n{font-family:var(--font-mono); font-size:26px; font-weight:500; color:var(--accent); line-height:1; min-width:34px}
+  .ph-t h2{font-family:var(--f-display); font-weight:600; font-size:21px; margin:0; line-height:1.25}
+  .ph-t .when{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-45); margin-top:3px}
+  .ph-count{font-family:var(--font-mono); font-size:11px; color:var(--ink-45); white-space:nowrap}
+  .ph-count::after{content:"+"; display:inline-block; margin-left:10px; font-size:18px; color:var(--ink-70); transition:transform .15s}
+  details.rm-phase[open] .ph-count::after{transform:rotate(45deg)}
+  .ph-body{padding:0 18px 18px; border-top:1px solid var(--line)}
+  .ph-sum{font-family:var(--f-display); font-size:16px; line-height:1.55; color:var(--ink-70); margin:16px 0 12px; max-width:68ch}
+  .ph-pw{
+    background:var(--bg); border-left:3px solid var(--accent-2); padding:10px 14px; font-size:13px; line-height:1.55; color:var(--ink-70);
+    margin:0 0 6px; border-radius:0 3px 3px 0;
+  }
+  .ph-pw b{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-2); margin-right:8px; font-weight:600}
+
+  /* workstreams */
+  details.rm-ws{margin-top:22px}
+  details.rm-ws > summary{
+    font-weight:600; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-2);
+    border-left:2px solid var(--accent-2); padding-left:9px; cursor:pointer; list-style:none; display:flex; gap:8px; align-items:center;
+  }
+  details.rm-ws > summary::-webkit-details-marker{display:none}
+  details.rm-ws > summary::after{content:"▾"; font-size:10px; color:var(--ink-45); transition:transform .15s}
+  details.rm-ws:not([open]) > summary::after{transform:rotate(-90deg)}
+  details.rm-ws > summary:hover{color:var(--ink)}
+  .ws-n{font-family:var(--font-mono); font-weight:400; letter-spacing:.04em; color:var(--ink-45)}
+  .tasks{margin-top:8px; border-top:1px solid var(--line)}
+
+  /* tasks */
+  details.rm-task{border-bottom:1px solid var(--line); scroll-margin-top:92px}
+  details.rm-task > summary{
+    list-style:none; cursor:pointer; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px 18px; align-items:center; padding:11px 4px 11px 2px;
+  }
+  details.rm-task > summary::-webkit-details-marker{display:none}
+  details.rm-task > summary:hover .tt{color:var(--accent)}
+  .tt{font-size:14.5px; font-weight:500; line-height:1.4; display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; position:relative; padding-left:16px}
+  .tt::before{content:"›"; position:absolute; left:2px; top:0; color:var(--ink-45); font-weight:400; transition:transform .15s}
+  details.rm-task[open] .tt::before{transform:rotate(90deg)}
+  .flags{display:inline-flex; gap:5px; flex-wrap:wrap}
+  .flag{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:2px 6px; border-radius:2px; border:1px solid var(--line); color:var(--ink-70); white-space:nowrap}
+  .flag.pre{background:var(--accent); border-color:var(--accent); color:#fff}
+  .flag.crit{border-color:var(--ink); color:var(--ink)}
+  .flag.lead{border-color:var(--accent-2); color:var(--accent-2)}
+  .who{display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end}
+  .role{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; padding:3px 8px; border-radius:20px; border:1px solid var(--ink-45); color:var(--ink-70); white-space:nowrap}
+  .role.you{background:var(--accent); border-color:var(--accent); color:#fff}
+  .role.builder{background:var(--accent-2); border-color:var(--accent-2); color:#fff}
+  .role.owner{background:var(--ink-15); border-color:transparent; color:var(--ink)}
+  .role.auth{border-style:dashed}
+  .role.none{border-color:transparent; color:var(--ink-45); font-style:italic; padding-left:0}
+  details.rm-task.off > summary .tt{color:var(--ink-45)}
+  .t-body{padding:2px 6px 18px 12px; display:grid; grid-template-columns:minmax(0,1fr) minmax(200px,280px); gap:16px 32px}
+  .t-body p{margin:0 0 10px; font-size:14px; line-height:1.65; color:var(--ink-70); max-width:66ch}
+  .t-meta{font-size:12.5px; line-height:1.5; color:var(--ink-70); display:flex; flex-direction:column; gap:10px; border-left:1px solid var(--line); padding-left:16px}
+  .t-meta .m b{display:block; font-family:var(--font-mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-45); font-weight:500; margin-bottom:2px}
+  .t-meta .pwnote{background:var(--bg); padding:8px 10px; border-radius:3px; border-left:3px solid var(--accent)}
+  .golink{align-self:flex-start; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:var(--ink); border:none; border-radius:3px; padding:7px 11px; cursor:pointer}
+  .golink:hover{background:var(--accent)}
+
+  .rm-foot{margin-top:40px; border-top:1px solid var(--line); padding-top:16px; font-size:12.5px; color:var(--ink-70); line-height:1.6}
+  .rm-foot ul{margin:8px 0 0; padding-left:18px}
+  .rm-foot a{color:var(--ink-70)}
+  .rm-foot a:hover{color:var(--accent)}
+
+  @media (max-width:820px){
+    .pw-grid{grid-template-columns:1fr}
+    .t-body{grid-template-columns:1fr}
+    .t-meta{border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:10px}
+    details.rm-task > summary{grid-template-columns:1fr}
+    .who{justify-content:flex-start; padding-left:20px}
+  }
+  @media (max-width:600px){
+    .mode{font-size:15px; padding:9px 12px 8px}
+    .rail{margin-left:-16px; margin-right:-16px}
+    .rail-in{padding-left:16px; padding-right:16px}
+    details.rm-phase > summary{grid-template-columns:auto 1fr; padding:14px}
+    .ph-count{grid-column:2}
+    .ph-t h2{font-size:18px}
+    .ph-body{padding:0 14px 16px}
+  }
 </style>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -274,11 +430,11 @@
 <header class="top">
   <div class="wrap">
     <div>
-      <p class="brand-eyebrow">Fit-Out Schedule</p>
+      <p class="brand-eyebrow" id="eyebrow">Fit-Out Schedule</p>
       <h1>46 Stanley Street</h1>
-      <p class="sub">Fixtures, finishes &amp; equipment, by type</p>
+      <p class="sub" id="subline">Fixtures, finishes &amp; equipment, by type</p>
     </div>
-    <div class="totals">
+    <div class="totals" id="totals">
       <span id="spec-count"></span><br>
       <span id="order-count"></span>
       <b id="running-total"></b>
@@ -286,6 +442,16 @@
     </div>
   </div>
 </header>
+
+<nav class="modebar" role="tablist" aria-label="Sections">
+  <div class="wrap">
+    <button type="button" class="mode" id="mode-roadmap" role="tab" aria-selected="false"><span class="n">01</span>Roadmap</button>
+    <button type="button" class="mode" id="mode-schedules" role="tab" aria-selected="true"><span class="n">02</span>Schedules</button>
+  </div>
+</nav>
+
+<div id="view-schedules">
+
 
 <nav class="tabs" role="tablist" aria-label="Categories">
   <div class="wrap" id="tab-row"></div>
@@ -321,9 +487,12 @@
     <ul class="removed-list" id="removed-list"></ul>
   </details>
 </main>
+</div><!-- /view-schedules -->
+
+<div id="view-roadmap" class="rm-off"></div>
 
 <footer class="site-foot">
-  <div class="wrap">v0.1 · 22 Nov 2026 · Second-storey addition, Scarborough WA</div>
+  <div class="wrap">v0.2 · 23 Nov 2026 · Second-storey addition, Scarborough WA</div>
 </footer>
 
 <dialog id="detail" aria-label="Item details">
@@ -1229,5 +1398,658 @@
   document.addEventListener("visibilitychange", function(){
     if (document.visibilityState === "visible" && Date.now() - lastPull > 20000) { lastPull = Date.now(); syncNow(0); }
   });
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  /* ---------- Roadmap data ---------- */
+  var PATHWAYS = {
+    A: { key:"A", name:"You lead", tag:"Traditional: you document, the builder builds",
+      lines:[
+        ["Design liability", "Highest: design, coordination and documents sit with you"],
+        ["Your workload", 5], ["Your control", 5],
+        ["PI insurance", "Essential"],
+        ["Contract admin", "You (or the owner), as superintendent"]],
+      best:"You want full design control and portfolio-grade detailing, and you are happy to coordinate consultants and administer the contract." },
+    B: { key:"B", name:"Builder-led", tag:"Design & construct: their team documents and builds",
+      lines:[
+        ["Design liability", "Mostly the builder: buildable, compliant documents are theirs"],
+        ["Your workload", 2], ["Your control", 2],
+        ["PI insurance", "Still needed for the design-intent work you do"],
+        ["Contract admin", "Builder-run; you may review design on site"]],
+      best:"You want one point of responsibility and the least admin, and you accept the builder's team shaping the detail." },
+    C: { key:"C", name:"Hybrid", tag:"You document the architecture, they supply the rest",
+      lines:[
+        ["Design liability", "Shared: needs a written scope matrix"],
+        ["Your workload", 4], ["Your control", 4],
+        ["PI insurance", "Required"],
+        ["Contract admin", "Agreed up front: usually you for design review and site visits"]],
+      best:"You want to keep design authority but share engineering, energy and certification risk with the builder." }
+  };
+
+  var BANDS = [
+    {name:"Set up", ph:[0]}, {name:"Before DA", ph:[1]}, {name:"DA", ph:[2]},
+    {name:"Design & documents", ph:[3,4,5]}, {name:"Procure & permit", ph:[6,7]}, {name:"Build", ph:[8,9]}
+  ];
+
+  var FLAGS = {pre:"Before DA", crit:"Critical path", lead:"Long lead", opt:"Optional"};
+
+  function T(title, tags, who, body, o){
+    o = o || {};
+    return {title:title, tags:tags ? tags.split(" ") : [], who:Array.isArray(who) ? who : [who, who, who],
+            body:body, dep:o.dep, out:o.out, n:o.n, link:o.link, ll:o.ll};
+  }
+
+  var PHASES = [
+  { n:0, title:"Decide & set up", when:"Now",
+    sum:"Choose how the project will be delivered and put the paperwork under it before money is spent.",
+    p:{A:"You carry everything, so the agreement and insurance matter most here.",
+       B:"Your job is to pin down what you will and won't be responsible for.",
+       C:"The scope matrix is the whole game: get it in writing before design continues."},
+    ws:[
+    { name:"Delivery & agreements", tasks:[
+      T("Choose the delivery pathway (A, B or C)", "crit", ["You,Owner","You,Owner","You,Owner"],
+        "The pathway decides who holds design liability, who coordinates the engineer, energy assessor and building surveyor, and who administers the building contract. Ask the builder for their scope in writing first, then compare it against the pathway cards above.\n\nThis is reversible until you sign something with the builder, so decide on the information you have and revisit after their reply.",
+        {out:"A decision, and a signed scope matrix for B or C"}),
+      T("Scope matrix with the builder: who does what", "crit", ["-","Builder,You","Builder,You"],
+        "A one-page table listing every document and decision, with an owner and a sign-off for each: engineering, energy, working drawings, specification, selections, shop drawings, building surveyor liaison, site inspections, variations.\n\nThe builder's company could work with you on documentation, but it isn't clear what you do and what they do. This table removes that ambiguity and is also what your PI insurer will want to see.",
+        {out:"Signed scope matrix", n:{A:"Not needed: you hold the whole scope."}}),
+      T("Written client–architect agreement with your brother", "crit", "You,Owner",
+        "Even for family work, write down: the services (DA only, documentation, contract administration), fee or no fee, limits of liability, who owns the drawings, and permission to use the project in your portfolio.\n\nIt protects the relationship as well as your insurance position.",
+        {out:"Signed agreement"}),
+      T("Professional indemnity and public liability insurance", "crit", "You",
+        "You're now registered as practising, so PI cover is mandatory; the WA minimum is $1 million. Tell the insurer exactly what you'll be doing on this project. Documentation and contract administration usually change the premium and can call for a higher limit.\n\nIf you've been covered under the Weco arrangement, confirm whether it extends to independent projects. It typically doesn't.",
+        {out:"Certificate of currency matching the services you'll provide"})
+    ]},
+    { name:"Money & owner obligations", tasks:[
+      T("Budget, funding and lender requirements", "", "Owner",
+        "Lenders commonly want a fixed-price contract, plans and a building permit before releasing construction funds, and will arrange a valuation. Ask for their checklist now so the documentation and contract type line up with it."),
+      T("Home insurance and living arrangements during the works", "", "Owner",
+        "The owner should notify their home insurer before work starts, since roof removal and an open structure change the risk. Decide whether the household moves out for the roof-off and structure stages: it changes the programme and the contract price.")
+    ]}
+  ]},
+
+  { n:1, title:"Pre-DA de-risking", when:"Before lodging the DA",
+    sum:"Find out what is hiding in the existing house and lock the numbers the DA depends on. The builder suggested lodging first; these items are the exceptions that are cheaper to resolve before you do.",
+    p:{A:"You engage the engineer and assessor directly for these early opinions.",
+       B:"Ask the builder to bring their engineer in for the structural opinion before you lodge.",
+       C:"Ask the builder to bring their engineer in for the structural opinion before you lodge."},
+    ws:[
+    { name:"Site & existing building", tasks:[
+      T("Title search and site constraints", "pre", "You",
+        "Order a current title and check for easements, covenants and any rights over the laneway. The studio's direct laneway access depends on it. Also check City of Stirling mapping for heritage listing, bushfire designation and any flood or groundwater constraints.",
+        {out:"Title and a short constraints note"}),
+      T("Feature survey and measure-up of the existing house", "pre crit", "You",
+        "The base for everything: boundaries, floor levels, ceiling heights, roof, walls, and neighbours' windows for overlooking. Build the Revit base model from it. Height compliance, overlooking and structure all depend on this being right.",
+        {out:"Survey and existing-conditions model"}),
+      T("Hazardous materials check (asbestos, lead paint)", "pre crit", ["Owner,Hygienist","Owner,Hygienist","Owner,Hygienist"],
+        "Houses of this era commonly have asbestos in eaves, wet areas or flooring. Test before any opening-up or roof removal. It changes demolition scope and cost, and builders will price it in or walk away.",
+        {out:"Hazardous materials report"})
+    ]},
+    { name:"Structure & buildability", tasks:[
+      T("Structural opinion on the north wall crack and existing structure", "pre crit", ["You,Engineer","Builder,Engineer","Builder,Engineer"],
+        "The crack in the northern wall may need addressing structurally. Ask an engineer to inspect it and advise on cause (footing movement or something else), whether the existing walls and footings can carry a second storey, and whether new posts, transfer beams or footing upgrades are needed.\n\nThose answers can change the ground-floor plan, so a short written opinion before the DA drawings freeze is worth having.",
+        {out:"Short engineer's letter", dep:"Existing-conditions survey"}),
+      T("Choose the structural system: SIPs, conventional timber frame or hybrid", "pre", ["You,Builder,Engineer","Builder,You,Engineer","Builder,You,Engineer"],
+        "It affects wall thickness (and so setbacks), floor depth, weight on the existing house, programme and cost. The builder specialises in timber and thinks the job is doable, and you're open to conventional framing. Ask for a rough price for each option.",
+        {out:"Chosen system and an indicative cost"}),
+      T("Lock the floor-to-ceiling zone (600–700mm) into the DA sections", "pre crit", "You",
+        "The builder advised allowing 600–700mm between ceiling and floor for an independent ceiling system and floor. That depth adds to overall building height, which is assessed at DA. Put it in the DA sections and height calculations now, otherwise a later change in height could need a DA amendment.",
+        {out:"DA sections showing the real build-up"}),
+      T("Early cost check from the builder", "pre", "Builder,Owner",
+        "A rough order of cost on the sketch design before you lodge, so the DA isn't spent on a scheme that can't be built to budget.")
+    ]},
+    { name:"Performance checks", tasks:[
+      T("Early energy sanity-check on the DA design", "pre", ["You,Assessor","Builder,Assessor","Builder,Assessor"],
+        "A quick NatHERS run on the DA scheme shows whether glazing area, orientation and shading will force changes. Window sizes appear on DA drawings, so it's much cheaper to learn this now.",
+        {out:"One-page result and any recommended changes"}),
+      T("Acoustic brief for the music studio", "opt", ["You,Acoustic","Builder,Acoustic","You,Acoustic"],
+        "The studio sits upstairs with laneway access, and neighbour noise is the likely objection. Decide whether to get acoustic advice now or later. Wall, floor and ceiling build-ups affect the 600–700mm zone.")
+    ]}
+  ]},
+
+  { n:2, title:"Development application", when:"Lodgement to determination",
+    sum:"The planning approval, including the setback variations tested through the Design Principles pathway. Timing depends on City of Stirling and any requests for further information.",
+    p:{A:"You run this phase as you have so far.", B:"You still lead the DA: it is what the builder then develops.", C:"You still lead the DA: it is what the builder then develops."},
+    ws:[
+    { name:"Prepare & lodge", tasks:[
+      T("Resolve the boundary strategy before lodging", "pre", "You,Owner",
+        "Council's pre-lodgement view was that the north boundary setback was held at 1.5m, and that the design could push further out on the east boundary. Weigh that against less light to the rear garden, then pick a study to lodge.",
+        {out:"Chosen Design Study"}),
+      T("Finish the DA drawings and Design Response Report", "crit", "You",
+        "Present the Design Studies against the Design Principles criteria and show why the preferred variation avoids overlooking that the compliant option creates. Drawings, shadow and overlooking diagrams, materials palette."),
+      T("Owner consent and lodgement", "", "Owner,You",
+        "The owner signs the application. Lodge online and pay the fee.")
+    ]},
+    { name:"Assessment & determination", tasks:[
+      T("Respond to council and neighbour feedback", "", "You,Council",
+        "Variations can be advertised to neighbours. Consider speaking to adjoining owners first. Reply to any requests for further information quickly: each one pauses the clock."),
+      T("Review the determination and every condition", "crit", "You,Owner",
+        "Some conditions must be cleared before the building permit (materials, privacy screens, stormwater, landscaping). List them and note who clears each. Also note the approval's expiry, commonly two years, but check the notice."),
+      T("Refusal or unacceptable conditions: options", "opt", "You,Owner",
+        "Ask the planner about reconsideration, or review rights at the State Administrative Tribunal. Usually a conversation with council comes first.")
+    ]},
+    { name:"After approval", tasks:[
+      T("Keep post-DA changes inside the approved envelope", "", "You",
+        "Changes to footprint, height or setbacks after approval (say from engineer's requirements) may need a DA amendment before the building permit. Where possible, resolve structure inside the approved envelope.")
+    ]}
+  ]},
+
+  { n:3, title:"Design development & consultants", when:"After DA approval, until documentation freeze",
+    sum:"Turn the approved scheme into something that can be engineered, rated and built. This is where the builder's offer to engage their engineer, in-house architect and energy assessor comes in, or where you engage your own.",
+    p:{A:"You engage and coordinate each consultant.",
+       B:"The builder's team engages and coordinates. Review what they produce against your design intent.",
+       C:"The builder supplies engineer, energy and certification. You coordinate the architecture around them."},
+    ws:[
+    { name:"Structure", tasks:[
+      T("Engage the structural engineer", "crit", ["You,Engineer","Builder,Engineer","Builder,Engineer"],
+        "Brief: existing structure and the north wall, new floor system, roof, lateral bracing, stair opening, footings and the SIPs or timber frame. If the builder engages them (B, C), check their PI and make sure you receive drawings early enough to coordinate.",
+        {out:"Engineering agreement and brief"}),
+      T("Site classification and geotechnical report", "crit", "Engineer",
+        "Needed for the building permit. Determines footing design for any new footings and informs how the existing ones are treated.",
+        {out:"Site classification report"}),
+      T("Structural design, calculations and drawings", "crit", "Engineer",
+        "Coordinate against your sections: beam and joist depths, posts through the ground floor, and the stair opening. Flush joists and beams (to keep the floor thin) need to be confirmed with the engineer early.",
+        {out:"Structural drawings and certification", dep:"Chosen structural system"}),
+      T("Timber or SIPs supplier engineering and shop drawings", "lead", "Builder",
+        "The supplier's connection details and panel layouts need space in your drawings. Lead times can be long, so ask the builder for the order point.",
+        {n:{A:"Happens after the contract is signed. Reserve space in your details for supplier connections."}})
+    ]},
+    { name:"Energy", tasks:[
+      T("Engage a NatHERS energy assessor", "", ["You,Assessor","Builder,Assessor","Builder,Assessor"],
+        "A certified assessor models the addition and issues the compliance report that goes into the permit application."),
+      T("Run the rating and iterate glazing, insulation and shading", "crit", "Assessor,You",
+        "WA has NCC 2022 variations for alterations and extensions, plus an industry Alterations and Additions Protocol; your building surveyor decides which route applies. Expect to adjust window sizes and glazing, insulation and fans. Do this before the window schedule is final.",
+        {out:"Rating at or above the required level", link:"hvac-energy", ll:"HVAC & Energy schedule"}),
+      T("Final energy report issued", "", "Assessor",
+        "Goes into the building permit documents and must match the final drawings. If windows or insulation change later, the report has to be redone.")
+    ]},
+    { name:"Services", tasks:[
+      T("Electrical: supply capacity, switchboard and circuits", "", ["You,Electrician","Builder,Electrician","Builder,Electrician"],
+        "A second storey, studio and air-conditioning load may need a switchboard upgrade or a larger supply. Check early; Western Power applications can take time.", {link:"electrical", ll:"Electrical & Data"}),
+      T("Hydraulics and stormwater", "", ["You,Plumber","Builder,Plumber","Builder,Plumber"],
+        "New roof area means more stormwater to manage on site, plus new wet areas and hot water. Confirm soakwell sizing with council requirements.", {link:"plumbing", ll:"Plumbing"}),
+      T("Heating and cooling strategy", "", ["You,Assessor","Builder,Assessor","Builder,Assessor"],
+        "Choose the system and where plant and ducts sit. It affects the ceiling zone, the energy result and the acoustic performance of the studio.", {link:"hvac-energy", ll:"HVAC & Energy"})
+    ]},
+    { name:"Technical resolution", tasks:[
+      T("Resolve the floor build-up and the 600–700mm zone", "crit", ["You","Builder,You","You"],
+        "Pin down the depth for the structure, acoustic layer, services and independent ceiling. Coordinate with the stair landing heights, the junction to the existing ceiling, and the energy result."),
+      T("Resolve the stair configuration", "", "You,Engineer",
+        "Winder or an alternative; it sets the trimmers and the floor opening and has to be settled before structure is documented."),
+      T("Junction between new and existing", "", "You,Engineer",
+        "Roof tie-in, flashings, brick-to-timber interface, damp and movement. This is where retrofits usually leak or crack."),
+      T("Wet area and waterproofing details", "", "You",
+        "Layers, falls and drainage. Tile and bed thickness affect floor levels, so tile selection has to be known.", {link:"finishes", ll:"Finishes"}),
+      T("Informal pre-check with the building surveyor", "", ["You,Certifier","Builder,Certifier","Builder,Certifier"],
+        "A short early conversation about fire separation, smoke alarms, egress, energy route for the extension and anything that might need a performance solution. Cheap now, expensive at certification.")
+    ]}
+  ]},
+
+  { n:4, title:"Selections", when:"Alongside design development, before the documentation freeze",
+    sum:"The smaller decisions that become drawings, schedules and prices. Whatever you don't decide becomes an allowance in the contract. Each item links to the Schedules tab where products are tracked.",
+    p:{A:"You select with the owner; the builder prices exactly what you specify.",
+       B:"Anything you don't specify becomes the builder's choice or a provisional allowance. Specify what matters visually.",
+       C:"You specify finishes and fixtures in your schedules; the builder prices them."},
+    ws:[
+    { name:"External finishes", tasks:[
+      T("Cladding: material, profile and colour", "lead", ["You,Owner","Owner,Builder","You,Owner"], "Weatherboard over the existing brick. The DA may need a materials palette, and the profile affects weatherproofing details.", {link:"external", ll:"External: Cladding"}),
+      T("Roofing, flashings, gutters and downpipes", "", ["You,Owner","Owner,Builder","You,Owner"], "Material and colour; has to tie into the existing roof. Gutter capacity ties to the stormwater design.", {link:"external", ll:"External: Roof & rainwater"}),
+      T("Windows and external doors", "lead crit", ["You,Owner","Owner,Builder","You,Owner"], "Frame material, glazing spec, sizes and operation. They feed the energy rating, are usually the longest lead item, and must be fixed before the window schedule.", {link:"doors-windows", ll:"Doors & Windows"}),
+      T("Shutters, screens and privacy screens", "", ["You,Owner","Owner,Builder","You,Owner"], "May be tied to DA overlooking conditions as well as security and shading.", {link:"doors-windows", ll:"Screens & security"}),
+      T("External paint, fascia and soffits", "", ["You,Owner","Owner,Builder","You,Owner"], "Colour palette and finish, and how new matches existing.", {link:"finishes", ll:"Finishes: Paint"}),
+      T("Balustrade, external stairs and access", "", ["You,Owner","Owner,Builder","You,Owner"], "Compliance heights and loads apply; coordinate with structure.", {link:"external", ll:"External: Balustrade & access"}),
+      T("External lighting and power points", "", ["You,Owner","Owner,Builder","You,Owner"], "Positions need to be on drawings for the electrician.", {link:"lighting", ll:"Lighting: External"})
+    ]},
+    { name:"Interior finishes", tasks:[
+      T("Flooring: ground and first floor", "", ["You,Owner","Owner,Builder","You,Owner"], "Material, thickness and transitions between old and new floors. Thickness affects levels and the stair design.", {link:"finishes", ll:"Finishes: Flooring"}),
+      T("Tiles: wet areas, splashbacks and floors", "", ["You,Owner","Owner,Builder","You,Owner"], "Size and layout set waterproofing and substrate details, and floor-level drops.", {link:"finishes", ll:"Finishes: Wall finishes"}),
+      T("Cabinetry and joinery: kitchen, laundry, vanities, wardrobes, studio", "lead crit", ["You,Owner","Owner,Builder","You,Owner"], "Long-lead and design-heavy. Layouts need to be fixed before services and electrical. Decide whether these are builder-made or a separate supplier.", {link:"finishes", ll:"Finishes: Casework"}),
+      T("Benchtops and splashbacks", "lead", ["You,Owner","Owner,Builder","You,Owner"], "Stone or other slab; needs templating after cabinetry is in, so it is on the critical path late in the build.", {link:"finishes", ll:"Finishes: Benchtops"}),
+      T("Internal doors, hardware, skirtings and architraves", "", ["You,Owner","Owner,Builder","You,Owner"], "Heights, swing and ironmongery, with a consistent set across the house.", {link:"doors-windows", ll:"Internal doors"}),
+      T("Wall and ceiling linings, paint and feature surfaces", "", ["You,Owner","Owner,Builder","You,Owner"], "Includes the independent ceiling system and any exposed timber or acoustic treatment in the studio.", {link:"finishes", ll:"Finishes: Ceilings"}),
+      T("Stair finishes: treads, balustrade and handrail", "", ["You,Owner","Owner,Builder","You,Owner"], "Ties to the stair configuration decision and to the structure.", {link:"finishes", ll:"Finishes"})
+    ]},
+    { name:"Fixtures & equipment", tasks:[
+      T("Sanitaryware, tapware and showers", "", ["You,Owner","Owner,Builder","You,Owner"], "Needed early for hydraulic rough-in positions, and the wall and floor waste layout.", {link:"plumbing", ll:"Plumbing"}),
+      T("Bath accessories", "", ["You,Owner","Owner,Builder","You,Owner"], "Fixing positions need blocking in the walls before lining.", {link:"bath-accessories", ll:"Bath Accessories"}),
+      T("Internal lighting, switches and control", "", ["You,Owner","Owner,Builder","You,Owner"], "Lighting plan and fitting selections need to be known for the electrical design and ceiling zone.", {link:"lighting", ll:"Lighting"}),
+      T("Power, data and AV points", "", ["You,Owner","Owner,Builder","You,Owner"], "Locations on the drawings; studio needs dedicated planning.", {link:"electrical", ll:"Electrical & Data"}),
+      T("Appliances: cooking, fridge, dishwasher, laundry", "lead", ["You,Owner","Owner,Builder","You,Owner"], "Dimensions drive joinery and services, so select before the cabinetry drawings.", {link:"appliances", ll:"Appliances"}),
+      T("Heating, cooling, hot water and solar", "", ["You,Owner","Owner,Builder","You,Owner"], "Same decision as the energy strategy; make sure the selected equipment matches the energy report.", {link:"hvac-energy", ll:"HVAC & Energy"}),
+      T("Blinds and curtains", "", ["You,Owner","Owner,Builder","You,Owner"], "Pelmet and track positions need to be allowed for in the ceiling.", {link:"furnishings", ll:"Window Furnishings"})
+    ]},
+    { name:"Selections process", tasks:[
+      T("Set a selections freeze date", "crit", "You,Owner",
+        "Pick a date before documentation is finalised. Anything undecided by then goes to the contract as a provisional allowance, which tends to be priced conservatively and gives the builder discretion."),
+      T("Collect specs, dimensions and lead times", "", "You",
+        "Keep them in the Schedules tab. Fix any item whose dimensions or lead time drives the drawings."),
+      T("Produce the finishes and fixtures schedules for the drawings and specification", "", ["You","Builder,You","You"],
+        "Turns the Schedules tab into issued documents.")
+    ]}
+  ]},
+
+  { n:5, title:"Documentation & certification", when:"After design development, up to the Certificate of Design Compliance",
+    sum:"The documents the builder prices from and the building surveyor certifies. For B and C this is where the split of who produces what shows up most clearly.",
+    p:{A:"You produce the full set and coordinate every consultant into it.",
+       B:"The builder's in-house architect produces the working drawings; you review against your design intent.",
+       C:"You produce the architectural set and schedules; the builder supplies engineering, energy and shop drawings."},
+    ws:[
+    { name:"Drawing set", tasks:[
+      T("Coordinate consultant information into the architectural set", "crit", ["You","Builder","You"], "Structure, energy, hydraulics, electrical and the supplier's information all need reconciling on one set."),
+      T("Construction drawings: plans, elevations, sections, details and schedules", "crit", ["You","Builder,You","You"], "Revit model to a set sufficient for pricing and certification. Include window and door schedules, wet area details and junctions.", {out:"Issued-for-permit drawings"}),
+      T("Specification", "crit", ["You","Builder,You","You"], "Materials, workmanship and the provisional allowance items. A clear specification is what lets builders price on the same basis."),
+      T("Structural drawings and engineer's certification", "crit", "Engineer", "Reviewed by the surveyor. Must match the architectural set exactly."),
+      T("Constructability review with the builder", "", ["Builder,You","-","Builder,You"], "Builder's input on sequencing, tolerance, access and standard details before documents are finalised. Particularly valuable for the new-to-existing junction.")
+    ]},
+    { name:"Certification", tasks:[
+      T("Engage a registered private building surveyor", "crit", ["Owner,You","Builder","Builder,Owner"], "Get quotes early; availability varies. The surveyor's review and Certificate of Design Compliance is what unlocks a certified permit application.", {out:"Appointment"}),
+      T("Surveyor review and Certificate of Design Compliance (BA3)", "crit", "Certifier", "The surveyor checks drawings, engineering and energy against the NCC and issues the certificate. Expect a list of comments to resolve.", {out:"Signed BA3 certificate"}),
+      T("Clear DA conditions that are required before the permit", "crit", "You,Council", "Close off each pre-permit condition with evidence."),
+      T("Performance solutions, if any", "opt", "You,Certifier", "Only if something can't comply with the deemed-to-satisfy provisions. They add time and cost, so aim to design them out.")
+    ]}
+  ]},
+
+  { n:6, title:"Procurement", when:"Once documents are ready (earlier for B and C)",
+    sum:"Choose the builder, fix the price and sign the contract. In WA the builder must be named on the permit application and hold home indemnity insurance, so this comes before lodging the permit.",
+    p:{A:"Run a tender on your documents.", B:"A negotiated design-and-construct price; the key risk is design drifting away from your intent.", C:"A negotiated price on your architectural set plus their scope."},
+    ws:[
+    { name:"Tender or negotiate", tasks:[
+      T("Assemble the tender package", "", ["You","-","You"], "Drawings, specification, schedules, allowances list, and the conditions of tendering."),
+      T("Invite and evaluate tenders, or negotiate", "crit", ["You,Owner","Builder,Owner","You,Owner"], "Compare like with like. Check inclusions, allowances, exclusions and programme, and not only the total."),
+      T("Resolve open selections into allowances", "", "You,Owner", "Every undecided item becomes a provisional sum or prime cost allowance. Keep the list short.", {link:"finishes", ll:"Schedules"})
+    ]},
+    { name:"Contract", tasks:[
+      T("Choose the contract form", "crit", "Owner,You", "WA's Home Building Contracts Act governs residential building work valued between $7,500 and $500,000, so check whether this job sits inside it. Fixed-price is the norm for residential work; cost-plus carries more owner risk."),
+      T("Builder provides home indemnity insurance before payment or start", "crit", "Builder,Owner", "For residential work over $20,000 the builder must take out home indemnity insurance in the owner's name before accepting payment or starting. Ask for the certificate."),
+      T("Be careful with preparation-of-plans agreements", "", ["-","Builder,Owner","Builder,Owner"], "A preparation-of-plans agreement with a builder is not covered by home indemnity insurance. If the builder becomes insolvent while only preparing plans, a deposit paid under it is unprotected, so keep payments small and tied to deliverables."),
+      T("Define the contract administrator role", "crit", ["You,Owner","Owner","You,Owner"], "Who gives instructions, assesses progress claims and approves variations? If it is you, you take on the superintendent's liability, so your PI cover needs to reflect that."),
+      T("Programme and payment schedule", "", "Builder,Owner", "Include the order points for long-lead items and the stages that trigger payments and lender drawdowns.")
+    ]}
+  ]},
+
+  { n:7, title:"Building permit & pre-start", when:"After contract, before work begins",
+    sum:"Lodge the certified application, collect the permit and prepare the site.",
+    p:{A:"The owner is the applicant; the builder's details and insurance go on the form.", B:"The builder typically lodges for the owner.", C:"The builder typically lodges for the owner."},
+    ws:[
+    { name:"Permit", tasks:[
+      T("Lodge the certified building permit application (BA1)", "crit", "Builder,Owner", "With the BA3 certificate, drawings, engineering, energy report, site classification, termite management plan, planning approval, owner's consent and the builder's details and insurance. The permit authority has 10 business days to decide a certified application."),
+      T("Pay the construction training levy and permit fees", "", "Builder,Owner", "Calculated on the value of the work."),
+      T("Permit issued: review conditions", "", "Council,Builder", "Read the permit's conditions and the mandatory inspection stages.")
+    ]},
+    { name:"Other approvals & pre-start", tasks:[
+      T("Verge, crossover and street tree protection", "", "Builder", "Any work in the road reserve, skip bins, hoarding and scaffolding on the verge may need council approval."),
+      T("Utility requests: Western Power, Water Corporation", "", "Builder,Electrician", "Needed if supply upgrades or new connections are planned. Start early, as lead times can be long."),
+      T("Weather protection and site plan for roof-off", "", "Builder", "How the house is kept dry when the roof comes off, and how existing occupants, neighbours, access and waste are managed."),
+      T("Pre-start meeting and inspection hold points", "", "Builder,You,Owner", "Agree site visits, RFI process, stage inspections and how variations are to be requested and priced.")
+    ]}
+  ]},
+
+  { n:8, title:"Construction & contract administration", when:"Build period",
+    sum:"The stages of the build and, if it's your role, the administration around them.",
+    p:{A:"You administer: inspections, claims, variations and instructions.", B:"The builder runs this. You may be retained to review design on site.", C:"Typically you review design and visit site; the builder manages the contract."},
+    ws:[
+    { name:"Build stages", tasks:[
+      T("Roof off and opening-up: engineer re-checks existing structure", "crit", "Builder,Engineer", "The first look inside walls and ceilings. Unforeseen conditions become variations, so have the engineer on call."),
+      T("Footings and new posts or beams: certifier inspection", "", "Builder,Certifier", "A mandatory inspection stage before they are covered."),
+      T("Floor structure and wall frame or SIPs: install and inspect", "", "Builder,Certifier", "Check against engineering before closing up."),
+      T("Roof and lock-up (weathertight)", "", "Builder", "Key milestone: interior works can start safely once the building is dry."),
+      T("Services rough-in and waterproofing: inspection", "", "Builder,Certifier", "Wet area membranes are inspected and often certified before tiling."),
+      T("Linings, joinery, tiling and flooring", "", "Builder", "Check selections are on site in time. Late deliveries stall trades."),
+      T("Fixtures, painting and final fit-off", "", "Builder", "Fittings go in last: sanitaryware, tapware, lights, appliances, hardware, then final paint touch-ups. Check each against the schedules as it is installed.")
+    ]},
+    { name:"Administration", tasks:[
+      T("Site visits, RFIs and shop drawing review", "", ["You","Owner","You"], "Answer questions in writing and keep a log. Review supplier shop drawings against your details."),
+      T("Progress claims and payments", "", ["You,Owner","Builder,Owner","You,Owner"], "Assess each claim against work done, and don't pay ahead of progress."),
+      T("Variations", "crit", ["You,Owner","Builder,Owner","You,Owner"], "Price and agree in writing before work proceeds. Most overruns start as verbal agreements."),
+      T("Selections follow-through: orders, deliveries and installs", "", "You,Owner", "Track in the Schedules tab against lead times.", {link:"finishes", ll:"Schedules"}),
+      T("Mandatory inspections and compliance documents", "", "Certifier,Builder", "Collect each inspection record and certificate as you go. They are needed at completion.")
+    ]}
+  ]},
+
+  { n:9, title:"Completion & handover", when:"Practical completion and after",
+    sum:"Get the building signed off, defects fixed and documents filed.",
+    p:{A:"You run the practical completion inspection.", B:"The builder hands over; you may be asked to check.", C:"You usually run the practical completion inspection on the design."},
+    ws:[
+    { name:"Completion", tasks:[
+      T("Practical completion inspection and defects list", "crit", ["You,Owner","Owner,Builder","You,Owner"], "Walk every room with the drawings and schedules. The Snaggo app is built for this."),
+      T("Final inspections and trade compliance certificates", "", "Certifier,Builder", "Electrical, plumbing, glazing and the energy as-built checks."),
+      T("Notice of completion", "", "Builder,Owner", "Lodged with the permit authority after completion. Your surveyor will confirm the form and the deadline."),
+      T("As-builts, manuals and warranties", "", "Builder,You", "Collect all of them for the owner's records.")
+    ]},
+    { name:"After handover", tasks:[
+      T("Defects period and final payment", "", "Owner,Builder", "Hold back an agreed retention until defects are fixed."),
+      T("Update insurance and records", "", "Owner", "Home insurer, council rates and the title/plan if required."),
+      T("Document the project for your portfolio", "", "You", "Photography, drawings and a short write-up. Your agreement with the owner should already permit it.")
+    ]}
+  ]}
+  ];
+
+  var SOURCES = [
+    ["Building approvals and forms (Building and Energy WA)", "https://www.wa.gov.au/organisation/building-and-energy/building-approvals"],
+    ["Building permit process, certified applications", "https://commerce.wa.gov.au/building-and-energy/section-5-permits-and-processes"],
+    ["Energy efficiency of residential buildings, WA additions protocol", "https://www.wa.gov.au/organisation/building-and-energy/sustainable-and-energy-efficient-homes"],
+    ["Home indemnity insurance fact sheet", "https://www.wa.gov.au/government/publications/home-indemnity-insurance-fact-sheet"],
+    ["Registration as an architect in WA (PI insurance)", "https://ablis.business.gov.au/service/wa/registration-as-an-architect/16948"]
+  ];
+
+  /* ---------- Roadmap rendering ---------- */
+  var PW_KEYS = ["A", "B", "C"];
+  var pw = "A";
+  try { var saved = localStorage.getItem("46stanley:pathway"); if (PATHWAYS[saved]) pw = saved; } catch(e){}
+
+  function h(tag, cls, text){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function roleClass(r){
+    if (r === "You") return "you";
+    if (r === "Builder") return "builder";
+    if (r === "Owner") return "owner";
+    if (r === "Council") return "auth";
+    return "cons";
+  }
+  function dots(n){
+    var s = h("span", "dots");
+    for (var i = 0; i < 5; i++) {
+      if (i < n) s.appendChild(document.createTextNode("●"));
+      else { var o = h("i", null, "●"); s.appendChild(o); }
+    }
+    s.setAttribute("aria-label", n + " out of 5");
+    return s;
+  }
+
+  var taskEls = [];       // {task, phase, el}
+  var phaseEls = [];
+  var rm = document.getElementById("view-roadmap");
+  var railPW, railChips = [];
+
+  function whoFor(task){ return task.who[PW_KEYS.indexOf(pw)]; }
+
+  function renderWho(box, task){
+    box.textContent = "";
+    var w = whoFor(task);
+    if (w === "-") { box.appendChild(h("span", "role none", "Not in this pathway")); return; }
+    w.split(",").forEach(function(r){ box.appendChild(h("span", "role " + roleClass(r), r)); });
+  }
+
+  function refreshPathway(){
+    document.querySelectorAll(".pw").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.k === pw ? "true" : "false"); });
+    document.querySelectorAll(".rail-pw .seg button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.k === pw ? "true" : "false"); });
+    taskEls.forEach(function(t){
+      renderWho(t.who, t.task);
+      t.el.classList.toggle("off", whoFor(t.task) === "-");
+      if (t.note) {
+        var txt = t.task.n && t.task.n[pw];
+        t.note.hidden = !txt;
+        if (txt) t.note.querySelector("span").textContent = txt;
+      }
+    });
+    phaseEls.forEach(function(p){
+      var line = p.phase.p[pw];
+      p.pwline.querySelector("span").textContent = line;
+    });
+  }
+
+  function setPathway(k){
+    pw = k;
+    try { localStorage.setItem("46stanley:pathway", k); } catch(e){}
+    refreshPathway();
+  }
+
+  function paras(txt){
+    var d = document.createDocumentFragment();
+    String(txt || "").split("\n\n").forEach(function(p){ d.appendChild(h("p", null, p)); });
+    return d;
+  }
+
+  function openAndScroll(el){
+    var p = el;
+    while (p) { if (p.tagName === "DETAILS") p.open = true; p = p.parentElement; }
+    setTimeout(function(){ el.scrollIntoView({behavior:"smooth", block:"start"}); }, 30);
+  }
+
+  function goSchedules(catId){
+    location.hash = catId;
+  }
+
+  function buildTask(task, phase){
+    var d = h("details", "rm-task");
+    var s = h("summary");
+    var tt = h("span", "tt");
+    tt.appendChild(document.createTextNode(task.title));
+    if (task.tags.length) {
+      var fl = h("span", "flags");
+      task.tags.forEach(function(t){ if (FLAGS[t]) fl.appendChild(h("span", "flag " + t, FLAGS[t])); });
+      tt.appendChild(fl);
+    }
+    s.appendChild(tt);
+    var who = h("span", "who");
+    s.appendChild(who);
+    d.appendChild(s);
+
+    var body = h("div", "t-body");
+    var left = h("div");
+    left.appendChild(paras(task.body));
+    body.appendChild(left);
+    var meta = h("div", "t-meta");
+    var note = null;
+    if (task.n) {
+      note = h("div", "m pwnote");
+      note.appendChild(h("b", null, "In this pathway"));
+      note.appendChild(h("span"));
+      meta.appendChild(note);
+    }
+    if (task.dep) { var m1 = h("div", "m"); m1.appendChild(h("b", null, "Depends on")); m1.appendChild(h("span", null, task.dep)); meta.appendChild(m1); }
+    if (task.out) { var m2 = h("div", "m"); m2.appendChild(h("b", null, "Produces")); m2.appendChild(h("span", null, task.out)); meta.appendChild(m2); }
+    if (task.link) {
+      var g = h("button", "golink", "Open " + (task.ll || "Schedules") + " →");
+      g.type = "button";
+      g.addEventListener("click", function(){ goSchedules(task.link); });
+      meta.appendChild(g);
+    }
+    if (meta.children.length) body.appendChild(meta); else body.style.gridTemplateColumns = "1fr";
+    d.appendChild(body);
+
+    taskEls.push({task:task, phase:phase, el:d, who:who, note:note});
+    return d;
+  }
+
+  function buildPhase(ph){
+    var d = h("details", "rm-phase");
+    d.id = "rm-ph-" + ph.n;
+    var count = 0;
+    ph.ws.forEach(function(w){ count += w.tasks.length; });
+    var s = h("summary");
+    s.appendChild(h("span", "ph-n", String(ph.n)));
+    var t = h("div", "ph-t");
+    t.appendChild(h("h2", null, ph.title));
+    t.appendChild(h("div", "when", ph.when));
+    s.appendChild(t);
+    s.appendChild(h("span", "ph-count", count + (count === 1 ? " task" : " tasks")));
+    d.appendChild(s);
+
+    var body = h("div", "ph-body");
+    body.appendChild(h("p", "ph-sum", ph.sum));
+    var pl = h("p", "ph-pw");
+    pl.appendChild(h("b", null, "In this pathway"));
+    pl.appendChild(h("span"));
+    body.appendChild(pl);
+
+    ph.ws.forEach(function(w, i){
+      var wd = h("details", "rm-ws"); wd.open = true;
+      var ws = h("summary");
+      ws.appendChild(document.createTextNode(w.name));
+      ws.appendChild(h("span", "ws-n", String(ph.n) + "." + (i + 1) + " · " + w.tasks.length));
+      wd.appendChild(ws);
+      var list = h("div", "tasks");
+      w.tasks.forEach(function(task){ list.appendChild(buildTask(task, ph)); });
+      wd.appendChild(list);
+      body.appendChild(wd);
+    });
+    d.appendChild(body);
+    phaseEls.push({phase:ph, el:d, pwline:pl});
+    return d;
+  }
+
+  function buildRoadmap(){
+    rm.textContent = "";
+    var wrap = h("div", "wrap");
+
+    var intro = h("p", "rm-intro");
+    intro.innerHTML = "<b>One timeline, three ways to run it.</b> Pick a pathway and every task shows who does it. Expand a task for the reasoning. Phases run in order, but design development, selections and documentation overlap in practice.";
+    wrap.appendChild(intro);
+
+    var grid = h("div", "pw-grid");
+    PW_KEYS.forEach(function(k){
+      var P = PATHWAYS[k];
+      var b = h("button", "pw"); b.type = "button"; b.dataset.k = k;
+      b.appendChild(h("span", "k", "Pathway " + k));
+      b.appendChild(h("h3", null, P.name));
+      b.appendChild(h("p", "tag-line", P.tag));
+      var dl = h("dl");
+      P.lines.forEach(function(l){
+        dl.appendChild(h("dt", null, l[0]));
+        var dd = h("dd");
+        if (typeof l[1] === "number") dd.appendChild(dots(l[1])); else dd.textContent = l[1];
+        dl.appendChild(dd);
+      });
+      b.appendChild(dl);
+      var best = h("div", "best"); best.innerHTML = "<b>Best if: </b>"; best.appendChild(document.createTextNode(P.best));
+      b.appendChild(best);
+      b.addEventListener("click", function(){ setPathway(k); });
+      grid.appendChild(b);
+    });
+    wrap.appendChild(grid);
+
+    // Before-DA callout
+    var pre = h("div", "preda");
+    pre.appendChild(h("h3", null, "Before you lodge the DA"));
+    pre.appendChild(h("p", null, "The items that are cheaper to settle now than after approval. Tap one to jump to it."));
+    var ul = h("ul");
+    pre.appendChild(ul);
+    wrap.appendChild(pre);
+
+    // Rail
+    var rail = h("div", "rail");
+    var rin = h("div", "rail-in");
+    var rp = h("div", "rail-pw");
+    rp.appendChild(h("span", "rail-lab", "Pathway"));
+    var seg = h("div", "seg");
+    PW_KEYS.forEach(function(k){
+      var b = h("button", null, k); b.type = "button"; b.dataset.k = k; b.title = PATHWAYS[k].name;
+      b.addEventListener("click", function(){ setPathway(k); });
+      seg.appendChild(b);
+    });
+    rp.appendChild(seg);
+    rin.appendChild(rp);
+    BANDS.forEach(function(band){
+      var bd = h("div", "band");
+      bd.appendChild(h("span", "rail-lab", band.name));
+      var chips = h("div", "chips");
+      band.ph.forEach(function(n){
+        var c = h("button", "chip", String(n)); c.type = "button"; c.title = PHASES[n].title;
+        c.addEventListener("click", function(){ openAndScroll(document.getElementById("rm-ph-" + n)); });
+        chips.appendChild(c);
+        railChips.push(c);
+      });
+      bd.appendChild(chips);
+      rin.appendChild(bd);
+    });
+    var tools = h("div", "rail-tools");
+    var ex = h("button", "tbtn", "Expand all"); ex.type = "button";
+    ex.addEventListener("click", function(){
+      var all = rm.querySelectorAll("details");
+      var anyClosed = false;
+      all.forEach(function(d){ if (!d.open) anyClosed = true; });
+      all.forEach(function(d){ d.open = anyClosed; });
+      ex.textContent = anyClosed ? "Collapse all" : "Expand all";
+    });
+    tools.appendChild(ex);
+    rin.appendChild(tools);
+    rail.appendChild(rin);
+    wrap.appendChild(rail);
+
+    var list = h("div", "phases");
+    PHASES.forEach(function(ph){ list.appendChild(buildPhase(ph)); });
+    wrap.appendChild(list);
+
+    // populate before-DA callout now that task elements exist
+    taskEls.forEach(function(t){
+      if (t.task.tags.indexOf("pre") === -1) return;
+      var li = h("li"); var b = h("button", null, t.task.title); b.type = "button";
+      b.addEventListener("click", function(){ openAndScroll(t.el); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+
+    var foot = h("div", "rm-foot");
+    foot.appendChild(h("p", null, "This roadmap is planning guidance, not regulatory or legal advice. Confirm requirements with your building surveyor and City of Stirling before relying on them. Time and cost aren't included. Add them once the builder responds."));
+    var more = h("details", "how"); more.appendChild(h("summary", null, "Sources"));
+    var sl = h("ul");
+    SOURCES.forEach(function(s){
+      var li = h("li"); var a = h("a", null, s[0]); a.href = s[1]; a.target = "_blank"; a.rel = "noopener";
+      li.appendChild(a); sl.appendChild(li);
+    });
+    more.appendChild(sl);
+    foot.appendChild(more);
+    wrap.appendChild(foot);
+
+    rm.appendChild(wrap);
+    // open the first two phases by default
+    phaseEls[0].el.open = true; phaseEls[1].el.open = true;
+    refreshPathway();
+
+    // highlight current phase chip while scrolling
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (!en.isIntersecting) return;
+          var n = parseInt(en.target.id.replace("rm-ph-", ""), 10);
+          railChips.forEach(function(c, i){ c.classList.toggle("cur", i === n); });
+        });
+      }, {rootMargin:"-120px 0px -65% 0px"});
+      phaseEls.forEach(function(p){ io.observe(p.el); });
+    }
+  }
+  buildRoadmap();
+
+  /* ---------- Mode switching (Roadmap | Schedules) ---------- */
+  var vS = document.getElementById("view-schedules"), vR = document.getElementById("view-roadmap");
+  var eyebrow = document.getElementById("eyebrow"), subline = document.getElementById("subline"), totals = document.getElementById("totals");
+  var modeBtns = {roadmap:document.getElementById("mode-roadmap"), schedules:document.getElementById("mode-schedules")};
+  var lastSched = "";
+  var mode = null;
+
+  function setMode(m){
+    if (m === mode) return;
+    mode = m;
+    var road = m === "roadmap";
+    vS.classList.toggle("rm-off", road);
+    vR.classList.toggle("rm-off", !road);
+    totals.classList.toggle("rm-off", road);
+    eyebrow.textContent = road ? "Roadmap" : "Fit-Out Schedule";
+    subline.textContent = road ? "From DA to handover: who does what, and when" : "Fixtures, finishes & equipment, by type";
+    document.title = "46 Stanley Street — " + (road ? "Roadmap" : "Fit-Out Schedule");
+    modeBtns.roadmap.setAttribute("aria-selected", road ? "true" : "false");
+    modeBtns.schedules.setAttribute("aria-selected", road ? "false" : "true");
+    window.scrollTo(0, 0);
+  }
+  function modeFromHash(){
+    var hh = location.hash.replace("#", "");
+    if (hh === "roadmap") { setMode("roadmap"); return; }
+    if (hh) lastSched = location.hash;
+    setMode("schedules");
+  }
+  modeBtns.roadmap.addEventListener("click", function(){ location.hash = "roadmap"; });
+  modeBtns.schedules.addEventListener("click", function(){
+    if (lastSched && lastSched !== "#roadmap") location.hash = lastSched;
+    else { try { history.replaceState(null, "", location.pathname + location.search); } catch(e){} setMode("schedules"); }
+  });
+  window.addEventListener("hashchange", modeFromHash);
+  modeFromHash();
 })();
 </script>

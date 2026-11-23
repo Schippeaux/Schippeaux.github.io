@@ -38,3 +38,12 @@ Download the photo into `lights/` (or a sensible folder) and add the item to the
 right group in `CATS`, or add it in the page with **+ Add item** (image URL can
 be a remote URL or a repo path). Items with a price/URL/image render as full
 cards; the rest stay dashed placeholders.
+
+## Tabs
+
+The page has two top-level tabs: **Roadmap** (`#roadmap`) and **Schedules** (`#<category-id>`, the
+catalogue described above). The Roadmap is a data-driven view: `PATHWAYS`, `PHASES` (phase → workstream → task)
+and `SOURCES` live in the second `<script>` block at the bottom of `index.html`. Each task lists who owns it
+under pathway A (you lead), B (builder-led) or C (hybrid); `"-"` means not part of that pathway. The selected
+pathway is kept in `localStorage` (`46stanley:pathway`). Tasks can link into a Schedules category via `link:`.
+The Roadmap has no status tracking and nothing is synced to `state.json`.
